@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<datastore-indexes autoGenerate="true">
+  <datastore-index kind="MessageItem" ancestor="false" source="auto">
+    <property name="queueId" direction="asc"/>
+    <property name="messageIndex" direction="desc"/>
+  </datastore-index>
+
+  <datastore-index kind="MessageItem" ancestor="false" source="auto">
+    <property name="queueId" direction="asc"/>
+    <property name="messageIndex" direction="asc"/>
+  </datastore-index>
+
+  <datastore-index kind="DataItem" ancestor="false" source="auto">
+    <property name="streamId" direction="asc"/>
+    <property name="timeMillis" direction="desc"/>
+  </datastore-index>
+</datastore-indexes>
+    
