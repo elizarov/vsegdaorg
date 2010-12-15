@@ -27,7 +27,28 @@ public class MessageServlet extends HttpServlet {
     @SuppressWarnings({"unchecked"})
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        writeGetResponse(resp, new MessageRequest(req));
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         MessageRequest messageRequest = new MessageRequest(req);
+        long now = System.currentTimeMillis();
+        Map<Long, Long> sessions = parseSessions(req);
+        Map<Long, List<MessageItem>> items = parseMessageItems(req.getReader(), now);
+        Set<Long> queues = new HashSet<Long>(sessions.keySet());
+        queues.addAll(items.keySet());
+        for (Long queue : queues) {
+            long sessionId = postToQueue(queue, sessions.get(queue), items.get(queue), now);
+            sessions.put(queue, sessionId);
+        }
+        addSessionCookies(resp, sessions);
+        // combine poll for messages with POST
+        if (messageRequest.isPollRequest())
+            writeGetResponse(resp, messageRequest);
+    }
+
+    private void writeGetResponse(HttpServletResponse resp, MessageRequest messageRequest) throws IOException {
         resp.setContentType("text/csv");
         resp.setCharacterEncoding("UTF-8");
         ServletOutputStream out = resp.getOutputStream();
@@ -39,20 +60,6 @@ public class MessageServlet extends HttpServlet {
         } finally {
             pm.close();
         }
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        long now = System.currentTimeMillis();
-        Map<Long, Long> sessions = parseSessions(req);
-        Map<Long, List<MessageItem>> items = parseMessageItems(req.getReader(), now);
-        Set<Long> queues = new HashSet<Long>(sessions.keySet());
-        queues.addAll(items.keySet());
-        for (Long queue : queues) {
-            long sessionId = postToQueue(queue, sessions.get(queue), items.get(queue), now);
-            sessions.put(queue, sessionId);
-        }
-        addSessionCookies(resp, sessions);
     }
 
     private long postToQueue(long queueId, Long sessionId, List<MessageItem> items, long now) {

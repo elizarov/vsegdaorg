@@ -95,7 +95,12 @@ public class MessageRequest {
         }
     }
 
+    public boolean isPollRequest() {
+        return id != null && !all && first == 0;
+    }
+
     public Long getId() {
         return id;
     }
+
 }
