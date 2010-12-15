@@ -1,7 +1,7 @@
 package org.vsegda.tags;
 
-import org.vsegda.DataRequest;
-import org.vsegda.Factory;
+import org.vsegda.util.DataRequest;
+import org.vsegda.util.Factory;
 import org.vsegda.data.DataItem;
 
 import javax.jdo.PersistenceManager;
@@ -18,16 +18,9 @@ public class DataItemsTag extends SimpleTagSupport {
     @Override
     public void doTag() throws JspException, IOException {
         PageContext ctx = (PageContext)getJspContext();
-        DataRequest req = new DataRequest(ctx.getRequest());
-        ctx.setAttribute("req", req);
-        PersistenceManager pm = Factory.getPersistenceManager();
-        try {
-            for (DataItem item : req.query(pm)) {
-                ctx.setAttribute("item", item);
-                getJspBody().invoke(null);
-            }
-        } finally {
-            pm.close();
+        for (DataItem item : new DataRequest(ctx.getRequest()).query()) {
+            ctx.setAttribute("item", item);
+            getJspBody().invoke(null);
         }
     }
 }

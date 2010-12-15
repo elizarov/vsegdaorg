@@ -4,19 +4,27 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
   <servlet>
     <servlet-name>alert</servlet-name>
-    <servlet-class>org.vsegda.AlertServlet</servlet-class>
+    <servlet-class>org.vsegda.servlet.AlertServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>dataSource</servlet-name>
+    <servlet-class>org.vsegda.servlet.DataItemSourceServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>data</servlet-name>
-    <servlet-class>org.vsegda.DataServlet</servlet-class>
+    <servlet-class>org.vsegda.servlet.DataServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>message</servlet-name>
-    <servlet-class>org.vsegda.MessageServlet</servlet-class>
+    <servlet-class>org.vsegda.servlet.MessageServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>alert</servlet-name>
     <url-pattern>/alert</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>dataSource</servlet-name>
+    <url-pattern>/dataSource</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>data</servlet-name>

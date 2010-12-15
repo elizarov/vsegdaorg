@@ -7,6 +7,9 @@
   <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body>
+<p>
+  Message items
+</p>
 <table>
   <tr>
     <th>id</th>
@@ -18,8 +21,8 @@
   <v:messageItems>
     <tr>
       <c:choose>
-        <c:when test="${req.id == null}">
-          <td><a href="?id=${item.queueId}&all"><c:out value="${item.queueId}"/></a></td>
+        <c:when test="${param.id == null}">
+          <td><a href="?id=${item.queueId}"><c:out value="${item.queueId}"/></a></td>
         </c:when>
         <c:otherwise>
           <td><c:out value="${item.queueId}"/></td>

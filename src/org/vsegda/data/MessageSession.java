@@ -2,7 +2,7 @@ package org.vsegda.data;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-import org.vsegda.TimeUtil;
+import org.vsegda.util.TimeUtil;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;

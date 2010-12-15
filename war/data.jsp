@@ -7,6 +7,12 @@
   <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body>
+<p>
+  Data Items
+  <c:if test="${param.id != null}">
+    <a href="dataGraph.jsp?${pageContext.request.queryString}">Graph</a>
+  </c:if>
+</p>
 <table>
   <tr>
     <th>id</th>
@@ -17,7 +23,7 @@
   <v:dataItems>
     <tr>
       <c:choose>
-        <c:when test="${req.id == null}">
+        <c:when test="${param.id == null}">
           <td><a href="?id=${item.streamId}"><c:out value="${item.streamId}"/></a></td>
         </c:when>
         <c:otherwise>

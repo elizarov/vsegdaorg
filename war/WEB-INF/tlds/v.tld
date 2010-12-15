@@ -10,10 +10,6 @@
     <tag-class>org.vsegda.tags.MessageItemsTag</tag-class>
     <body-content>scriptless</body-content>
     <variable>
-      <name-given>req</name-given>
-      <variable-class>org.vsegda.MessageRequest</variable-class>
-    </variable>
-    <variable>
       <name-given>item</name-given>
       <variable-class>org.vsegda.data.MessageItem</variable-class>
     </variable>
@@ -22,10 +18,6 @@
     <name>dataItems</name>
     <tag-class>org.vsegda.tags.DataItemsTag</tag-class>
     <body-content>scriptless</body-content>
-    <variable>
-      <name-given>req</name-given>
-      <variable-class>org.vsegda.DataRequest</variable-class>
-    </variable>
     <variable>
       <name-given>item</name-given>
       <variable-class>org.vsegda.data.DataItem</variable-class>

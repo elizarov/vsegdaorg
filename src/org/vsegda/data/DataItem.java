@@ -1,7 +1,7 @@
 package org.vsegda.data;
 
 import com.google.appengine.api.datastore.Key;
-import org.vsegda.TimeUtil;
+import org.vsegda.util.TimeUtil;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
