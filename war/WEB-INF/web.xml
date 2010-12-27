@@ -7,6 +7,10 @@
     <servlet-class>org.vsegda.servlet.AlertServlet</servlet-class>
   </servlet>
   <servlet>
+    <servlet-name>dataCheck</servlet-name>
+    <servlet-class>org.vsegda.servlet.DataCheckServlet</servlet-class>
+  </servlet>
+  <servlet>
     <servlet-name>dataSource</servlet-name>
     <servlet-class>org.vsegda.servlet.DataItemSourceServlet</servlet-class>
   </servlet>
@@ -21,6 +25,10 @@
   <servlet-mapping>
     <servlet-name>alert</servlet-name>
     <url-pattern>/alert</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>dataCheck</servlet-name>
+    <url-pattern>/cron/dataCheck</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>dataSource</servlet-name>

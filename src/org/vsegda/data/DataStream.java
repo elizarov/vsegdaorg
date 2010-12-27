@@ -21,6 +21,9 @@ public class DataStream {
     @Persistent
     private Key lastItemKey;
 
+    @Persistent
+    private Long alertTimeout;
+
     public DataStream(Long streamId) {
         this.streamId = streamId;
     }
@@ -47,6 +50,14 @@ public class DataStream {
 
     public void setLastItemKey(Key lastItemKey) {
         this.lastItemKey = lastItemKey;
+    }
+
+    public Long getAlertTimeout() {
+        return alertTimeout;
+    }
+
+    public void setAlertTimeout(Long alertTimeout) {
+        this.alertTimeout = alertTimeout;
     }
 
     @Override
