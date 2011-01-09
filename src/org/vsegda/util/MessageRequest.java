@@ -22,15 +22,18 @@ public class MessageRequest {
 	private int first;
 	private int last = 100; // last 100 items by default
 
-    public MessageRequest(ServletRequest req) {
+    public MessageRequest(ServletRequest req, boolean post) {
+        take = req.getParameter("take") != null;
         String idString = req.getParameter("id");
-		if (idString != null)
+		if (idString != null) {
             try {
                 id = Long.parseLong(idString);
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("id must be integer", e);
             }
-        take = req.getParameter("take") != null;
+            if (post)
+                take = true; // force take on POST request if "id" is set
+        }
         String indexString = req.getParameter("index");
 		if (indexString != null) {
             if (id == null)

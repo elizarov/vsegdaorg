@@ -29,12 +29,12 @@ public class MessageServlet extends HttpServlet {
     @SuppressWarnings({"unchecked"})
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        writeGetResponse(resp, new MessageRequest(req));
+        writeGetResponse(resp, new MessageRequest(req, false));
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        MessageRequest messageRequest = new MessageRequest(req);
+        MessageRequest messageRequest = new MessageRequest(req, true);
         long now = System.currentTimeMillis();
         Map<Long, Long> sessions = parseSessions(req);
         Map<Long, List<MessageItem>> items = parseMessageItems(req.getReader(), now);
