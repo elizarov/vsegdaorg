@@ -19,7 +19,7 @@
     <th>index</th>
   </tr>
   <v:messageItems>
-    <tr>
+    <tr class="${item.formatClass}">
       <c:choose>
         <c:when test="${param.id == null}">
           <td><a href="?id=${item.queueId}"><c:out value="${item.queueId}"/></a></td>

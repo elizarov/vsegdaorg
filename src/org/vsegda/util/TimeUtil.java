@@ -9,6 +9,8 @@ import java.util.TimeZone;
  * @author Roman Elizarov
  */
 public class TimeUtil {
+    public static final TimeZone TIMEZONE = TimeZone.getTimeZone("Europe/Moscow");
+
     public static final long SECOND = 1000L;
     public static final long MINUTE = 60 * SECOND;
     public static final long HOUR = 60 * MINUTE;
@@ -16,7 +18,7 @@ public class TimeUtil {
 
     private static SimpleDateFormat getDateTimeFormat() {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd'T'HHmmss.SSS");
-        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        format.setTimeZone(TIMEZONE);
         return format;
     }
 
@@ -52,5 +54,10 @@ public class TimeUtil {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid time format: " + s, e);
         }
+    }
+
+    public static String getFormatClass(long timeMillis, long now) {
+        // Check if older than 15 mins ago
+        return timeMillis < now - 15 * 60000L ? "old" : "recent";
     }
 }

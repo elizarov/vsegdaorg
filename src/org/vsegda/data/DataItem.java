@@ -81,6 +81,10 @@ public class DataItem {
         return TimeUtil.formatDateTimeDifference(getTimeMillis(), System.currentTimeMillis());
     }
 
+    public String getFormatClass() {
+        return TimeUtil.getFormatClass(getTimeMillis(), System.currentTimeMillis());
+    }
+
     @Override
 	public String toString() {
         return streamId + "," + value + "," + TimeUtil.formatDateTime(timeMillis);

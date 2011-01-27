@@ -98,6 +98,10 @@ public class MessageItem {
         return TimeUtil.formatDateTimeDifference(getTimeMillis(), System.currentTimeMillis());
     }
 
+    public String getFormatClass() {
+        return TimeUtil.getFormatClass(getTimeMillis(), System.currentTimeMillis());
+    }
+
     @Override
     public String toString() {
         return queueId + "," + text + "," + getTime() + "," + messageIndex;

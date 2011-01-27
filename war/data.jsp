@@ -21,7 +21,7 @@
     <th>ago</th>
   </tr>
   <v:dataItems>
-    <tr>
+    <tr class="${item.formatClass}">
       <c:choose>
         <c:when test="${param.id == null}">
           <td><a href="?id=${item.streamId}"><c:out value="${item.streamId}"/></a></td>

@@ -10,6 +10,7 @@ import com.google.visualization.datasource.datatable.value.ValueType;
 import com.google.visualization.datasource.query.Query;
 import org.vsegda.data.DataItem;
 import org.vsegda.util.DataRequest;
+import org.vsegda.util.TimeUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -31,7 +32,6 @@ public class DataItemSourceServlet extends DataSourceServlet {
             return 0;
         }
     };
-    private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
 
     public DataTable generateDataTable(Query query, HttpServletRequest req) throws DataSourceException {
         List<DataItem> items = new DataRequest(req).query();
@@ -49,7 +49,7 @@ public class DataItemSourceServlet extends DataSourceServlet {
         }
         data.addColumns(cd);
 
-        Calendar c = Calendar.getInstance(UTC);
+        Calendar c = Calendar.getInstance(TimeUtil.TIMEZONE);
         for (DataItem item : items) {
             TableRow row = new TableRow();
             c.setTimeInMillis(item.getTimeMillis());
