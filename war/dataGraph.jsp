@@ -23,7 +23,7 @@
       }
       var data = response.getDataTable();
       var chart = new google.visualization.AnnotatedTimeLine(document.getElementById('chart_div'));
-      char.displayZoomButtons = false;
+      chart.displayZoomButtons = false;
       chart.draw(data, {displayAnnotations: true});
     }
   </script>
