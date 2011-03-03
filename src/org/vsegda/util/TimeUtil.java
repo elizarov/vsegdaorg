@@ -26,7 +26,7 @@ public class TimeUtil {
         return getDateTimeFormat().format(new Date(timeMillis));
     }
 
-    public static String formatDateTimeDifference(long timeMillis, long now) {
+   public static String formatDateTimeDifference(long timeMillis, long now) {
         StringBuilder sb = new StringBuilder();
         long diff = now - timeMillis;
         if (diff < 0) {

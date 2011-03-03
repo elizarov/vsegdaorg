@@ -6,9 +6,7 @@ import org.vsegda.data.DataStream;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.servlet.ServletRequest;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Roman Elizarov
@@ -18,6 +16,7 @@ public class DataRequest {
 	private int first;
 	private int last = 1000; // last 1000 items by default
     private double filter = 5; // 5 sigmas by default
+    private TimeInstant since;
 
 	public DataRequest(ServletRequest req) {
         RequestUtil.populate(this, req);
@@ -44,12 +43,21 @@ public class DataRequest {
         } else {
             for (long id : this.id) {
                 Query query = pm.newQuery(DataItem.class);
-                query.setFilter("streamId == id");
-                query.declareParameters("int id");
+                String queryFilter = "streamId == id";
+                String queryParams = "int id";
+                Map<String, Object> queryArgs = new HashMap<String, Object>();
+                queryArgs.put("id", id);
+                if (since != null) {
+                    queryFilter += " && timeMillis >= since";
+                    queryParams += ", long since";
+                    queryArgs.put("since", since.time());
+                }
+                query.setFilter(queryFilter);
+                query.declareParameters(queryParams);
                 query.setOrdering("timeMillis desc");
                 query.setRange(first, first + last);
                 int s0 = items.size();
-                items.addAll((Collection<DataItem>)query.execute(id));
+                items.addAll((Collection<DataItem>)query.executeWithMap(queryArgs));
                 filter(items.subList(s0, items.size()));
             }
         }
@@ -128,5 +136,13 @@ public class DataRequest {
 
     public void setFilter(double filter) {
         this.filter = filter;
+    }
+
+    public TimeInstant getSince() {
+        return since;
+    }
+
+    public void setSince(TimeInstant since) {
+        this.since = since;
     }
 }

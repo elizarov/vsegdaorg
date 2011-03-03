@@ -11,6 +11,8 @@ import javax.servlet.ServletRequest;
 public class RequestUtil {
     static {
         ConvertUtils.register(new IdList.Cnv(), IdList.class);
+        ConvertUtils.register(new TimeInstant.Cnv(), TimeInstant.class);
+        ConvertUtils.register(new TimePeriod.Cnv(), TimePeriod.class);
     }
 
     public static void populate(Object obj, ServletRequest req) {
