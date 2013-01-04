@@ -47,14 +47,17 @@ public class DataRequest {
             query.setRange(first, first + last);
             for (DataStream stream : (Collection<DataStream>)query.execute()) {
                 DataItem item = null;
-                try {
-                    item = pm.getObjectById(DataItem.class, stream.getLastItemKey());
-                    item.setStream(stream);
-                    result.add(item);
-                } catch (JDOObjectNotFoundException e) {
-                    log.warning("Last item for streamId=" + stream.getStreamId() + " is not found by key=" + stream.getLastItemKey());
-                    stream.setLastItemKey(null);
-                }
+                if (stream.getLastItemKey() != null)
+                    try {
+                        item = pm.getObjectById(DataItem.class, stream.getLastItemKey());
+                    } catch (JDOObjectNotFoundException e) {
+                        log.warning("Last item for streamId=" + stream.getStreamId() + " is not found by key=" + stream.getLastItemKey());
+                        stream.setLastItemKey(null);
+                    }
+                if (item == null)
+                    item = new DataItem(stream.getStreamId(), Double.NaN, 0);
+                item.setStream(stream);
+                result.add(item);
             }
         } else {
             for (String code : this.id) {
