@@ -29,12 +29,11 @@ public class DataArchiveTaskServlet extends HttpServlet {
     private static final Logger log = Logger.getLogger(DataArchiveTaskServlet.class.getName());
 
     public static void enqueueDataArchiveTask(long streamId) {
-        log.info("Enqueueing data archive data for streamId=" + streamId);
+        log.info("Enqueueing data archive task for streamId=" + streamId);
         Queue queue = QueueFactory.getDefaultQueue();
         queue.add(TaskOptions.Builder
                 .withUrl("/task/dataArchive")
-                .param("id", String.valueOf(streamId))
-                .taskName("archive" + streamId));
+                .param("id", String.valueOf(streamId)));
     }
 
     @SuppressWarnings({"unchecked"})
