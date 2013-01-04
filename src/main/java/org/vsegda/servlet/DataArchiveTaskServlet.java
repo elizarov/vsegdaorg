@@ -57,7 +57,7 @@ public class DataArchiveTaskServlet extends HttpServlet {
             Calendar cal = Calendar.getInstance(TimeUtil.TIMEZONE);
             cal.setTimeInMillis(firstItem.getTimeMillis());
             cal.set(Calendar.HOUR_OF_DAY, cal.getMaximum(Calendar.HOUR_OF_DAY));
-            cal.set(Calendar.MINUTE, cal.getMaximum(Calendar.MILLISECOND));
+            cal.set(Calendar.MINUTE, cal.getMaximum(Calendar.MINUTE));
             cal.set(Calendar.SECOND, cal.getMaximum(Calendar.SECOND));
             cal.set(Calendar.MILLISECOND, cal.getMaximum(Calendar.MILLISECOND));
             Query query = pm.newQuery(DataItem.class);
