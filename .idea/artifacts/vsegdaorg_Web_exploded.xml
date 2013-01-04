@@ -1,0 +1,19 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" build-on-make="true" name="vsegdaorg:Web exploded">
+    <output-path>$PROJECT_DIR$/war</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="vsegdaorg/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="vsegdaorg" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="application" name="appengine-user" />
+          <element id="library" level="project" name="jakarta-taglibs-standard-1.1.2" />
+          <element id="library" level="project" name="visualization-datasource-1.0.2" />
+          <element id="library" level="project" name="commons-beanutils-1.7.0" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

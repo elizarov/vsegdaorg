@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module relativePaths="false" type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="web" name="Web">
+      <configuration>
+        <descriptors>
+          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/src/main/webapp/WEB-INF/web.xml" />
+        </descriptors>
+        <webroots>
+          <root url="file://$MODULE_DIR$/src/main/webapp" relative="/" />
+        </webroots>
+        <sourceRoots>
+          <root url="file://$MODULE_DIR$/src/main/java" />
+          <root url="file://$MODULE_DIR$/src/main/resources" />
+          <root url="file://$MODULE_DIR$/src/main/webapp" />
+        </sourceRoots>
+      </configuration>
+      <facet type="google-app-engine" name="Google App Engine">
+        <configuration>
+          <password>dfcddfc1dfc2dfdfdfc4df9cdfc1df93</password>
+          <files-to-enhance>
+            <file path="$MODULE_DIR$/src" />
+          </files-to-enhance>
+          <run-enhancer-on-make>true</run-enhancer-on-make>
+          <sdk-home-path>C:/Java/appengine-java-sdk-1.7.3</sdk-home-path>
+          <email>elizarov@gmail.com</email>
+        </configuration>
+      </facet>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/resources" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/webapp" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="PROVIDED" name="appengine-shared" level="application" />
+    <orderEntry type="library" name="appengine-user" level="application" />
+    <orderEntry type="library" name="jakarta-taglibs-standard-1.1.2" level="project" />
+    <orderEntry type="library" name="visualization-datasource-1.0.2" level="project" />
+    <orderEntry type="library" name="commons-beanutils-1.7.0" level="project" />
+    <orderEntry type="module-library" scope="TEST">
+      <library>
+        <CLASSES>
+          <root url="jar://$APPLICATION_HOME_DIR$/lib/junit.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+  </component>
+</module>
+
