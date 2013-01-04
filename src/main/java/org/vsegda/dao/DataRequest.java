@@ -53,6 +53,7 @@ public class DataRequest {
                     result.add(item);
                 } catch (JDOObjectNotFoundException e) {
                     log.warning("Last item for streamId=" + stream.getStreamId() + " is not found by key=" + stream.getLastItemKey());
+                    stream.setLastItemKey(null);
                 }
             }
         } else {
