@@ -1,5 +1,6 @@
 package org.vsegda.servlet;
 
+import org.vsegda.dao.DataItemDAO;
 import org.vsegda.dao.DataRequest;
 import org.vsegda.dao.DataStreamDAO;
 import org.vsegda.data.DataItem;
@@ -7,7 +8,6 @@ import org.vsegda.data.DataStream;
 import org.vsegda.data.DataStreamMode;
 import org.vsegda.factory.Factory;
 
-import javax.jdo.JDOObjectNotFoundException;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
@@ -43,14 +43,16 @@ public class DataServlet extends HttpServlet {
         for (DataItem item : items)
             item.setStream(DataStreamDAO.resolveStream(item.getStream()));
         // persist all items
-        Factory.getPM().makePersistentAll(items);
+        DataItemDAO.persistDataItems(items);
         // update all streams
         for (DataItem item : items) {
             DataStream stream = item.getStream();
             // update last item key
             if (stream.getLastItemKey() != null) {
-                try {
-                    DataItem lastItem = Factory.getPM().getObjectById(DataItem.class, stream.getLastItemKey());
+                DataItem lastItem = DataItemDAO.getDataItemByKey(stream.getLastItemKey());
+                if (lastItem == null)
+                    stream.setLastItemKey(item.getKey()); // something wrong -- update to cur item
+                else {
                     // remove last item in LAST mode
                     if (stream.getMode() == DataStreamMode.LAST) {
                         stream.setLastItemKey(null);
@@ -60,24 +62,16 @@ public class DataServlet extends HttpServlet {
                         stream.setLastItemKey(item.getKey());
                     } else if (item.getTimeMillis() >= lastItem.getTimeMillis())
                         stream.setLastItemKey(item.getKey());
-                } catch (JDOObjectNotFoundException e) {
-                    log.warning("Cannot find last DataItem from stream with key=" + stream.getLastItemKey());
-                    // something wrong -- fallback to set
-                    stream.setLastItemKey(item.getKey());
                 }
             } else
                 stream.setLastItemKey(item.getKey());
             // update first item key
             if (stream.getFirstItemKey() != null) {
-                try {
-                    DataItem firstItem = Factory.getPM().getObjectById(DataItem.class, stream.getFirstItemKey());
-                    if (item.getTimeMillis() < firstItem.getTimeMillis())
-                        stream.setFirstItemKey(item.getKey());
-                } catch (JDOObjectNotFoundException e) {
-                    log.warning("Cannot find first DataItem from stream with key=" + stream.getFirstItemKey());
-                    // something wrong -- clear it
-                    stream.setFirstItemKey(null);
-                }
+                DataItem firstItem = DataItemDAO.getDataItemByKey(stream.getFirstItemKey());
+                if (firstItem == null)
+                    stream.setFirstItemKey(null); // something wrong -- clear it
+                else if (item.getTimeMillis() < firstItem.getTimeMillis())
+                    stream.setFirstItemKey(item.getKey());
             }
         }
     }

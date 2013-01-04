@@ -9,7 +9,6 @@ import org.vsegda.util.IdList;
 import org.vsegda.util.RequestUtil;
 import org.vsegda.util.TimeInstant;
 
-import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.Query;
 import javax.servlet.ServletRequest;
 import java.util.*;
@@ -43,13 +42,11 @@ public class DataRequest {
             query.getFetchPlan().setFetchSize(last);
             for (DataStream stream : (Collection<DataStream>)query.execute()) {
                 DataItem item = null;
-                if (stream.getLastItemKey() != null)
-                    try {
-                        item = Factory.getPM().getObjectById(DataItem.class, stream.getLastItemKey());
-                    } catch (JDOObjectNotFoundException e) {
-                        log.warning("Last item for streamId=" + stream.getStreamId() + " is not found by key=" + stream.getLastItemKey());
+                if (stream.getLastItemKey() != null) {
+                    item = DataItemDAO.getDataItemByKey(stream.getLastItemKey());
+                    if (item == null)
                         stream.setLastItemKey(null);
-                    }
+                }
                 if (item == null)
                     item = new DataItem(stream.getStreamId(), Double.NaN, 0);
                 item.setStream(stream);
