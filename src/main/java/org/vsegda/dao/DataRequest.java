@@ -58,13 +58,12 @@ public class DataRequest {
             }
         } else {
             for (String code : this.id) {
-                long id = DataStreamDAO.resolveStreamCode(pm, code);
-                DataStream stream = pm.getObjectById(DataStream.class, id);
+                DataStream stream = DataStreamDAO.resolveStreamByCode(pm, code);
                 Query query = pm.newQuery(DataItem.class);
                 String queryFilter = "streamId == id";
                 String queryParams = "long id";
                 Map<String, Object> queryArgs = new HashMap<String, Object>();
-                queryArgs.put("id", id);
+                queryArgs.put("id", stream.getStreamId());
                 if (since != null) {
                     queryFilter += " && timeMillis >= since";
                     queryParams += ", long since";

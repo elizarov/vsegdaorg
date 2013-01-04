@@ -49,15 +49,13 @@ public class DataServlet extends HttpServlet {
         PersistenceManager pm = Factory.getPersistenceManager();
         try {
             // resolve all stream tags
-            for (DataItem item : items) {
-                if (item.getStreamId() == 0)
-                    item.setStreamId(DataStreamDAO.resolveStreamCode(pm, item.getStream().getTag()));
-            }
+            for (DataItem item : items)
+                item.setStream(DataStreamDAO.resolveStream(pm, item.getStream()));
             // persist all items
             pm.makePersistentAll(items);
             // update all streams
             for (DataItem item : items) {
-                DataStream stream = getOrCreateDataStream(pm, item.getStreamId());
+                DataStream stream = item.getStream();
                 // update last item key
                 if (stream.getLastItemKey() != null) {
                     try {
@@ -93,14 +91,6 @@ public class DataServlet extends HttpServlet {
             }
         } finally {
             pm.close();
-        }
-    }
-
-    private DataStream getOrCreateDataStream(PersistenceManager pm, Long id) {
-        try {
-            return pm.getObjectById(DataStream.class, id);
-        } catch (JDOObjectNotFoundException e) {
-            return pm.makePersistent(new DataStream(id));
         }
     }
 

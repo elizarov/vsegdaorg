@@ -18,37 +18,54 @@ public class DataStreamDAO {
 
     private DataStreamDAO() {}
 
-    @SuppressWarnings({"unchecked"})
-    public static long resolveStreamCode(PersistenceManager pm, String code) {
+    public static DataStream resolveStreamByCode(PersistenceManager pm, String code) {
         try {
-            return Long.parseLong(code);
+            return resolveStreamById(pm, Long.parseLong(code));
         } catch (NumberFormatException e) {
             // ignore and try to find by tag
         }
+        return resolveStreamByTag(pm, code);
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public static DataStream resolveStreamByTag(PersistenceManager pm, String tag) {
         Query query = pm.newQuery(DataStream.class);
         query.setOrdering("streamId asc");
         query.declareParameters("String code");
         query.setFilter("tag == code");
-        Collection<DataStream> streams = (Collection<DataStream>) query.execute(code);
+        Collection<DataStream> streams = (Collection<DataStream>) query.execute(tag);
+        DataStream stream;
         if (streams.isEmpty()) {
-            log.info("Creating new data stream with tag=" + code);
+            log.info("Creating new data stream with tag=" + tag);
             // find last stream
             query = pm.newQuery(DataStream.class);
             query.setOrdering("streamId desc");
             query.setRange(0, 1);
             streams = (Collection<DataStream>) query.execute();
             long id = streams.isEmpty() ? 100 : streams.iterator().next().getStreamId() + 1;
-            DataStream stream = new DataStream(id);
-            stream.setTag(code);
+            stream = new DataStream(id);
+            stream.setTag(tag);
             pm.makePersistent(stream);
-            return stream.getStreamId();
-        }
-        return streams.iterator().next().getStreamId();
+        } else
+            stream = streams.iterator().next();
+        return stream;
     }
 
-    public static Key findFistItemKey(PersistenceManager pm, long streamId) {
-        DataItem fistItem = findFistItem(pm, streamId);
-        return fistItem == null ? null : fistItem.getKey();
+    private static DataStream resolveStreamById(PersistenceManager pm, long id) {
+        try {
+            return pm.getObjectById(DataStream.class, id);
+        } catch (JDOObjectNotFoundException e) {
+            log.info("Creating new data stream with id=" + id);
+            DataStream stream = new DataStream(id);
+            pm.makePersistent(stream);
+            return stream;
+        }
+    }
+
+    public static DataStream resolveStream(PersistenceManager pm, DataStream stream) {
+        return stream.getStreamId() != null ?
+                resolveStreamById(pm, stream.getStreamId()) :
+                resolveStreamByTag(pm, stream.getTag());
     }
 
     @SuppressWarnings({"unchecked"})
@@ -78,4 +95,5 @@ public class DataStreamDAO {
         stream.setFirstItemKey(firstItem.getKey());
         return firstItem;
     }
+
 }
