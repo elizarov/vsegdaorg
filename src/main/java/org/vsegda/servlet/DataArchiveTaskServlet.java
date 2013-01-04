@@ -4,11 +4,11 @@ import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import org.vsegda.dao.DataStreamDAO;
-import org.vsegda.dao.Factory;
 import org.vsegda.data.DataArchive;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
 import org.vsegda.data.DataStreamMode;
+import org.vsegda.factory.Factory;
 import org.vsegda.util.TimeUtil;
 
 import javax.jdo.PersistenceManager;
@@ -42,14 +42,14 @@ public class DataArchiveTaskServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long streamId = Long.parseLong(req.getParameter("id"));
         log.info("Archiving data for streamId=" + streamId);
-        PersistenceManager pm = Factory.getPersistenceManager();
+        PersistenceManager pm = Factory.getPM();
         try {
             DataStream stream = pm.getObjectById(DataStream.class, streamId);
             if (stream.getMode() == DataStreamMode.LAST) {
                 log.warning("Stream mode is " + stream.getMode() + ", ignoring task");
                 return;
             }
-            DataItem firstItem = DataStreamDAO.getOrFindFirstItem(pm, stream);
+            DataItem firstItem = DataStreamDAO.getOrFindFirstItem(stream);
             if (firstItem == null || firstItem.isRecent()) {
                 log.info("First stream item is recent or missing: " + firstItem);
                 return;

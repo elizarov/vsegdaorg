@@ -2,16 +2,15 @@ package org.vsegda.dao;
 
 import org.vsegda.data.MessageItem;
 import org.vsegda.data.MessageQueue;
+import org.vsegda.factory.Factory;
 import org.vsegda.util.IdList;
 import org.vsegda.util.RequestUtil;
 
 import javax.jdo.JDOObjectNotFoundException;
-import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.servlet.ServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author Roman Elizarov
@@ -37,34 +36,25 @@ public class MessageRequest {
             throw new IllegalArgumentException("cannot specify take with first");
 	}
 
-    public List<MessageItem> query() {
-        PersistenceManager pm = Factory.getPersistenceManager();
-        try {
-            return new ArrayList<MessageItem>(query(pm));
-        } finally {
-            pm.close();
-        }
-    }
-
     @SuppressWarnings({"unchecked"})
-    public Collection<MessageItem> query(PersistenceManager pm) {
+    public Collection<MessageItem> query() {
         Collection<MessageItem> items = new ArrayList<MessageItem>();
         if (id == null) {
-            Query query = pm.newQuery(MessageQueue.class);
+            Query query = Factory.getPM().newQuery(MessageQueue.class);
             query.setOrdering("key asc");
             query.setRange(first, first + last);
             for (MessageQueue queue : (Collection<MessageQueue>)query.execute())
                 try {
-                    items.add(pm.getObjectById(MessageItem.class, MessageItem.createKey(queue.getQueueId(), queue.getLastPostIndex())));
+                    items.add(Factory.getPM().getObjectById(MessageItem.class, MessageItem.createKey(queue.getQueueId(), queue.getLastPostIndex())));
                 } catch (JDOObjectNotFoundException e) {
                     // just ignore
                 }
         } else {
             for (String code : this.id) {
-                long id = MessageQueueDAO.resolveQueueCode(pm, code);
-                Query query = pm.newQuery(MessageItem.class);
+                long id = MessageQueueDAO.resolveQueueCode(code);
+                Query query = Factory.getPM().newQuery(MessageItem.class);
                 if (take) {
-                    MessageQueue queue = pm.getObjectById(MessageQueue.class, MessageQueue.createKey(id));
+                    MessageQueue queue = Factory.getPM().getObjectById(MessageQueue.class, MessageQueue.createKey(id));
                     index = Math.max(index, queue.getLastGetIndex());
                     queue.setLastGetIndex(index);
                     query.setFilter("queueId == id && messageIndex > index");

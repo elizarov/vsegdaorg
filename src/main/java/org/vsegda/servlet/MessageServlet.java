@@ -1,22 +1,20 @@
 package org.vsegda.servlet;
 
-import org.vsegda.dao.Factory;
 import org.vsegda.dao.MessageRequest;
-import org.vsegda.data.MessageSession;
 import org.vsegda.data.MessageItem;
 import org.vsegda.data.MessageQueue;
+import org.vsegda.data.MessageSession;
+import org.vsegda.factory.Factory;
 
+import javax.jdo.JDOObjectNotFoundException;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.jdo.PersistenceManager;
-import javax.jdo.Transaction;
-import javax.jdo.JDOObjectNotFoundException;
-import java.io.IOException;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -54,61 +52,43 @@ public class MessageServlet extends HttpServlet {
         resp.setContentType("text/csv");
         resp.setCharacterEncoding("UTF-8");
         ServletOutputStream out = resp.getOutputStream();
-        PersistenceManager pm = Factory.getPersistenceManager();
-        try {
-            for (MessageItem item : messageRequest.query(pm)) {
-                out.println(item.toString());
-            }
-        } finally {
-            pm.close();
-        }
+        for (MessageItem item : messageRequest.query())
+            out.println(item.toString());
     }
 
     private long postToQueue(long queueId, Long sessionId, List<MessageItem> items, long now) {
-        PersistenceManager pm = Factory.getPersistenceManager();
-        try {
-            Transaction tx = pm.currentTransaction();
-            try {
-                tx.begin();
-                MessageQueue queue = getOrCreateMessageQueue(pm, queueId);
-                MessageSession session = getOrCreateMessageSession(pm, queue, sessionId, now);
-                long maxSessionPostIndex = session.getLastPostIndex();
-                if (items != null)
-                    for (MessageItem item : items) {
-                        if (item.getMessageIndex() <= session.getLastPostIndex())
-                            continue; // was already posted
-                        maxSessionPostIndex = Math.max(maxSessionPostIndex, session.getLastPostIndex());
-                        long index = queue.getLastPostIndex() + 1;
-                        queue.setLastPostIndex(index);
-                        item.setMessageIndex(index);
-                        pm.makePersistent(item);
-                    }
-                session.setLastPostIndex(maxSessionPostIndex);
-                tx.commit();
-                return session.getSessionId();
-            } finally {
-                if (tx.isActive())
-                    tx.rollback();
+        Factory.beginTransaction();
+        MessageQueue queue = getOrCreateMessageQueue(queueId);
+        MessageSession session = getOrCreateMessageSession(queue, sessionId, now);
+        long maxSessionPostIndex = session.getLastPostIndex();
+        if (items != null)
+            for (MessageItem item : items) {
+                if (item.getMessageIndex() <= session.getLastPostIndex())
+                    continue; // was already posted
+                maxSessionPostIndex = Math.max(maxSessionPostIndex, session.getLastPostIndex());
+                long index = queue.getLastPostIndex() + 1;
+                queue.setLastPostIndex(index);
+                item.setMessageIndex(index);
+                Factory.getPM().makePersistent(item);
             }
-        } finally {
-            pm.close();
-        }
+        session.setLastPostIndex(maxSessionPostIndex);
+        return session.getSessionId();
     }
 
-    private MessageQueue getOrCreateMessageQueue(PersistenceManager pm, long queueId) {
+    private MessageQueue getOrCreateMessageQueue(long queueId) {
         try {
-            return pm.getObjectById(MessageQueue.class, MessageQueue.createKey(queueId));
+            return Factory.getPM().getObjectById(MessageQueue.class, MessageQueue.createKey(queueId));
         } catch (JDOObjectNotFoundException e) {
-            return pm.makePersistent(new MessageQueue(MessageQueue.createKey(queueId)));
+            return Factory.getPM().makePersistent(new MessageQueue(MessageQueue.createKey(queueId)));
         }
     }
 
-    private MessageSession getOrCreateMessageSession(PersistenceManager pm, MessageQueue queue, Long sessionId, long now) {
+    private MessageSession getOrCreateMessageSession(MessageQueue queue, Long sessionId, long now) {
         if (sessionId != null)
-            return pm.getObjectById(MessageSession.class, MessageSession.createKey(queue.getQueueId(), sessionId));
+            return Factory.getPM().getObjectById(MessageSession.class, MessageSession.createKey(queue.getQueueId(), sessionId));
         sessionId = queue.getLastSessionId() + 1;
         queue.setLastSessionId(sessionId);
-        return pm.makePersistent(new MessageSession(queue.getQueueId(), sessionId, now));
+        return Factory.getPM().makePersistent(new MessageSession(queue.getQueueId(), sessionId, now));
     }
 
     @SuppressWarnings({"unchecked"})

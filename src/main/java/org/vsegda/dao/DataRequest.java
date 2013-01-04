@@ -2,12 +2,12 @@ package org.vsegda.dao;
 
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
+import org.vsegda.factory.Factory;
 import org.vsegda.util.IdList;
 import org.vsegda.util.RequestUtil;
 import org.vsegda.util.TimeInstant;
 
 import javax.jdo.JDOObjectNotFoundException;
-import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.servlet.ServletRequest;
 import java.util.*;
@@ -29,20 +29,11 @@ public class DataRequest {
         RequestUtil.populate(this, req);
 	}
 
-    public List<DataItem> query() {
-        PersistenceManager pm = Factory.getPersistenceManager();
-        try {
-            return query(pm);
-        } finally {
-            pm.close();
-        }
-    }
-
     @SuppressWarnings({"unchecked"})
-    public List<DataItem> query(PersistenceManager pm) {
+    public List<DataItem> query() {
         List<DataItem> result = new ArrayList<DataItem>();
         if (id == null) {
-            Query query = pm.newQuery(DataStream.class);
+            Query query = Factory.getPM().newQuery(DataStream.class);
             query.setOrdering("streamId asc");
             query.setRange(first, first + last);
             query.getFetchPlan().setFetchSize(last);
@@ -50,7 +41,7 @@ public class DataRequest {
                 DataItem item = null;
                 if (stream.getLastItemKey() != null)
                     try {
-                        item = pm.getObjectById(DataItem.class, stream.getLastItemKey());
+                        item = Factory.getPM().getObjectById(DataItem.class, stream.getLastItemKey());
                     } catch (JDOObjectNotFoundException e) {
                         log.warning("Last item for streamId=" + stream.getStreamId() + " is not found by key=" + stream.getLastItemKey());
                         stream.setLastItemKey(null);
@@ -62,8 +53,8 @@ public class DataRequest {
             }
         } else {
             for (String code : this.id) {
-                DataStream stream = DataStreamDAO.resolveStreamByCode(pm, code);
-                Query query = pm.newQuery(DataItem.class);
+                DataStream stream = DataStreamDAO.resolveStreamByCode(code);
+                Query query = Factory.getPM().newQuery(DataItem.class);
                 String queryFilter = "streamId == id";
                 String queryParams = "long id";
                 Map<String, Object> queryArgs = new HashMap<String, Object>();
@@ -77,7 +68,7 @@ public class DataRequest {
                 query.declareParameters(queryParams);
                 query.setOrdering("timeMillis desc");
                 query.setRange(first, first + last);
-                query.getFetchPlan().setFetchSize(last * this.id.size());
+                query.getFetchPlan().setFetchSize(last);
                 int s0 = result.size();
                 Collection<DataItem> items = (Collection<DataItem>) query.executeWithMap(queryArgs);
                 for (DataItem item : items)
