@@ -2,6 +2,12 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+  <jsp-config>
+    <jsp-property-group>
+      <url-pattern>*.jsp</url-pattern>
+      <page-encoding>UTF-8</page-encoding>
+    </jsp-property-group>
+  </jsp-config>
   <servlet>
     <servlet-name>alert</servlet-name>
     <servlet-class>org.vsegda.servlet.AlertServlet</servlet-class>
