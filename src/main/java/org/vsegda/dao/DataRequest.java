@@ -25,7 +25,7 @@ public class DataRequest {
     private double filter = 5; // 5 sigmas by default
     private TimeInstant since;
 
-	public DataRequest(ServletRequest req) {
+    public DataRequest(ServletRequest req) {
         RequestUtil.populate(this, req);
 	}
 
@@ -45,6 +45,7 @@ public class DataRequest {
             Query query = pm.newQuery(DataStream.class);
             query.setOrdering("streamId asc");
             query.setRange(first, first + last);
+            query.getFetchPlan().setFetchSize(last);
             for (DataStream stream : (Collection<DataStream>)query.execute()) {
                 DataItem item = null;
                 if (stream.getLastItemKey() != null)
@@ -76,6 +77,7 @@ public class DataRequest {
                 query.declareParameters(queryParams);
                 query.setOrdering("timeMillis desc");
                 query.setRange(first, first + last);
+                query.getFetchPlan().setFetchSize(last * this.id.size());
                 int s0 = result.size();
                 Collection<DataItem> items = (Collection<DataItem>) query.executeWithMap(queryArgs);
                 for (DataItem item : items)
