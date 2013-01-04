@@ -55,8 +55,13 @@ public class DataStreamDAO {
         return key != null;
     }
 
-    @SuppressWarnings({"unchecked"})
     public static Key findFistItemKey(PersistenceManager pm, long streamId) {
+        DataItem fistItem = findFistItem(pm, streamId);
+        return fistItem == null ? null : fistItem.getKey();
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public static DataItem findFistItem(PersistenceManager pm, long streamId) {
         Query query = pm.newQuery(DataItem.class);
         query.setFilter("streamId == id");
         query.setOrdering("timeMillis asc");
@@ -65,6 +70,6 @@ public class DataStreamDAO {
         Collection<DataItem> items = (Collection<DataItem>) query.execute(streamId);
         if (items.isEmpty())
             return null;
-        return items.iterator().next().getKey();
+        return items.iterator().next();
     }
 }
