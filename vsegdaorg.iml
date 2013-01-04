@@ -38,6 +38,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="PROVIDED" name="appengine-shared" level="application" />
     <orderEntry type="library" name="appengine-user" level="application" />
     <orderEntry type="library" name="jakarta-taglibs-standard-1.1.2" level="project" />
     <orderEntry type="library" name="visualization-datasource-1.0.2" level="project" />

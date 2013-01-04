@@ -6,15 +6,19 @@ import org.vsegda.util.IdList;
 import org.vsegda.util.RequestUtil;
 import org.vsegda.util.TimeInstant;
 
+import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.servlet.ServletRequest;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author Roman Elizarov
  */
 public class DataRequest {
+    private static final Logger log = Logger.getLogger(DataRequest.class.getName());
+
 	private IdList id;
 	private int first;
 	private int last = 1000; // last 1000 items by default
@@ -42,9 +46,14 @@ public class DataRequest {
             query.setOrdering("streamId asc");
             query.setRange(first, first + last);
             for (DataStream stream : (Collection<DataStream>)query.execute()) {
-                DataItem item = pm.getObjectById(DataItem.class, stream.getLastItemKey());
-                item.setStreamTag(stream.getTag());
-                result.add(item);
+                DataItem item = null;
+                try {
+                    item = pm.getObjectById(DataItem.class, stream.getLastItemKey());
+                    item.setStreamTag(stream.getTag());
+                    result.add(item);
+                } catch (JDOObjectNotFoundException e) {
+                    log.warning("Last item for streamId=" + stream.getStreamId() + " is not found by key=" + stream.getLastItemKey());
+                }
             }
         } else {
             for (long id : this.id) {
