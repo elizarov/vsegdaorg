@@ -78,6 +78,10 @@ public class DataItem {
     }
 
     public void setStream(DataStream stream) {
+        if (streamId == 0)
+            streamId = stream.getStreamId();
+        else if (streamId != stream.getStreamId())
+            throw new IllegalArgumentException();
         this.stream = stream;
     }
 
