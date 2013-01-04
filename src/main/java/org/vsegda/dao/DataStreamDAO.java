@@ -19,7 +19,7 @@ public class DataStreamDAO {
     private DataStreamDAO() {}
 
     public static DataStream resolveStreamByCode(PersistenceManager pm, String code) {
-        int i = code.lastIndexOf('#');
+        int i = code.lastIndexOf('@');
         String id;
         if (i >= 0)
             id = code.substring(i + 1);

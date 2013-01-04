@@ -84,7 +84,7 @@ public class DataItem {
      */
     public String getStreamCode() {
         return stream != null && stream.getTag() != null ?
-                stream.getTag() + (streamId != 0 ? "#" + streamId : ""):
+                stream.getTag() + (streamId != 0 ? "@" + streamId : ""):
                 String.valueOf(streamId);
     }
 
