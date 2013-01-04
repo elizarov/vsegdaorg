@@ -59,7 +59,9 @@ public class DataStream {
      * Returns stream id or tag if defined.
      */
     public String getCode() {
-        return tag != null ? tag : String.valueOf(streamId);
+        return tag != null ?
+                tag + (streamId == null ? "" : "@" + streamId) :
+                String.valueOf(streamId);
     }
 
     public String getName() {
