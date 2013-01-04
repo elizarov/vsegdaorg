@@ -1,7 +1,8 @@
 package org.vsegda.util;
 
-import java.text.SimpleDateFormat;
 import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -59,5 +60,15 @@ public class TimeUtil {
     public static String getFormatClass(long timeMillis, long now) {
         // Check if older than 15 mins ago
         return timeMillis < now - 15 * 60000L ? "old" : "recent";
+    }
+
+    public static long getArchiveLimit(long firstTime) {
+        Calendar cal = Calendar.getInstance(TIMEZONE);
+        cal.setTimeInMillis(firstTime);
+        cal.set(Calendar.HOUR_OF_DAY, cal.getMaximum(Calendar.HOUR_OF_DAY));
+        cal.set(Calendar.MINUTE, cal.getMaximum(Calendar.MINUTE));
+        cal.set(Calendar.SECOND, cal.getMaximum(Calendar.SECOND));
+        cal.set(Calendar.MILLISECOND, cal.getMaximum(Calendar.MILLISECOND));
+        return cal.getTimeInMillis();
     }
 }

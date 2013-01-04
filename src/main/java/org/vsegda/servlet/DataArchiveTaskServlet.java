@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.logging.Logger;
 
@@ -27,6 +26,7 @@ import java.util.logging.Logger;
  */
 public class DataArchiveTaskServlet extends HttpServlet {
     private static final Logger log = Logger.getLogger(DataArchiveTaskServlet.class.getName());
+    private static final int MAX_ARCHIVE_COUNT = 1000;
 
     public static void enqueueDataArchiveTask(long streamId) {
         log.info("Enqueueing data archive task for streamId=" + streamId);
@@ -54,17 +54,13 @@ public class DataArchiveTaskServlet extends HttpServlet {
                 return;
             }
             // Archive up to next midnight
-            Calendar cal = Calendar.getInstance(TimeUtil.TIMEZONE);
-            cal.setTimeInMillis(firstItem.getTimeMillis());
-            cal.set(Calendar.HOUR_OF_DAY, cal.getMaximum(Calendar.HOUR_OF_DAY));
-            cal.set(Calendar.MINUTE, cal.getMaximum(Calendar.MINUTE));
-            cal.set(Calendar.SECOND, cal.getMaximum(Calendar.SECOND));
-            cal.set(Calendar.MILLISECOND, cal.getMaximum(Calendar.MILLISECOND));
+            long limit = TimeUtil.getArchiveLimit(firstItem.getTimeMillis());
             Query query = pm.newQuery(DataItem.class);
             query.setOrdering("timeMillis asc");
             query.declareParameters("long id, long limit");
             query.setFilter("streamId == id && timeMillis <= limit");
-            Collection<DataItem> items = (Collection<DataItem>) query.execute(streamId, cal.getTimeInMillis());
+            query.setRange(0, MAX_ARCHIVE_COUNT);
+            Collection<DataItem> items = (Collection<DataItem>) query.execute(streamId, limit);
             if (items.isEmpty()) {
                 log.warning("No items to archive");
                 return;
