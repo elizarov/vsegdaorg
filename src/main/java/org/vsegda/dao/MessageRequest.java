@@ -60,7 +60,8 @@ public class MessageRequest {
                     // just ignore
                 }
         } else {
-            for (long id : this.id) {
+            for (String code : this.id) {
+                long id = MessageQueueDAO.resolveQueueCode(pm, code);
                 Query query = pm.newQuery(MessageItem.class);
                 if (take) {
                     MessageQueue queue = pm.getObjectById(MessageQueue.class, MessageQueue.createKey(id));

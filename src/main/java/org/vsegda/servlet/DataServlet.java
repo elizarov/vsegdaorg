@@ -5,6 +5,7 @@ import org.vsegda.dao.DataStreamDAO;
 import org.vsegda.dao.Factory;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
+import org.vsegda.data.DataStreamMode;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
@@ -49,8 +50,8 @@ public class DataServlet extends HttpServlet {
         try {
             // resolve all stream tags
             for (DataItem item : items) {
-                if (item.getStreamId() == 0 && item.getStreamTag() != null)
-                    item.setStreamId(DataStreamDAO.resolveStreamCode(pm, item.getStreamTag()));
+                if (item.getStreamId() == 0)
+                    item.setStreamId(DataStreamDAO.resolveStreamCode(pm, item.getStream().getTag()));
             }
             // persist all items
             pm.makePersistentAll(items);
@@ -61,7 +62,14 @@ public class DataServlet extends HttpServlet {
                 if (stream.getLastItemKey() != null) {
                     try {
                         DataItem lastItem = pm.getObjectById(DataItem.class, stream.getLastItemKey());
-                        if (item.getTimeMillis() >= lastItem.getTimeMillis())
+                        // remove last item in LAST mode
+                        if (stream.getMode() == DataStreamMode.LAST) {
+                            stream.setLastItemKey(null);
+                            if (stream.getFirstItemKey() == lastItem.getKey())
+                                stream.setFirstItemKey(null);
+                            pm.deletePersistent(lastItem);
+                            stream.setLastItemKey(item.getKey());
+                        } else if (item.getTimeMillis() >= lastItem.getTimeMillis())
                             stream.setLastItemKey(item.getKey());
                     } catch (JDOObjectNotFoundException e) {
                         log.warning("Cannot find last DataItem from stream with key=" + stream.getLastItemKey());

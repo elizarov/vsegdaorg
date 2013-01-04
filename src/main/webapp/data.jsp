@@ -19,20 +19,28 @@
     <th>value</th>
     <th>time</th>
     <th>ago</th>
+    <c:if test="${param.id == null}">
+      <th>name</th>
+      <th>mode</th>
+    </c:if>
   </tr>
   <v:dataItems>
     <tr class="${item.formatClass}">
       <c:choose>
         <c:when test="${param.id == null}">
-          <td><a href="?id=${item.streamCode}"><c:out value="${item.streamCode}"/></a></td>
+          <td><a href="?id=${item.stream.code}"><c:out value="${item.stream.code}"/></a></td>
         </c:when>
         <c:otherwise>
-          <td><c:out value="${item.streamCode}"/></td>
+          <td><c:out value="${item.stream.code}"/></td>
         </c:otherwise>
       </c:choose>
       <td><c:out value="${item.value}"/></td>
       <td><c:out value="${item.time}"/></td>
       <td><c:out value="${item.ago}"/></td>
+      <c:if test="${param.id == null}">
+        <td><c:out value="${item.stream.name}"/></td>
+        <td><c:out value="${item.stream.mode}"/></td>
+      </c:if>
     </tr>
   </v:dataItems>
 </table>

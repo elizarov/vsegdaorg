@@ -2,7 +2,6 @@ package org.vsegda.data;
 
 import com.google.appengine.api.datastore.Key;
 
-import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -33,6 +32,8 @@ public class DataStream {
 
     @Persistent
     private DataStreamMode mode = DataStreamMode.LAST;
+
+    public DataStream() {}
 
     public DataStream(Long streamId) {
         this.streamId = streamId;

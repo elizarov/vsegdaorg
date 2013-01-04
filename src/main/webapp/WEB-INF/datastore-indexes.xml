@@ -29,4 +29,8 @@
     <property name="tag" direction="asc"/>
     <property name="streamId" direction="asc"/>
   </datastore-index>
+
+  <datastore-index kind="DataStream" ancestor="false" source="auto">
+    <property name="streamId" direction="desc"/>
+  </datastore-index>
 </datastore-indexes>

@@ -32,14 +32,14 @@ public class DataRequest {
     public List<DataItem> query() {
         PersistenceManager pm = Factory.getPersistenceManager();
         try {
-            return new ArrayList<DataItem>(query(pm));
+            return query(pm);
         } finally {
             pm.close();
         }
     }
 
     @SuppressWarnings({"unchecked"})
-    public Collection<DataItem> query(PersistenceManager pm) {
+    public List<DataItem> query(PersistenceManager pm) {
         List<DataItem> result = new ArrayList<DataItem>();
         if (id == null) {
             Query query = pm.newQuery(DataStream.class);
@@ -49,14 +49,15 @@ public class DataRequest {
                 DataItem item = null;
                 try {
                     item = pm.getObjectById(DataItem.class, stream.getLastItemKey());
-                    item.setStreamTag(stream.getTag());
+                    item.setStream(stream);
                     result.add(item);
                 } catch (JDOObjectNotFoundException e) {
                     log.warning("Last item for streamId=" + stream.getStreamId() + " is not found by key=" + stream.getLastItemKey());
                 }
             }
         } else {
-            for (long id : this.id) {
+            for (String code : this.id) {
+                long id = DataStreamDAO.resolveStreamCode(pm, code);
                 DataStream stream = pm.getObjectById(DataStream.class, id);
                 Query query = pm.newQuery(DataItem.class);
                 String queryFilter = "streamId == id";
@@ -75,7 +76,7 @@ public class DataRequest {
                 int s0 = result.size();
                 Collection<DataItem> items = (Collection<DataItem>) query.executeWithMap(queryArgs);
                 for (DataItem item : items)
-                    item.setStreamTag(stream.getTag());
+                    item.setStream(stream);
                 result.addAll(items);
                 filter(result.subList(s0, result.size()));
             }

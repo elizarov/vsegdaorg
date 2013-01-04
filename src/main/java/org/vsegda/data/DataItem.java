@@ -17,11 +17,11 @@ public class DataItem {
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     private Key key;
 
+    // non-persistent!!!
+    private transient DataStream stream;
+
 	@Persistent
 	private long streamId;
-
-    // non-persistent!!!
-    private String streamTag;
 
 	@Persistent
 	private double value;
@@ -40,7 +40,8 @@ public class DataItem {
             streamId = Long.parseLong(streamCode);
         } catch (NumberFormatException e) {
             // it means that this is a stream tag
-            streamTag = streamCode;
+            stream = new DataStream();
+            stream.setTag(streamCode);
         }
         try {
             value = Double.parseDouble(tokens[1]);
@@ -72,19 +73,19 @@ public class DataItem {
         this.streamId = streamId;
     }
 
-    public String getStreamTag() {
-        return streamTag;
+    public DataStream getStream() {
+        return stream == null ? new DataStream(streamId) : stream;
     }
 
-    public void setStreamTag(String streamTag) {
-        this.streamTag = streamTag;
+    public void setStream(DataStream stream) {
+        this.stream = stream;
     }
 
     /**
      * Returns stream id or tag of the stream if defined.
      */
     public String getStreamCode() {
-        return streamTag != null ? streamTag : String.valueOf(streamId);
+        return stream != null && stream.getTag() != null ? stream.getTag() : String.valueOf(streamId);
     }
 
     public double getValue() {

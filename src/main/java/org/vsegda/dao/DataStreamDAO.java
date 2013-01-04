@@ -30,7 +30,17 @@ public class DataStreamDAO {
         query.setFilter("tag == code");
         Collection<DataStream> streams = (Collection<DataStream>) query.execute(code);
         if (streams.isEmpty()) {
-            //
+            log.info("Creating new data stream with tag=" + code);
+            // find last stream
+            query = pm.newQuery(DataStream.class);
+            query.setOrdering("streamId desc");
+            query.setRange(0, 1);
+            streams = (Collection<DataStream>) query.execute();
+            long id = streams.isEmpty() ? 100 : streams.iterator().next().getStreamId() + 1;
+            DataStream stream = new DataStream(id);
+            stream.setTag(code);
+            pm.makePersistent(stream);
+            return stream.getStreamId();
         }
         return streams.iterator().next().getStreamId();
     }
