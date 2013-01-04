@@ -4,6 +4,7 @@ import com.google.appengine.api.datastore.Key;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
 
+import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import java.util.Collection;
@@ -45,16 +46,6 @@ public class DataStreamDAO {
         return streams.iterator().next().getStreamId();
     }
 
-    @SuppressWarnings({"unchecked"})
-    public static boolean ensureFirstItemKey(PersistenceManager pm, DataStream stream) {
-        if (stream.getFirstItemKey() != null)
-            return true;
-        log.info("Determining first item key for streamId=" + stream.getStreamId());
-        Key key = findFistItemKey(pm, stream.getStreamId());
-        stream.setFirstItemKey(key);
-        return key != null;
-    }
-
     public static Key findFistItemKey(PersistenceManager pm, long streamId) {
         DataItem fistItem = findFistItem(pm, streamId);
         return fistItem == null ? null : fistItem.getKey();
@@ -71,5 +62,20 @@ public class DataStreamDAO {
         if (items.isEmpty())
             return null;
         return items.iterator().next();
+    }
+
+    public static DataItem getOrFindFirstItem(PersistenceManager pm, DataStream stream) {
+        Key key = stream.getFirstItemKey();
+        if (key != null)
+            try {
+                return pm.getObjectById(DataItem.class, key);
+            } catch (JDOObjectNotFoundException e) {
+                log.warning("First item for streamId=" + stream.getStreamId() + " is not found with key=" + key);
+            }
+        DataItem firstItem = findFistItem(pm, stream.getStreamId());
+        if (firstItem == null)
+            return null;
+        stream.setFirstItemKey(firstItem.getKey());
+        return firstItem;
     }
 }

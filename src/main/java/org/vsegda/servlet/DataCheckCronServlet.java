@@ -8,7 +8,6 @@ import org.vsegda.data.DataStream;
 import org.vsegda.data.DataStreamMode;
 import org.vsegda.util.Alert;
 
-import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -42,17 +41,9 @@ public class DataCheckCronServlet extends HttpServlet {
                 // check for archive or purge (find non-recent items)
                 long threshold = System.currentTimeMillis() - DataArchive.RECENT_TIME_INTERVAL - 2 * DataArchive.ARCHIVE_INTERVAL;
                 if (stream.getMode() != DataStreamMode.LAST) {
-                    if (DataStreamDAO.ensureFirstItemKey(pm, stream)) {
-                        DataItem firstItem;
-                        try {
-                            firstItem = pm.getObjectById(DataItem.class, stream.getFirstItemKey());
-                        } catch (JDOObjectNotFoundException e) {
-                            log.info("First item is not found for streamId=" + stream.getStreamId() + " with key=" + stream.getFirstItemKey());
-                            firstItem = DataStreamDAO.findFistItem(pm, stream.getStreamId());
-                        }
-                        if (firstItem != null && firstItem.getTimeMillis() < threshold) // need to archive
-                            DataArchiveTaskServlet.enqueueDataArchiveTask(stream.getStreamId());
-                    }
+                    DataItem firstItem = DataStreamDAO.getOrFindFirstItem(pm, stream);
+                    if (firstItem != null && firstItem.getTimeMillis() < threshold) // need to archive
+                        DataArchiveTaskServlet.enqueueDataArchiveTask(stream.getStreamId());
                 }
             }
         } finally {

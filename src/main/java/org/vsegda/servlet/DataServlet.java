@@ -86,11 +86,10 @@ public class DataServlet extends HttpServlet {
                             stream.setFirstItemKey(item.getKey());
                     } catch (JDOObjectNotFoundException e) {
                         log.warning("Cannot find first DataItem from stream with key=" + stream.getFirstItemKey());
-                        // something wrong -- fallback to set
-                        stream.setFirstItemKey(DataStreamDAO.findFistItemKey(pm, stream.getStreamId()));
+                        // something wrong -- clear it
+                        stream.setFirstItemKey(null);
                     }
-                } else
-                    DataStreamDAO.ensureFirstItemKey(pm, stream);
+                }
             }
         } finally {
             pm.close();

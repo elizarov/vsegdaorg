@@ -11,7 +11,6 @@ import org.vsegda.data.DataStream;
 import org.vsegda.data.DataStreamMode;
 import org.vsegda.util.TimeUtil;
 
-import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.servlet.ServletException;
@@ -45,25 +44,13 @@ public class DataArchiveTaskServlet extends HttpServlet {
         PersistenceManager pm = Factory.getPersistenceManager();
         try {
             DataStream stream = pm.getObjectById(DataStream.class, streamId);
-            if (stream.getFirstItemKey() == null) {
-                log.warning("Stream is not found, ignoring task");
-                return;
-            } if (stream.getMode() == DataStreamMode.LAST) {
+            if (stream.getMode() == DataStreamMode.LAST) {
                 log.warning("Stream mode is " + stream.getMode() + ", ignoring task");
                 return;
             }
-            if (!DataStreamDAO.ensureFirstItemKey(pm, stream)) {
-                log.warning("No items, ignoring task");
-                return;
-            }
-            DataItem firstItem ;
-            try {
-                firstItem = pm.getObjectById(DataItem.class, stream.getFirstItemKey());
-            } catch (JDOObjectNotFoundException e) {
-                firstItem = DataStreamDAO.findFistItem(pm, stream.getStreamId());
-            }
+            DataItem firstItem = DataStreamDAO.getOrFindFirstItem(pm, stream);
             if (firstItem == null || firstItem.isRecent()) {
-                log.warning("First stream item is recent: " + firstItem);
+                log.info("First stream item is recent or missing: " + firstItem);
                 return;
             }
             // Archive up to next midnight
@@ -92,14 +79,10 @@ public class DataArchiveTaskServlet extends HttpServlet {
             archive.setItems(items);
             log.info("Creating archive " + archive);
             pm.makePersistent(archive);
+            stream.setFirstItemKey(null);
             pm.deletePersistentAll(items);
-            stream.setFirstItemKey(DataStreamDAO.findFistItemKey(pm, streamId));
-            if (stream.getFirstItemKey() != null) {
-                DataItem nextItem = pm.getObjectById(DataItem.class, stream.getFirstItemKey());
-                log.info("Next data item is " + nextItem);
-                if (!nextItem.isRecent())
-                    enqueueDataArchiveTask(streamId);
-            }
+            // create next task to check this stream
+            enqueueDataArchiveTask(streamId);
         } finally {
             pm.close();
         }
