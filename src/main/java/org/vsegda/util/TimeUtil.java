@@ -11,6 +11,7 @@ import java.util.TimeZone;
  */
 public class TimeUtil {
     public static final TimeZone TIMEZONE = TimeZone.getTimeZone("Europe/Moscow");
+    public static final String NA_STRING = "N/A";
 
     public static final long SECOND = 1000L;
     public static final long MINUTE = 60 * SECOND;
@@ -24,10 +25,12 @@ public class TimeUtil {
     }
 
     public static String formatDateTime(long timeMillis) {
-        return getDateTimeFormat().format(new Date(timeMillis));
+        return timeMillis == 0 ? NA_STRING : getDateTimeFormat().format(new Date(timeMillis));
     }
 
    public static String formatDateTimeDifference(long timeMillis, long now) {
+        if (timeMillis == 0)
+            return NA_STRING;
         StringBuilder sb = new StringBuilder();
         long diff = now - timeMillis;
         if (diff < 0) {
@@ -46,6 +49,8 @@ public class TimeUtil {
     public static long parseTime(String s, long now) {
         if (s.isEmpty())
             return now;
+        if (s.equalsIgnoreCase(NA_STRING))
+            return 0;
         ParsePosition pos = new ParsePosition(0);
         Date date = getDateTimeFormat().parse(s, pos);
         if (date != null && pos.getIndex() == s.length())
