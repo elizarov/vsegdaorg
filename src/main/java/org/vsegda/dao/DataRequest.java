@@ -1,5 +1,7 @@
 package org.vsegda.dao;
 
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
 import org.vsegda.factory.Factory;
@@ -31,6 +33,8 @@ public class DataRequest {
 
     @SuppressWarnings({"unchecked"})
     public List<DataItem> query() {
+        log.info("Performing data query " + this);
+        long startTimeMillis = System.currentTimeMillis();
         List<DataItem> result = new ArrayList<DataItem>();
         if (id == null) {
             Query query = Factory.getPM().newQuery(DataStream.class);
@@ -77,6 +81,7 @@ public class DataRequest {
                 filter(result.subList(s0, result.size()));
             }
         }
+        log.info("Completed data query in " + (System.currentTimeMillis() - startTimeMillis) + " ms");
         return result;
     }
 
@@ -160,5 +165,10 @@ public class DataRequest {
 
     public void setSince(TimeInstant since) {
         this.since = since;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }

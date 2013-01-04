@@ -1,5 +1,7 @@
 package org.vsegda.dao;
 
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.vsegda.data.MessageItem;
 import org.vsegda.data.MessageQueue;
 import org.vsegda.factory.Factory;
@@ -11,11 +13,15 @@ import javax.jdo.Query;
 import javax.servlet.ServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @author Roman Elizarov
  */
 public class MessageRequest {
+    private static final Logger log = Logger.getLogger(MessageRequest.class.getName());
+
 	private IdList id;
     private boolean take;
 	private long index;
@@ -37,8 +43,10 @@ public class MessageRequest {
 	}
 
     @SuppressWarnings({"unchecked"})
-    public Collection<MessageItem> query() {
-        Collection<MessageItem> items = new ArrayList<MessageItem>();
+    public List<MessageItem> query() {
+        log.info("Performing message query " + this);
+        long startTimeMillis = System.currentTimeMillis();
+        List<MessageItem> items = new ArrayList<MessageItem>();
         if (id == null) {
             Query query = Factory.getPM().newQuery(MessageQueue.class);
             query.setOrdering("key asc");
@@ -71,6 +79,7 @@ public class MessageRequest {
                 }
             }
         }
+        log.info("Completed message query in " + (System.currentTimeMillis() - startTimeMillis) + " ms");
         return items;
     }
 
@@ -112,5 +121,10 @@ public class MessageRequest {
 
     public void setLast(int last) {
         this.last = last;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }
