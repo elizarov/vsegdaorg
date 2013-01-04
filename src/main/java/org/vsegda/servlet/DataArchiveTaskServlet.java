@@ -30,7 +30,7 @@ public class DataArchiveTaskServlet extends HttpServlet {
 
     public static void enqueueDataArchiveTask(long streamId) {
         log.info("Enqueueing data archive task for streamId=" + streamId);
-        Queue queue = QueueFactory.getDefaultQueue();
+        Queue queue = QueueFactory.getQueue("archiveTaskQueue");
         queue.add(TaskOptions.Builder
                 .withUrl("/task/dataArchive")
                 .param("id", String.valueOf(streamId)));
