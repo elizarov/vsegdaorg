@@ -39,7 +39,7 @@ public class DataStreamDAO {
     public static boolean ensureFirstItemKey(PersistenceManager pm, DataStream stream) {
         if (stream.getFirstItemKey() != null)
             return true;
-        log.info("Determining first item key for streamId=" + stream.getFirstItemKey());
+        log.info("Determining first item key for streamId=" + stream.getStreamId());
         Key key = findFistItemKey(pm, stream.getStreamId());
         stream.setFirstItemKey(key);
         return key != null;
