@@ -35,14 +35,8 @@ public class DataItem {
         String[] tokens = line.split(",");
         if (tokens.length < 2 || tokens.length > 3)
             throw new IllegalArgumentException("Invalid line format: " + line);
-        String streamCode = tokens[0];
-        try {
-            streamId = Long.parseLong(streamCode);
-        } catch (NumberFormatException e) {
-            // it means that this is a stream tag
-            stream = new DataStream();
-            stream.setTag(streamCode);
-        }
+        stream = new DataStream();
+        stream.setTag(tokens[0]);
         try {
             value = Double.parseDouble(tokens[1]);
             timeMillis = tokens.length < 3 ? now : TimeUtil.parseTime(tokens[2], now);
@@ -89,7 +83,9 @@ public class DataItem {
      * Returns stream id or tag of the stream if defined.
      */
     public String getStreamCode() {
-        return stream != null && stream.getTag() != null ? stream.getTag() : String.valueOf(streamId);
+        return stream != null && stream.getTag() != null ?
+                stream.getTag() + (streamId != 0 ? "#" + streamId : ""):
+                String.valueOf(streamId);
     }
 
     public double getValue() {

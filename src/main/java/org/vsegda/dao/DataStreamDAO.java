@@ -19,8 +19,14 @@ public class DataStreamDAO {
     private DataStreamDAO() {}
 
     public static DataStream resolveStreamByCode(PersistenceManager pm, String code) {
+        int i = code.lastIndexOf('#');
+        String id;
+        if (i >= 0)
+            id = code.substring(i + 1);
+        else
+            id = code;
         try {
-            return resolveStreamById(pm, Long.parseLong(code));
+            return resolveStreamById(pm, Long.parseLong(id));
         } catch (NumberFormatException e) {
             // ignore and try to find by tag
         }
@@ -65,7 +71,7 @@ public class DataStreamDAO {
     public static DataStream resolveStream(PersistenceManager pm, DataStream stream) {
         return stream.getStreamId() != null ?
                 resolveStreamById(pm, stream.getStreamId()) :
-                resolveStreamByTag(pm, stream.getTag());
+                resolveStreamByCode(pm, stream.getTag());
     }
 
     @SuppressWarnings({"unchecked"})
