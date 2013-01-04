@@ -1,10 +1,8 @@
 package org.vsegda.tags;
 
-import org.vsegda.util.DataRequest;
-import org.vsegda.util.Factory;
+import org.vsegda.dao.DataRequest;
 import org.vsegda.data.DataItem;
 
-import javax.jdo.PersistenceManager;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;

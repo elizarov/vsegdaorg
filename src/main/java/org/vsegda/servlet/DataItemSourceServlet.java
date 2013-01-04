@@ -8,8 +8,8 @@ import com.google.visualization.datasource.datatable.TableRow;
 import com.google.visualization.datasource.datatable.value.DateTimeValue;
 import com.google.visualization.datasource.datatable.value.ValueType;
 import com.google.visualization.datasource.query.Query;
+import org.vsegda.dao.DataRequest;
 import org.vsegda.data.DataItem;
-import org.vsegda.util.DataRequest;
 import org.vsegda.util.TimeUtil;
 
 import javax.servlet.http.HttpServletRequest;

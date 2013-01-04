@@ -2,6 +2,7 @@ package org.vsegda.data;
 
 import com.google.appengine.api.datastore.Key;
 
+import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -14,6 +15,9 @@ public class DataStream {
     @PrimaryKey
     @Persistent
     private Long streamId;
+
+    @Persistent
+    private String tag;
 
     @Persistent
     private String name = "";
@@ -40,6 +44,21 @@ public class DataStream {
 
     public void setStreamId(Long streamId) {
         this.streamId = streamId;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    /**
+     * Returns stream id or tag if defined.
+     */
+    public String getCode() {
+        return tag != null ? tag : String.valueOf(streamId);
     }
 
     public String getName() {
@@ -85,6 +104,6 @@ public class DataStream {
 
     @Override
     public String toString() {
-        return streamId + "," + name;
+        return getCode() + "," + name;
     }
 }

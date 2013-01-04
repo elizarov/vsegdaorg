@@ -2,6 +2,9 @@ package org.vsegda.util;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
+import org.vsegda.util.IdList;
+import org.vsegda.util.TimeInstant;
+import org.vsegda.util.TimePeriod;
 
 import javax.servlet.ServletRequest;
 

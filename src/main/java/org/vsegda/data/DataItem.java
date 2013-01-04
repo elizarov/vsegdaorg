@@ -20,6 +20,9 @@ public class DataItem {
 	@Persistent
 	private long streamId;
 
+    // non-persistent!!!
+    private String streamTag;
+
 	@Persistent
 	private double value;
 
@@ -32,8 +35,14 @@ public class DataItem {
         String[] tokens = line.split(",");
         if (tokens.length < 2 || tokens.length > 3)
             throw new IllegalArgumentException("Invalid line format: " + line);
+        String streamCode = tokens[0];
         try {
-            streamId = Long.parseLong(tokens[0]);
+            streamId = Long.parseLong(streamCode);
+        } catch (NumberFormatException e) {
+            // it means that this is a stream tag
+            streamTag = streamCode;
+        }
+        try {
             value = Double.parseDouble(tokens[1]);
             timeMillis = tokens.length < 3 ? now : TimeUtil.parseTime(tokens[2], now);
         } catch (NumberFormatException e) {
@@ -61,6 +70,21 @@ public class DataItem {
 
     public void setStreamId(long streamId) {
         this.streamId = streamId;
+    }
+
+    public String getStreamTag() {
+        return streamTag;
+    }
+
+    public void setStreamTag(String streamTag) {
+        this.streamTag = streamTag;
+    }
+
+    /**
+     * Returns stream id or tag of the stream if defined.
+     */
+    public String getStreamCode() {
+        return streamTag != null ? streamTag : String.valueOf(streamId);
     }
 
     public double getValue() {
@@ -97,6 +121,6 @@ public class DataItem {
 
     @Override
 	public String toString() {
-        return streamId + "," + value + "," + TimeUtil.formatDateTime(timeMillis);
+        return getStreamCode() + "," + value + "," + TimeUtil.formatDateTime(timeMillis);
 	}
 }

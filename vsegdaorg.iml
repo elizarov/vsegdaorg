@@ -22,7 +22,7 @@
             <file path="$MODULE_DIR$/src" />
           </files-to-enhance>
           <run-enhancer-on-make>true</run-enhancer-on-make>
-          <sdk-home-path>C:/Java/appengine-java-sdk-1.7.3</sdk-home-path>
+          <sdk-home-path>C:/Java/appengine-java-sdk</sdk-home-path>
           <email>elizarov@gmail.com</email>
         </configuration>
       </facet>
@@ -38,7 +38,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="appengine-shared" level="application" />
     <orderEntry type="library" name="appengine-user" level="application" />
     <orderEntry type="library" name="jakarta-taglibs-standard-1.1.2" level="project" />
     <orderEntry type="library" name="visualization-datasource-1.0.2" level="project" />

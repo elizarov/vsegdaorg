@@ -1,10 +1,10 @@
 package org.vsegda.servlet;
 
+import org.vsegda.dao.Factory;
+import org.vsegda.dao.MessageRequest;
 import org.vsegda.data.MessageSession;
 import org.vsegda.data.MessageItem;
 import org.vsegda.data.MessageQueue;
-import org.vsegda.util.Factory;
-import org.vsegda.util.MessageRequest;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;

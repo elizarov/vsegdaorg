@@ -24,10 +24,10 @@
     <tr class="${item.formatClass}">
       <c:choose>
         <c:when test="${param.id == null}">
-          <td><a href="?id=${item.streamId}"><c:out value="${item.streamId}"/></a></td>
+          <td><a href="?id=${item.streamCode}"><c:out value="${item.streamCode}"/></a></td>
         </c:when>
         <c:otherwise>
-          <td><c:out value="${item.streamId}"/></td>
+          <td><c:out value="${item.streamCode}"/></td>
         </c:otherwise>
       </c:choose>
       <td><c:out value="${item.value}"/></td>

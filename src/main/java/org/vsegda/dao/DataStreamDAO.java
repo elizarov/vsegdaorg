@@ -18,6 +18,24 @@ public class DataStreamDAO {
     private DataStreamDAO() {}
 
     @SuppressWarnings({"unchecked"})
+    public static long resolveStreamCode(PersistenceManager pm, String code) {
+        try {
+            return Long.parseLong(code);
+        } catch (NumberFormatException e) {
+            // ignore and try to find by tag
+        }
+        Query query = pm.newQuery(DataStream.class);
+        query.setOrdering("streamId asc");
+        query.declareParameters("String code");
+        query.setFilter("tag == code");
+        Collection<DataStream> streams = (Collection<DataStream>) query.execute(code);
+        if (streams.isEmpty()) {
+            //
+        }
+        return streams.iterator().next().getStreamId();
+    }
+
+    @SuppressWarnings({"unchecked"})
     public static boolean ensureFirstItemKey(PersistenceManager pm, DataStream stream) {
         if (stream.getFirstItemKey() != null)
             return true;

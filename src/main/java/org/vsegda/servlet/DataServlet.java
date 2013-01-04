@@ -1,10 +1,10 @@
 package org.vsegda.servlet;
 
+import org.vsegda.dao.DataRequest;
 import org.vsegda.dao.DataStreamDAO;
+import org.vsegda.dao.Factory;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
-import org.vsegda.util.DataRequest;
-import org.vsegda.util.Factory;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
@@ -17,12 +17,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * @author Roman Elizarov
  */
 public class DataServlet extends HttpServlet {
+    private static final Logger log = Logger.getLogger(DataServlet.class.getName());
+
     @SuppressWarnings({"unchecked"})
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -45,21 +47,40 @@ public class DataServlet extends HttpServlet {
         List<DataItem> items = parseDataItems(req.getReader());
         PersistenceManager pm = Factory.getPersistenceManager();
         try {
+            // resolve all stream tags
+            for (DataItem item : items) {
+                if (item.getStreamId() == 0 && item.getStreamTag() != null)
+                    item.setStreamId(DataStreamDAO.resolveStreamCode(pm, item.getStreamTag()));
+            }
+            // persist all items
             pm.makePersistentAll(items);
+            // update all streams
             for (DataItem item : items) {
                 DataStream stream = getOrCreateDataStream(pm, item.getStreamId());
                 // update last item key
                 if (stream.getLastItemKey() != null) {
-                    DataItem lastItem = pm.getObjectById(DataItem.class, stream.getLastItemKey());
-                    if (item.getTimeMillis() >= lastItem.getTimeMillis())
+                    try {
+                        DataItem lastItem = pm.getObjectById(DataItem.class, stream.getLastItemKey());
+                        if (item.getTimeMillis() >= lastItem.getTimeMillis())
+                            stream.setLastItemKey(item.getKey());
+                    } catch (JDOObjectNotFoundException e) {
+                        log.warning("Cannot find last DataItem from stream with key=" + stream.getLastItemKey());
+                        // something wrong -- fallback to set
                         stream.setLastItemKey(item.getKey());
+                    }
                 } else
                     stream.setLastItemKey(item.getKey());
                 // update first item key
                 if (stream.getFirstItemKey() != null) {
-                    DataItem firstItem = pm.getObjectById(DataItem.class, stream.getFirstItemKey());
-                    if (item.getTimeMillis() < firstItem.getTimeMillis())
-                        stream.setFirstItemKey(item.getKey());
+                    try {
+                        DataItem firstItem = pm.getObjectById(DataItem.class, stream.getFirstItemKey());
+                        if (item.getTimeMillis() < firstItem.getTimeMillis())
+                            stream.setFirstItemKey(item.getKey());
+                    } catch (JDOObjectNotFoundException e) {
+                        log.warning("Cannot find first DataItem from stream with key=" + stream.getFirstItemKey());
+                        // something wrong -- fallback to set
+                        stream.setFirstItemKey(DataStreamDAO.findFistItemKey(pm, stream.getStreamId()));
+                    }
                 } else
                     DataStreamDAO.ensureFirstItemKey(pm, stream);
             }

@@ -1,4 +1,4 @@
-package org.vsegda.util;
+package org.vsegda.dao;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;

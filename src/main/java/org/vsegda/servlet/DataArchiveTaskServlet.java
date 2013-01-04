@@ -4,11 +4,11 @@ import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import org.vsegda.dao.DataStreamDAO;
+import org.vsegda.dao.Factory;
 import org.vsegda.data.DataArchive;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
 import org.vsegda.data.DataStreamMode;
-import org.vsegda.util.Factory;
 import org.vsegda.util.TimeUtil;
 
 import javax.jdo.PersistenceManager;

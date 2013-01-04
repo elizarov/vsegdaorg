@@ -24,5 +24,9 @@
     <property name="streamId" direction="asc"/>
     <property name="firstTimeMillis" direction="desc"/>
   </datastore-index>
+
+  <datastore-index kind="DataStream" ancestor="false" source="auto">
+    <property name="tag" direction="asc"/>
+    <property name="streamId" direction="asc"/>
+  </datastore-index>
 </datastore-indexes>
-    

@@ -1,7 +1,9 @@
-package org.vsegda.util;
+package org.vsegda.dao;
 
 import org.vsegda.data.MessageItem;
 import org.vsegda.data.MessageQueue;
+import org.vsegda.util.IdList;
+import org.vsegda.util.RequestUtil;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;

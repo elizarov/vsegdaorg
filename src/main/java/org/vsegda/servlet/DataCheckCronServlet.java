@@ -1,12 +1,12 @@
 package org.vsegda.servlet;
 
 import org.vsegda.dao.DataStreamDAO;
+import org.vsegda.dao.Factory;
 import org.vsegda.data.DataArchive;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
 import org.vsegda.data.DataStreamMode;
 import org.vsegda.util.Alert;
-import org.vsegda.util.Factory;
 
 import javax.jdo.PersistenceManager;
 import javax.servlet.ServletException;

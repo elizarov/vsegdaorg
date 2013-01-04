@@ -1,7 +1,10 @@
-package org.vsegda.util;
+package org.vsegda.dao;
 
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
+import org.vsegda.util.IdList;
+import org.vsegda.util.RequestUtil;
+import org.vsegda.util.TimeInstant;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -33,15 +36,19 @@ public class DataRequest {
 
     @SuppressWarnings({"unchecked"})
     public Collection<DataItem> query(PersistenceManager pm) {
-        List<DataItem> items = new ArrayList<DataItem>();
+        List<DataItem> result = new ArrayList<DataItem>();
         if (id == null) {
             Query query = pm.newQuery(DataStream.class);
             query.setOrdering("streamId asc");
             query.setRange(first, first + last);
-            for (DataStream stream : (Collection<DataStream>)query.execute())
-                items.add(pm.getObjectById(DataItem.class, stream.getLastItemKey()));
+            for (DataStream stream : (Collection<DataStream>)query.execute()) {
+                DataItem item = pm.getObjectById(DataItem.class, stream.getLastItemKey());
+                item.setStreamTag(stream.getTag());
+                result.add(item);
+            }
         } else {
             for (long id : this.id) {
+                DataStream stream = pm.getObjectById(DataStream.class, id);
                 Query query = pm.newQuery(DataItem.class);
                 String queryFilter = "streamId == id";
                 String queryParams = "long id";
@@ -56,12 +63,15 @@ public class DataRequest {
                 query.declareParameters(queryParams);
                 query.setOrdering("timeMillis desc");
                 query.setRange(first, first + last);
-                int s0 = items.size();
-                items.addAll((Collection<DataItem>)query.executeWithMap(queryArgs));
-                filter(items.subList(s0, items.size()));
+                int s0 = result.size();
+                Collection<DataItem> items = (Collection<DataItem>) query.executeWithMap(queryArgs);
+                for (DataItem item : items)
+                    item.setStreamTag(stream.getTag());
+                result.addAll(items);
+                filter(result.subList(s0, result.size()));
             }
         }
-        return items;
+        return result;
     }
 
     private void filter(List<DataItem> items) {
