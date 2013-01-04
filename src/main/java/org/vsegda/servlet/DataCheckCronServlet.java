@@ -30,11 +30,11 @@ public class DataCheckCronServlet extends HttpServlet {
         long now = System.currentTimeMillis();
         PersistenceManager pm = Factory.getPersistenceManager();
         try {
-            Collection<DataStream> streams = (Collection<DataStream>)pm.newQuery(DataStream.class).execute();
+            Collection<DataStream> streams = (Collection<DataStream>) pm.newQuery(DataStream.class).execute();
             for (DataStream stream : streams) {
                 // check for data update timeout
                 if (stream.getAlertTimeout() != null && stream.getLastItemKey() != null) {
-                    DataItem item = (DataItem)pm.getObjectById(stream.getLastItemKey());
+                    DataItem item = (DataItem) pm.getObjectById(stream.getLastItemKey());
                     if (now - item.getTimeMillis() > stream.getAlertTimeout())
                         Alert.sendAlertEmail("" + stream.getStreamId(), "Data update timeout");
                 }
@@ -42,8 +42,12 @@ public class DataCheckCronServlet extends HttpServlet {
                 long threshold = System.currentTimeMillis() - DataArchive.RECENT_TIME_INTERVAL - 2 * DataArchive.ARCHIVE_INTERVAL;
                 if (stream.getMode() != DataStreamMode.LAST) {
                     DataItem firstItem = DataStreamDAO.getOrFindFirstItem(pm, stream);
-                    if (firstItem != null && firstItem.getTimeMillis() < threshold) // need to archive
+                    if (firstItem != null && firstItem.getTimeMillis() < threshold &&
+                            !firstItem.getKey().equals(stream.getLastItemKey()))
+                    {
+                        // need to archive
                         DataArchiveTaskServlet.enqueueDataArchiveTask(stream.getStreamId());
+                    }
                 }
             }
         } finally {

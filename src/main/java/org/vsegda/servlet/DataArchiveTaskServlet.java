@@ -18,7 +18,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -58,11 +60,16 @@ public class DataArchiveTaskServlet extends HttpServlet {
             query.setOrdering("timeMillis asc");
             query.declareParameters("long id, long limit");
             query.setFilter("streamId == id && timeMillis <= limit");
-            Collection<DataItem> items = (Collection<DataItem>) query.execute(streamId, limit);
+            List<DataItem> items = new ArrayList<DataItem>((Collection<DataItem>) query.execute(streamId, limit));
+
+            // never remove or archive the last item !!!
+            if (!items.isEmpty() && items.get(items.size() - 1).getKey().equals(stream.getLastItemKey()))
+                items.remove(items.size() - 1);
             if (items.isEmpty()) {
                 log.warning("No items to archive");
                 return;
             }
+
             if (stream.getMode() == DataStreamMode.RECENT) {
                 log.info("Only recent items are kept, removing old ones");
                 pm.deletePersistentAll(items);
