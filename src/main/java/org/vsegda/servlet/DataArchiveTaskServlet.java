@@ -26,7 +26,6 @@ import java.util.logging.Logger;
  */
 public class DataArchiveTaskServlet extends HttpServlet {
     private static final Logger log = Logger.getLogger(DataArchiveTaskServlet.class.getName());
-    private static final int MAX_ARCHIVE_COUNT = 1000;
 
     public static void enqueueDataArchiveTask(long streamId) {
         log.info("Enqueueing data archive task for streamId=" + streamId);
@@ -59,7 +58,6 @@ public class DataArchiveTaskServlet extends HttpServlet {
             query.setOrdering("timeMillis asc");
             query.declareParameters("long id, long limit");
             query.setFilter("streamId == id && timeMillis <= limit");
-            query.setRange(0, MAX_ARCHIVE_COUNT);
             Collection<DataItem> items = (Collection<DataItem>) query.execute(streamId, limit);
             if (items.isEmpty()) {
                 log.warning("No items to archive");
