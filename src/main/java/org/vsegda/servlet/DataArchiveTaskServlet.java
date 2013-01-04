@@ -11,6 +11,7 @@ import org.vsegda.data.DataStream;
 import org.vsegda.data.DataStreamMode;
 import org.vsegda.util.TimeUtil;
 
+import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.servlet.ServletException;
@@ -55,8 +56,13 @@ public class DataArchiveTaskServlet extends HttpServlet {
                 log.warning("No items, ignoring task");
                 return;
             }
-            DataItem firstItem = pm.getObjectById(DataItem.class, stream.getFirstItemKey());
-            if (firstItem.isRecent()) {
+            DataItem firstItem ;
+            try {
+                firstItem = pm.getObjectById(DataItem.class, stream.getFirstItemKey());
+            } catch (JDOObjectNotFoundException e) {
+                firstItem = DataStreamDAO.findFistItem(pm, stream.getStreamId());
+            }
+            if (firstItem == null || firstItem.isRecent()) {
                 log.warning("First stream item is recent: " + firstItem);
                 return;
             }
