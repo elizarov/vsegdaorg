@@ -15,6 +15,7 @@ public class PersistenceManagerFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         try {
+            Factory.start();
             filterChain.doFilter(servletRequest, servletResponse);
             Factory.commit();
         } finally {
