@@ -5,7 +5,6 @@ import org.vsegda.dao.DataRequest;
 import org.vsegda.dao.DataStreamDAO;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
-import org.vsegda.factory.Factory;
 import org.vsegda.shared.DataStreamMode;
 
 import javax.servlet.ServletException;
@@ -58,7 +57,7 @@ public class DataServlet extends HttpServlet {
                         stream.setLastItemKey(null);
                         if (stream.getFirstItemKey() == lastItem.getKey())
                             stream.setFirstItemKey(null);
-                        Factory.getPM().deletePersistent(lastItem);
+                        DataItemDAO.deleteDataItem(lastItem);
                         stream.setLastItemKey(item.getKey());
                     } else if (item.getTimeMillis() >= lastItem.getTimeMillis())
                         stream.setLastItemKey(item.getKey());

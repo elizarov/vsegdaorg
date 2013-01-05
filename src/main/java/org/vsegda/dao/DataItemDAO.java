@@ -68,6 +68,17 @@ public class DataItemDAO {
         }
     }
 
+    public static void deleteDataItem(DataItem dataItem) {
+        ITEM_BY_KEY_CACHE.remove(dataItem.getKey());
+        if (!((javax.jdo.spi.PersistenceCapable)dataItem).jdoIsPersistent()) {
+            // data item came from cache -- reload
+            dataItem = performGetDataItemByKey(dataItem.getKey());
+            if (dataItem == null)
+                return; // already removed
+        }
+        Factory.getPM().deletePersistent(dataItem);
+    }
+
     public static void persistDataItems(List<DataItem> items) {
         for (DataItem item : items)
             persistDataItem(item);
@@ -79,14 +90,19 @@ public class DataItemDAO {
         DataItem dataItem = (DataItem) ITEM_BY_KEY_CACHE.get(key);
         if (dataItem != null)
             return dataItem;
+        dataItem = performGetDataItemByKey(key);
+        if (dataItem != null)
+            ITEM_BY_KEY_CACHE.put(key, dataItem);
+        return dataItem;
+    }
+
+    private static DataItem performGetDataItemByKey(Key key) {
         try {
-            dataItem = Factory.getPM().getObjectById(DataItem.class, key);
+            return Factory.getPM().getObjectById(DataItem.class, key);
         } catch (JDOObjectNotFoundException e) {
             log.info("Data item is not found by key=" + key);
             return null;
         }
-        ITEM_BY_KEY_CACHE.put(key, dataItem);
-        return dataItem;
     }
 
     /**

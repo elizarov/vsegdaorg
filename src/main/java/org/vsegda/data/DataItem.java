@@ -97,7 +97,7 @@ public class DataItem implements Serializable {
 		this.value = value;
 	}
 
-	public long getTimeMillis() {
+    public long getTimeMillis() {
 		return timeMillis;
 	}
 
