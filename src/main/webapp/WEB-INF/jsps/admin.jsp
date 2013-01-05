@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link type="text/css" rel="stylesheet" href="style.css">
+<link type="text/css" rel="stylesheet" href="/style.css">
 <script type="text/javascript" language="javascript" src="admin/admin.nocache.js"></script>
 <title>vsegda.org | Admin</title>
 </head>

@@ -6,9 +6,14 @@
 
   <!-- Configure serving/caching of GWT files -->
   <static-files>
-    <include path="**" />
-    <include path="**.nocache.*" expiration="0s" />
-    <include path="**.cache.*" expiration="365d" />
-    <exclude path="**.gwt.rpc" />
+    <include path="**"/>
+    <include path="**.nocache.*" expiration="0s"/>
+    <include path="**.cache.*" expiration="365d"/>
+    <exclude path="**.gwt.rpc"/>
   </static-files>
+
+  <!-- admin pages in admin console -->
+  <admin-console>
+    <page name="Data Stream Admin" url="/admin"/>
+  </admin-console>
 </appengine-web-app>

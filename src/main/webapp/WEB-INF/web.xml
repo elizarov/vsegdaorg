@@ -42,7 +42,7 @@
 
   <servlet>
     <servlet-name>adminView</servlet-name>
-    <jsp-file>admin.jsp</jsp-file>
+    <jsp-file>/WEB-INF/jsps/admin.jsp</jsp-file>
   </servlet>
   <servlet-mapping>
     <servlet-name>adminView</servlet-name>
@@ -51,7 +51,7 @@
   
   <servlet>
     <servlet-name>dataView</servlet-name>
-    <jsp-file>data.jsp</jsp-file>
+    <jsp-file>/WEB-INF/jsps/data.jsp</jsp-file>
   </servlet>
   <servlet-mapping>
     <servlet-name>dataView</servlet-name>
@@ -60,7 +60,7 @@
 
   <servlet>
     <servlet-name>messageView</servlet-name>
-    <jsp-file>message.jsp</jsp-file>
+    <jsp-file>/WEB-INF/jsps/message.jsp</jsp-file>
   </servlet>
   <servlet-mapping>
     <servlet-name>messageView</servlet-name>
@@ -69,7 +69,7 @@
 
   <servlet>
     <servlet-name>dataGraphView</servlet-name>
-    <jsp-file>dataGraph.jsp</jsp-file>
+    <jsp-file>/WEB-INF/jsps/dataGraph.jsp</jsp-file>
   </servlet>
   <servlet-mapping>
     <servlet-name>dataGraphView</servlet-name>

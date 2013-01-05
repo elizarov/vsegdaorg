@@ -6,6 +6,7 @@
 <html>
 <head>
   <title>vsegda.org | Data graph</title>
+  <link rel="stylesheet" href="/style.css" type="text/css">
   <script type='text/javascript' src='https://www.google.com/jsapi'></script>
   <script type='text/javascript'>
     google.load('visualization', '1', {'packages':['annotatedtimeline']});

@@ -4,7 +4,7 @@
 <html>
 <head>
   <title>vsegda.org | Data items</title>
-  <link rel="stylesheet" href="style.css" type="text/css">
+  <link rel="stylesheet" href="/style.css" type="text/css">
 </head>
 <body>
 <div class="par">
