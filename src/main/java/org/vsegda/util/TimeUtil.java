@@ -19,7 +19,7 @@ public class TimeUtil {
     public static final long DAY = 24 * HOUR;
 
     private static SimpleDateFormat getDateTimeFormat() {
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd'T'HHmmss.SSS");
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd'T'HHmmss");
         format.setTimeZone(TIMEZONE);
         return format;
     }
@@ -53,8 +53,19 @@ public class TimeUtil {
             return 0;
         ParsePosition pos = new ParsePosition(0);
         Date date = getDateTimeFormat().parse(s, pos);
-        if (date != null && pos.getIndex() == s.length())
-            return date.getTime();
+        if (date != null) {
+            if (pos.getIndex() == s.length())
+                return date.getTime();
+            if (s.charAt(pos.getIndex()) == '.') {
+                // optional millis
+                try {
+                    double mf = Double.parseDouble("0" + s.substring(pos.getIndex()));
+                    return date.getTime() + (int)(1000 * mf);
+                } catch (NumberFormatException e) {
+                    // ignore & fallback to other pasing approach
+                }
+            }
+        }
         try {
             return now + Long.parseLong(s);
         } catch (NumberFormatException e) {
