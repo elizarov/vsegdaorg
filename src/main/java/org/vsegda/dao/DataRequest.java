@@ -11,7 +11,10 @@ import org.vsegda.util.TimeInstant;
 
 import javax.jdo.Query;
 import javax.servlet.ServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -55,27 +58,12 @@ public class DataRequest {
         } else {
             for (String code : this.id) {
                 DataStream stream = DataStreamDAO.resolveStreamByCode(code);
-                Query query = Factory.getPM().newQuery(DataItem.class);
-                String queryFilter = "streamId == id";
-                String queryParams = "long id";
-                Map<String, Object> queryArgs = new HashMap<String, Object>();
-                queryArgs.put("id", stream.getStreamId());
-                if (since != null) {
-                    queryFilter += " && timeMillis >= since";
-                    queryParams += ", long since";
-                    queryArgs.put("since", since.time());
-                }
-                query.setFilter(queryFilter);
-                query.declareParameters(queryParams);
-                query.setOrdering("timeMillis desc");
-                query.setRange(first, first + last);
-                query.getFetchPlan().setFetchSize(last);
+                List<DataItem> items = DataItemDAO.listDataItems(stream, since, first, last);
                 int s0 = result.size();
-                Collection<DataItem> items = (Collection<DataItem>) query.executeWithMap(queryArgs);
-                for (DataItem item : items)
-                    item.setStream(stream);
                 result.addAll(items);
-                filter(result.subList(s0, result.size()));
+                List<DataItem> subList = result.subList(s0, result.size());
+                Collections.reverse(subList);
+                filter(subList);
             }
         }
         log.info("Completed data query in " + (System.currentTimeMillis() - startTimeMillis) + " ms");
