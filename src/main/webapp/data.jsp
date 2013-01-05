@@ -10,7 +10,7 @@
 <div class="par">
   Data Items
   <c:if test="${param.id != null}">
-    <a href="dataGraph.jsp?${pageContext.request.queryString}">Graph</a>
+    <a href="dataGraph?${pageContext.request.queryString}">Graph</a>
   </c:if>
 </div>
 <table class="par data">

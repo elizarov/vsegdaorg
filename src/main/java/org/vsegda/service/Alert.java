@@ -19,7 +19,7 @@ public class Alert {
         String body = text;
         if (id != null) {
             subject += " (" + id + ")";
-            body += "\nhttp://apps.vsegda.org/graph.jsp?id=" + id;
+            body += "\nhttp://apps.vsegda.org/dataGraph?id=" + id;
         }
         try {
             Message msg = new MimeMessage(session);
