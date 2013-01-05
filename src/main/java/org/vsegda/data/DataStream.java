@@ -1,16 +1,18 @@
 package org.vsegda.data;
 
 import com.google.appengine.api.datastore.Key;
+import org.vsegda.shared.DataStreamMode;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+import java.io.Serializable;
 
 /**
  * @author Roman Elizarov
  */
 @PersistenceCapable
-public class DataStream {
+public class DataStream implements Serializable {
     @PrimaryKey
     @Persistent
     private Long streamId;

@@ -1,4 +1,6 @@
-package org.vsegda.util;
+package org.vsegda.data;
+
+import org.vsegda.util.TimeUtil;
 
 /**
  * @author Roman Elizarov

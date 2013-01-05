@@ -1,11 +1,11 @@
-package org.vsegda.util;
+package org.vsegda.data;
 
 import java.io.ByteArrayOutputStream;
 
 /**
  * @author Roman Elizarov
  */
-public class DeltaEncoder {
+class DeltaEncoder {
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
     private double lastValue;
     private int lastPrecision;

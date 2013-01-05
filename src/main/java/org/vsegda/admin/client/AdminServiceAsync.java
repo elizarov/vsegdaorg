@@ -1,0 +1,10 @@
+package org.vsegda.admin.client;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.vsegda.admin.shared.DataStreamDTO;
+
+import java.util.List;
+
+public interface AdminServiceAsync {
+    void getDataStreams(AsyncCallback<List<DataStreamDTO>> async);
+}

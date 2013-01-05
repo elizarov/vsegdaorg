@@ -7,21 +7,20 @@
   <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body>
-<p>
+<div class="par">
   Data Items
   <c:if test="${param.id != null}">
     <a href="dataGraph.jsp?${pageContext.request.queryString}">Graph</a>
   </c:if>
-</p>
-<table>
+</div>
+<table class="par data">
   <tr>
-    <th>id</th>
+    <th>tag@id</th>
     <th>value</th>
     <th>time</th>
     <th>ago</th>
     <c:if test="${param.id == null}">
       <th>name</th>
-      <th>mode</th>
     </c:if>
   </tr>
   <v:dataItems>
@@ -39,7 +38,6 @@
       <td><c:out value="${item.ago}"/></td>
       <c:if test="${param.id == null}">
         <td><c:out value="${item.stream.name}"/></td>
-        <td><c:out value="${item.stream.mode}"/></td>
       </c:if>
     </tr>
   </v:dataItems>

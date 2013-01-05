@@ -1,4 +1,4 @@
-package org.vsegda.util;
+package org.vsegda.data;
 
 import junit.framework.TestCase;
 

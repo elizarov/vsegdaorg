@@ -6,7 +6,6 @@ import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
 import org.vsegda.factory.Factory;
 import org.vsegda.util.IdList;
-import org.vsegda.util.RequestUtil;
 import org.vsegda.util.TimeInstant;
 
 import javax.jdo.Query;
@@ -28,6 +27,8 @@ public class DataRequest {
 	private int last = 1000; // last 1000 items by default
     private double filter = 5; // 5 sigmas by default
     private TimeInstant since;
+
+    public DataRequest() {}
 
     public DataRequest(ServletRequest req) {
         RequestUtil.populate(this, req);

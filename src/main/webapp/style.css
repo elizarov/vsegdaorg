@@ -1,8 +1,11 @@
-table {
+.par {
+    margin-bottom: 1em;
+}
+table.data {
     border: 3px solid black;
     border-collapse: collapse;
 }
-th, td {
+table.data th, table.data td {
     border: 1px solid black;
     padding: 0 5px;
 }
@@ -11,4 +14,7 @@ th, td {
 }
 .old {
     color: grey;
+}
+.edit {
+    color: blue;
 }

@@ -7,10 +7,10 @@
   <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body>
-<p>
+<div class="par">
   Message items
-</p>
-<table>
+</div>
+<table class="par data">
   <tr>
     <th>id</th>
     <th>text</th>

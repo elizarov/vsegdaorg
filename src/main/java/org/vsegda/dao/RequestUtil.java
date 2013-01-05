@@ -1,4 +1,4 @@
-package org.vsegda.util;
+package org.vsegda.dao;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
@@ -11,7 +11,7 @@ import javax.servlet.ServletRequest;
 /**
  * @author Roman Elizarov
  */
-public class RequestUtil {
+class RequestUtil {
     static {
         ConvertUtils.register(new IdList.Cnv(), IdList.class);
         ConvertUtils.register(new TimeInstant.Cnv(), TimeInstant.class);

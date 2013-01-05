@@ -1,4 +1,4 @@
-package org.vsegda.util;
+package org.vsegda.service;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;

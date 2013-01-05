@@ -8,8 +8,8 @@ import net.sf.jsr107cache.CacheFactory;
 import net.sf.jsr107cache.CacheManager;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
-import org.vsegda.data.DataStreamMode;
 import org.vsegda.factory.Factory;
+import org.vsegda.shared.DataStreamMode;
 import org.vsegda.util.TimeInstant;
 import org.vsegda.util.TimeUtil;
 

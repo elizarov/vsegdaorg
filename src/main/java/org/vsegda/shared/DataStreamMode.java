@@ -1,4 +1,4 @@
-package org.vsegda.data;
+package org.vsegda.shared;
 
 /**
  * @author Roman Elizarov

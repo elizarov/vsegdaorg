@@ -1,8 +1,6 @@
 package org.vsegda.data;
 
 import com.google.appengine.api.datastore.Key;
-import org.vsegda.util.DeltaDecoder;
-import org.vsegda.util.DeltaEncoder;
 import org.vsegda.util.TimeUtil;
 
 import javax.jdo.annotations.IdGeneratorStrategy;

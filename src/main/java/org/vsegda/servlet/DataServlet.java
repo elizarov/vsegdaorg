@@ -5,8 +5,8 @@ import org.vsegda.dao.DataRequest;
 import org.vsegda.dao.DataStreamDAO;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
-import org.vsegda.data.DataStreamMode;
 import org.vsegda.factory.Factory;
+import org.vsegda.shared.DataStreamMode;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;

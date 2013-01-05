@@ -27,6 +27,14 @@
         </configuration>
       </facet>
     </facet>
+    <facet type="gwt" name="GWT">
+      <configuration>
+        <setting name="compilerMaxHeapSize" value="128" />
+        <setting name="gwtScriptOutputStyle" value="DETAILED" />
+        <setting name="gwtSdkUrl" value="file://C:/Java/gwt" />
+        <setting name="webFacet" value="Web" />
+      </configuration>
+    </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
@@ -53,6 +61,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="gwt-user" level="application" />
+    <orderEntry type="library" name="gwt-servlet" level="application" />
   </component>
 </module>
 

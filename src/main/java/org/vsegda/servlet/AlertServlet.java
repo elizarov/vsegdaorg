@@ -1,6 +1,6 @@
 package org.vsegda.servlet;
 
-import org.vsegda.util.Alert;
+import org.vsegda.service.Alert;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

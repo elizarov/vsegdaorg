@@ -3,4 +3,12 @@
   <application>vsegdaorg-hrd</application>
   <version>1</version>
   <threadsafe>true</threadsafe>
+
+  <!-- Configure serving/caching of GWT files -->
+  <static-files>
+    <include path="**" />
+    <include path="**.nocache.*" expiration="0s" />
+    <include path="**.cache.*" expiration="365d" />
+    <exclude path="**.gwt.rpc" />
+  </static-files>
 </appengine-web-app>

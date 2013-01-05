@@ -1,8 +1,6 @@
-package org.vsegda.util;
+package org.vsegda.data;
 
 import junit.framework.TestCase;
-
-import java.util.Arrays;
 
 /**
  * @author Roman Elizarov
