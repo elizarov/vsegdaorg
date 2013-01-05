@@ -1,20 +1,42 @@
 .par {
     margin-bottom: 1em;
 }
+
 table.data {
     border: 3px solid black;
     border-collapse: collapse;
 }
+
 table.data th, table.data td {
     border: 1px solid black;
     padding: 0 5px;
 }
+
+table.data th, .th {
+    font-weight: bold;
+}
+
 .recent {
     color: black;
 }
+
 .old {
     color: grey;
 }
+
 .edit {
     color: blue;
+}
+
+.label {
+    text-align: right;
+    font-weight: bold;
+}
+
+.frt {
+    float: right !important;
+}
+
+.mrt {
+    margin-right: .5em !important;
 }

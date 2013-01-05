@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface AdminServiceAsync {
     void getDataStreams(AsyncCallback<List<DataStreamDTO>> async);
+
+    void updateDataStream(DataStreamDTO sd, AsyncCallback<Void> async);
 }

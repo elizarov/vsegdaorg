@@ -54,7 +54,12 @@ public class DataStream implements Serializable {
     }
 
     public void setTag(String tag) {
-        this.tag = tag;
+        if (tag == null)
+            this.tag = null;
+        else {
+            tag = tag.trim();
+            this.tag = tag.isEmpty() ? null : tag;
+        }
     }
 
     /**
@@ -71,7 +76,7 @@ public class DataStream implements Serializable {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name == null ? "" : name.trim();
     }
 
     public Key getFirstItemKey() {

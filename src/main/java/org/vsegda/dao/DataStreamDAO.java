@@ -18,7 +18,7 @@ public class DataStreamDAO {
 
     private DataStreamDAO() {}
 
-    public static DataStream resolveStreamByCode(String code) {
+    public static DataStream resolveDataStreamByCode(String code) {
         int i = code.lastIndexOf('@');
         String id;
         if (i >= 0)
@@ -26,15 +26,15 @@ public class DataStreamDAO {
         else
             id = code;
         try {
-            return resolveStreamById(Long.parseLong(id));
+            return resolveDataStreamById(Long.parseLong(id));
         } catch (NumberFormatException e) {
             // ignore and try to find by tag
         }
-        return resolveStreamByTag(code);
+        return resolveDataStreamByTag(code);
     }
 
     @SuppressWarnings({"unchecked"})
-    public static DataStream resolveStreamByTag(String tag) {
+    public static DataStream resolveDataStreamByTag(String tag) {
         Query query = Factory.getPM().newQuery(DataStream.class);
         query.setOrdering("streamId asc");
         query.declareParameters("String code");
@@ -57,7 +57,7 @@ public class DataStreamDAO {
         return stream;
     }
 
-    private static DataStream resolveStreamById(long id) {
+    public static DataStream resolveDataStreamById(long id) {
         try {
             return Factory.getPM().getObjectById(DataStream.class, id);
         } catch (JDOObjectNotFoundException e) {
@@ -68,10 +68,10 @@ public class DataStreamDAO {
         }
     }
 
-    public static DataStream resolveStream(DataStream stream) {
+    public static DataStream resolveDataStream(DataStream stream) {
         return stream.getStreamId() != null ?
-                resolveStreamById(stream.getStreamId()) :
-                resolveStreamByCode(stream.getTag());
+                resolveDataStreamById(stream.getStreamId()) :
+                resolveDataStreamByCode(stream.getTag());
     }
 
     @SuppressWarnings({"unchecked"})
@@ -101,5 +101,4 @@ public class DataStreamDAO {
         stream.setFirstItemKey(firstItem.getKey());
         return firstItem;
     }
-
 }

@@ -12,4 +12,5 @@ import java.util.List;
 @RemoteServiceRelativePath("admin.rpc")
 public interface AdminService extends RemoteService {
     public List<DataStreamDTO> getDataStreams();
+    public void updateDataStream(DataStreamDTO stream);
 }

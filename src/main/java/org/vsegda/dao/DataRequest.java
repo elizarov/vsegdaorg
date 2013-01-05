@@ -58,7 +58,7 @@ public class DataRequest {
             }
         } else {
             for (String code : this.id) {
-                DataStream stream = DataStreamDAO.resolveStreamByCode(code);
+                DataStream stream = DataStreamDAO.resolveDataStreamByCode(code);
                 List<DataItem> items = DataItemDAO.listDataItems(stream, since, first, last);
                 int s0 = result.size();
                 result.addAll(items);

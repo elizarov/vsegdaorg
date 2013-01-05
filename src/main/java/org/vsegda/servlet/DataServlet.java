@@ -41,7 +41,7 @@ public class DataServlet extends HttpServlet {
         List<DataItem> items = parseDataItems(req.getReader());
         // resolve all stream tags
         for (DataItem item : items)
-            item.setStream(DataStreamDAO.resolveStream(item.getStream()));
+            item.setStream(DataStreamDAO.resolveDataStream(item.getStream()));
         // persist all items
         DataItemDAO.persistDataItems(items);
         // update all streams

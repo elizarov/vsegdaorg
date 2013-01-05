@@ -16,6 +16,7 @@ public class DataStreamDTO implements Serializable {
     private double value;
     private String time;
     private String ago;
+    private String formatClass;
 
     public long getId() {
         return id;
@@ -79,5 +80,13 @@ public class DataStreamDTO implements Serializable {
 
     public void setAgo(String ago) {
         this.ago = ago;
+    }
+
+    public void setFormatClass(String formatClass) {
+        this.formatClass = formatClass;
+    }
+
+    public String getFormatClass() {
+        return formatClass;
     }
 }

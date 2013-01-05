@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * @author Roman Elizarov
  */
-public class Admin implements EntryPoint {
+public class Admin implements EntryPoint, DataStreamSaved {
     private final AdminServiceAsync adminService = GWT.create(AdminService.class);
     private final FlexTable table = new FlexTable();
     private final Label status = new Label();
@@ -59,68 +59,67 @@ public class Admin implements EntryPoint {
     }
 
     private void setupTableColumns() {
-        int c = 0;
-        table.setText(0, c++, "id");
-        table.setText(0, c++, "tag");
-        table.setText(0, c++, "name");
-        table.setText(0, c++, "alert");
-        table.setText(0, c++, "mode");
-        table.setText(0, c++, "value");
-        table.setText(0, c++, "time");
-        table.setText(0, c++, "ago");
-        table.setText(0, c++, "edit");
+        String[] ss =  { "id", "tag", "name", "alert", "mode", "value", "time", "ago", "edit" };
+        for (int c = 0; c < ss.length; c++) {
+            Label label = new Label(ss[c]);
+            label.addStyleName("th");
+            table.setWidget(0, c, label);
+        }
     }
 
-    private void updateTable(List<DataStreamDTO> ss) {
+    private Label createTH(String s) {
+        Label label = new Label(s);
+        label.addStyleName("th");
+        return label;
+    }
+
+    private void updateTable(List<DataStreamDTO> sds) {
         int r = 0;
-        for (final DataStreamDTO s : ss) {
+        for (final DataStreamDTO sd : sds) {
             r++;
-            int c = 0;
-            table.setText(r, c++, String.valueOf(s.getId()));
-            table.setText(r, c++, s.getTag());
-            table.setText(r, c++, s.getName());
-            table.setText(r, c++, s.getAlert());
-            table.setText(r, c++, String.valueOf(s.getMode()));
-            table.setText(r, c++, String.valueOf(s.getValue()));
-            table.setText(r, c++, s.getTime());
-            table.setText(r, c++, s.getAgo());
+            String[] ss = {
+                    String.valueOf(sd.getId()),
+                    sd.getTag(),
+                    sd.getName(),
+                    sd.getAlert(),
+                    String.valueOf(sd.getMode()),
+                    String.valueOf(sd.getValue()),
+                    sd.getTime(),
+                    sd.getAgo()
+            };
+            for (int c = 0; c < ss.length; c++) {
+                Label label = new Label(ss[c]);
+                label.addStyleName(sd.getFormatClass());
+                table.setWidget(r, c, label);
+            }
             Label edit = new Label("[...]");
             edit.addStyleName("edit");
             edit.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent clickEvent) {
-                    editStream(s);
+                    editStream(sd);
                 }
             });
-            table.setWidget(r, c++, edit);
+            table.setWidget(r, ss.length, edit);
         }
     }
 
-    private void editStream(DataStreamDTO s) {
-        final PopupPanel popup = new PopupPanel(false);
+    private void editStream(DataStreamDTO stream) {
+        new DataStreamEditor().edit(stream, this);
+    }
 
-        Label contents = new Label();
-        contents.setText("Not implemented");
-
-        Button cancel = new Button("Cancel");
-        cancel.addClickHandler(new ClickHandler() {
+    @Override
+    public void onDataStreamSaved(DataStreamDTO sd) {
+        adminService.updateDataStream(sd, new AsyncCallback<Void>() {
             @Override
-            public void onClick(ClickEvent clickEvent) {
-                popup.hide();
+            public void onFailure(Throwable t) {
+                status.setText("Failed to save: " + t);
+            }
+
+            @Override
+            public void onSuccess(Void aVoid) {
+                refreshTable();
             }
         });
-
-        HorizontalPanel buttons = new HorizontalPanel();
-        buttons.add(cancel);
-
-        VerticalPanel vPanel = new VerticalPanel();
-
-        vPanel.add(contents);
-        vPanel.add(buttons);
-
-        popup.setTitle("Edit stream");
-        popup.setWidget(vPanel);
-        popup.setModal(true);
-        popup.center();
     }
 }

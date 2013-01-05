@@ -17,6 +17,11 @@ public class TimePeriod {
     }
 
     public static TimePeriod valueOf(String s) {
+        if (s == null)
+            return new TimePeriod(0);
+        s = s.trim();
+        if (s.isEmpty())
+            return new TimePeriod(0);
         long period = 0;
         long mul = 1;
         int i = 0;
@@ -56,8 +61,12 @@ public class TimePeriod {
         this.period = period;
     }
 
-     public long period() {
+    public long period() {
         return period;
+    }
+
+    public Long periodOrNull() {
+        return period == 0 ? null : period;
     }
 
     public String format(int limit) {
@@ -69,7 +78,7 @@ public class TimePeriod {
         }
         TimePeriodUnit[] units = TimePeriodUnit.values();
         int cnt = 0;
-        for (int i = units.length; --i >= 0;) {
+        for (int i = units.length; --i >= 0; ) {
             TimePeriodUnit unit = units[i];
             if (cnt > 0 || r >= unit.period()) {
                 cnt++;
@@ -77,9 +86,9 @@ public class TimePeriod {
                 r %= unit.period();
                 if (unit == TimePeriodUnit.SECOND && r > 0 && cnt < limit)
                     sb.append('.')
-                        .append(r / 100)
-                        .append((r / 10) % 10)
-                        .append(r % 10);
+                            .append(r / 100)
+                            .append((r / 10) % 10)
+                            .append(r % 10);
                 sb.append(unit.code());
                 if (cnt >= limit)
                     break;
@@ -98,10 +107,10 @@ public class TimePeriod {
     public static class Cnv implements Converter {
         public Object convert(Class clazz, Object o) {
             if (o == null)
-               return null;
+                return null;
             String s = o.toString();
             if (s == null)
-               return null;
+                return null;
             return valueOf(s);
         }
     }
