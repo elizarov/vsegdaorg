@@ -26,8 +26,8 @@ public class DataItemDAO {
     private static final Logger log = Logger.getLogger(DataItemDAO.class.getName());
 
     private static final int LIST_CACHE_EXPIRATION_MILLIS = (int)(15 * TimeUtil.MINUTE);
-    private static final int MAX_LIST_SIZE = 5000;
-    private static final int TRIM_LIST_SIZE = 4000;
+    private static final int MAX_LIST_SIZE = 4000;
+    private static final int TRIM_LIST_SIZE = 3000;
 
     private static final Comparator<DataItem> ORDER_BY_TIME = new Comparator<DataItem>() {
         @Override
@@ -92,7 +92,6 @@ public class DataItemDAO {
     /**
      * Returns a list of last data items in ASCENDING order.
      */
-    @SuppressWarnings({"unchecked"})
     public static List<DataItem> listDataItems(DataStream stream, TimeInstant since, int first, int last) {
         if (stream.getMode() == DataStreamMode.LAST) {
             DataItem theOne = getDataItemByKey(stream.getLastItemKey());
@@ -114,11 +113,16 @@ public class DataItemDAO {
                         entry.items.subList(Math.max(start, size - first - last), Math.max(start, size - first)));
         }
         // perform query
+        return fillStream(stream, performItemsQuery(stream.getStreamId(), since, first, last));
+    }
+
+    @SuppressWarnings({"unchecked"})
+    private static List<DataItem> performItemsQuery(long streamId, TimeInstant since, int first, int last) {
         Query query = Factory.getPM().newQuery(DataItem.class);
         String queryFilter = "streamId == id";
         String queryParams = "long id";
         Map<String, Object> queryArgs = new HashMap<String, Object>();
-        queryArgs.put("id", stream.getStreamId());
+        queryArgs.put("id", streamId);
         if (since != null) {
             queryFilter += " && timeMillis >= since";
             queryParams += ", long since";
@@ -132,14 +136,18 @@ public class DataItemDAO {
         List<DataItem> items = new ArrayList<DataItem>((Collection<DataItem>)query.executeWithMap(queryArgs));
         Collections.reverse(items); // turn descending into ascending order
         if (first == 0)
-            LIST_CACHE.put(stream.getStreamId(), new ListEntry(items, items.size() < last));
-        return fillStream(stream, items);
+            LIST_CACHE.put(streamId, new ListEntry(items, items.size() < last));
+        return items;
     }
 
     private static List<DataItem> fillStream(DataStream stream, List<DataItem> items) {
         for (DataItem item : items)
             item.setStream(stream);
         return items;
+    }
+
+    public static void refreshCache(long streamId) {
+        performItemsQuery(streamId, null, 0, MAX_LIST_SIZE);
     }
 
     private static class ListEntry implements Serializable {

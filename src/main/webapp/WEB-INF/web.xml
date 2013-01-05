@@ -12,7 +12,7 @@
       <url-pattern>*.jsp</url-pattern>
       <page-encoding>UTF-8</page-encoding>
     </jsp-property-group>
-  </jsp-config>
+  </jsp-config>                                                  qu
 
   <!-- filters -->
 
@@ -52,6 +52,15 @@
   <servlet-mapping>
     <servlet-name>taskDataArchive</servlet-name>
     <url-pattern>/task/dataArchive</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>taskDataCacheRefresh</servlet-name>
+    <servlet-class>org.vsegda.servlet.DataCacheRefreshTaskServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>taskDataCacheRefresh</servlet-name>
+    <url-pattern>/task/dataCacheRefresh</url-pattern>
   </servlet-mapping>
 
   <servlet>

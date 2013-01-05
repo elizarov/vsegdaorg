@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 public class DataArchiveTaskServlet extends HttpServlet {
     private static final Logger log = Logger.getLogger(DataArchiveTaskServlet.class.getName());
 
-    public static void enqueueDataArchiveTask(long streamId) {
+    public static void enqueueTask(long streamId) {
         log.info("Enqueueing data archive task for streamId=" + streamId);
         Queue queue = QueueFactory.getQueue("archiveTaskQueue");
         queue.add(TaskOptions.Builder
@@ -80,6 +80,6 @@ public class DataArchiveTaskServlet extends HttpServlet {
         stream.setFirstItemKey(null);
         Factory.getPM().deletePersistentAll(items);
         // create next task to check this stream
-        enqueueDataArchiveTask(streamId);
+        enqueueTask(streamId);
     }
 }

@@ -25,7 +25,7 @@ public class DataCheckCronServlet extends HttpServlet {
     @SuppressWarnings({"unchecked"})
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        log.info("Checking data items for timeouts and archival needs");
+        log.info("Checking data items for timeouts, archival needs, and cache updates");
         long now = System.currentTimeMillis();
         Collection<DataStream> streams = (Collection<DataStream>) Factory.getPM().newQuery(DataStream.class).execute();
         for (DataStream stream : streams) {
@@ -43,9 +43,11 @@ public class DataCheckCronServlet extends HttpServlet {
                         !firstItem.getKey().equals(stream.getLastItemKey()))
                 {
                     // need to archive
-                    DataArchiveTaskServlet.enqueueDataArchiveTask(stream.getStreamId());
+                    DataArchiveTaskServlet.enqueueTask(stream.getStreamId());
                 }
             }
+            // enqueue cache update task
+            DataCacheRefreshTaskServlet.enqueueTask(stream.getStreamId());
         }
     }
 }
