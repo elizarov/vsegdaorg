@@ -17,11 +17,11 @@
   <tr>
     <th>tag@id</th>
     <th>value</th>
-    <th>time</th>
-    <th>ago</th>
     <c:if test="${param.id == null}">
       <th>name</th>
     </c:if>
+    <th>time</th>
+    <th>ago</th>
   </tr>
   <v:dataItems>
     <tr class="${item.formatClass}">
@@ -34,11 +34,11 @@
         </c:otherwise>
       </c:choose>
       <td><c:out value="${item.value}"/></td>
-      <td><c:out value="${item.time}"/></td>
-      <td><c:out value="${item.ago}"/></td>
       <c:if test="${param.id == null}">
         <td><c:out value="${item.stream.name}"/></td>
       </c:if>
+      <td><c:out value="${item.time}"/></td>
+      <td><c:out value="${item.ago}"/></td>
     </tr>
   </v:dataItems>
 </table>
