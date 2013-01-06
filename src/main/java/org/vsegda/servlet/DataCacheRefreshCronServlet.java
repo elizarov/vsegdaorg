@@ -20,7 +20,7 @@ public class DataCacheRefreshCronServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         log.info("Scheduling cache updates");
         long startTimeMillis = System.currentTimeMillis();
-        for (DataStream stream : DataStreamDAO.getAllDataStreams()) {
+        for (DataStream stream : DataStreamDAO.listDataStreams()) {
             // enqueue cache update task
             DataCacheRefreshTaskServlet.enqueueTask(stream.getStreamId());
         }

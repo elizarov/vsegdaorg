@@ -37,7 +37,7 @@ public class DataRequest {
         long startTimeMillis = System.currentTimeMillis();
         List<DataItem> result = new ArrayList<DataItem>();
         if (id == null) {
-            for (DataStream stream : DataStreamDAO.getAllDataStreams(first, last)) {
+            for (DataStream stream : DataStreamDAO.listDataStreams(first, last)) {
                 DataItem item = null;
                 if (stream.getLastItemKey() != null) {
                     item = DataItemDAO.getDataItemByKey(stream.getLastItemKey());

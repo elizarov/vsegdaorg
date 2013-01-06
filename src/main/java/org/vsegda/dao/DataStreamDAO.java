@@ -21,12 +21,12 @@ public class DataStreamDAO {
 
     private DataStreamDAO() {}
 
-    public static List<DataStream> getAllDataStreams() {
-        return getAllDataStreams(0, Integer.MAX_VALUE);
+    public static List<DataStream> listDataStreams() {
+        return listDataStreams(0, Integer.MAX_VALUE);
     }
 
     @SuppressWarnings({"unchecked"})
-    public static List<DataStream> getAllDataStreams(int first, int last) {
+    public static List<DataStream> listDataStreams(int first, int last) {
         Query query = PM.instance().newQuery(DataStream.class);
         query.setOrdering("streamId asc");
         if (last < Integer.MAX_VALUE)
