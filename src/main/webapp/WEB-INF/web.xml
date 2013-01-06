@@ -159,11 +159,4 @@
     <servlet-name>messageCsv</servlet-name>
     <url-pattern>/message.csv</url-pattern>
   </servlet-mapping>
-
-  <!-- Preload cache on GAE warmup request -->
-
-  <servlet>
-    <servlet-name>_ah_warmup</servlet-name>
-    <servlet-class>org.vsegda.servlet.DataCacheRefreshCronServlet</servlet-class>
-  </servlet>
 </web-app>
