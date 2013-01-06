@@ -25,7 +25,7 @@ public class DataStreamEditor extends DialogBox implements Editor<DataStreamDTO>
     private Button cancel = new Button("Cancel");
 
     private DataStreamEditorDriver driver = GWT.create(DataStreamEditorDriver.class);
-    private DataStreamSaved onSave;
+    private DataStreamEditorListener onSave;
 
     public DataStreamEditor() {
         super(false);
@@ -33,7 +33,7 @@ public class DataStreamEditor extends DialogBox implements Editor<DataStreamDTO>
         initListeners();
     }
 
-    public void edit(DataStreamDTO sd, DataStreamSaved onSave) {
+    public void edit(DataStreamDTO sd, DataStreamEditorListener onSave) {
         driver.initialize(this);
         driver.edit(sd);
         this.onSave = onSave;
@@ -97,7 +97,7 @@ public class DataStreamEditor extends DialogBox implements Editor<DataStreamDTO>
                 status.setText("Error: " + errors.get(0).getMessage());
                 return; // just show first error and return
             }
-            onSave.onDataStreamSaved(sd);
+            onSave.dataStreamEditorSaved(sd);
         }
         hide();
     }

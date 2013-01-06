@@ -5,6 +5,6 @@ import org.vsegda.admin.shared.DataStreamDTO;
 /**
  * @author Roman Elizarov
  */
-public interface DataStreamSaved {
-    public void onDataStreamSaved(DataStreamDTO sd);
+public interface DataStreamTableListener {
+    public void editDataStream(DataStreamDTO sd);
 }
