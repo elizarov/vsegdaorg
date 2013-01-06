@@ -23,9 +23,9 @@ public class DataArchive {
     public static final long ARCHIVE_INTERVAL = TimeUtil.DAY;
 
     /**
-     * Data is considered recent for 60 days (then it is archived or deleted).
+     * Data is considered recent for 20 days (then it is archived or deleted).
      */
-    public static final long RECENT_TIME_INTERVAL = 60 * TimeUtil.DAY;
+    public static final long RECENT_TIME_INTERVAL = 20 * TimeUtil.DAY;
 
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
