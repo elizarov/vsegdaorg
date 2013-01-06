@@ -17,12 +17,22 @@ import java.util.logging.Logger;
  */
 public class DataStreamDAO {
     private static final Logger log = Logger.getLogger(DataStreamDAO.class.getName());
+    private static final int MAX_FETCH_SIZE = 10000;
 
     private DataStreamDAO() {}
 
-    @SuppressWarnings({"unchecked"})
     public static List<DataStream> getAllDataStreams() {
-        return new ArrayList<DataStream>((Collection<DataStream>) PM.instance().newQuery(DataStream.class).execute());
+        return getAllDataStreams(0, Integer.MAX_VALUE);
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public static List<DataStream> getAllDataStreams(int first, int last) {
+        Query query = PM.instance().newQuery(DataStream.class);
+        query.setOrdering("streamId asc");
+        if (last < Integer.MAX_VALUE)
+            query.setRange(first, first + last);
+        query.getFetchPlan().setFetchSize(Math.min(MAX_FETCH_SIZE, last));
+        return new ArrayList<DataStream>((Collection<DataStream>) query.execute());
     }
 
     public static DataStream resolveDataStreamByCode(String code) {

@@ -4,14 +4,11 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
-import org.vsegda.factory.PM;
 import org.vsegda.util.IdList;
 import org.vsegda.util.TimeInstant;
 
-import javax.jdo.Query;
 import javax.servlet.ServletRequest;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
@@ -40,11 +37,7 @@ public class DataRequest {
         long startTimeMillis = System.currentTimeMillis();
         List<DataItem> result = new ArrayList<DataItem>();
         if (id == null) {
-            Query query = PM.instance().newQuery(DataStream.class);
-            query.setOrdering("streamId asc");
-            query.setRange(first, first + last);
-            query.getFetchPlan().setFetchSize(last);
-            for (DataStream stream : (Collection<DataStream>)query.execute()) {
+            for (DataStream stream : DataStreamDAO.getAllDataStreams(first, last)) {
                 DataItem item = null;
                 if (stream.getLastItemKey() != null) {
                     item = DataItemDAO.getDataItemByKey(stream.getLastItemKey());
