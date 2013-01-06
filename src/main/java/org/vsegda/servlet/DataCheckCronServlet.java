@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.logging.Logger;
 
 /**
@@ -22,13 +21,11 @@ import java.util.logging.Logger;
 public class DataCheckCronServlet extends HttpServlet {
     private static final Logger log = Logger.getLogger(DataCheckCronServlet.class.getName());
 
-    @SuppressWarnings({"unchecked"})
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         log.info("Checking data items for timeouts, archival needs, and cache updates");
         long now = System.currentTimeMillis();
-        Collection<DataStream> streams = (Collection<DataStream>) PM.instance().newQuery(DataStream.class).execute();
-        for (DataStream stream : streams) {
+        for (DataStream stream : DataStreamDAO.getAllDataStreams()) {
             // check for data update timeout
             if (stream.getAlertTimeout() != null && stream.getLastItemKey() != null) {
                 DataItem item = (DataItem) PM.instance().getObjectById(stream.getLastItemKey());
@@ -50,4 +47,5 @@ public class DataCheckCronServlet extends HttpServlet {
             DataCacheRefreshTaskServlet.enqueueTask(stream.getStreamId());
         }
     }
+
 }

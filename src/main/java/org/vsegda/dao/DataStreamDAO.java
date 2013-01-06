@@ -7,7 +7,9 @@ import org.vsegda.factory.PM;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.Query;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -17,6 +19,11 @@ public class DataStreamDAO {
     private static final Logger log = Logger.getLogger(DataStreamDAO.class.getName());
 
     private DataStreamDAO() {}
+
+    @SuppressWarnings({"unchecked"})
+    public static List<DataStream> getAllDataStreams() {
+        return new ArrayList<DataStream>((Collection<DataStream>) PM.instance().newQuery(DataStream.class).execute());
+    }
 
     public static DataStream resolveDataStreamByCode(String code) {
         int i = code.lastIndexOf('@');
