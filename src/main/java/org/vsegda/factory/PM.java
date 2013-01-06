@@ -6,15 +6,17 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Transaction;
 
 /**
+ * Factory for {@link PersistenceManager}.
+ *
  * @author Roman Elizarov
  */
-public class Factory {
+public class PM {
     private static final PersistenceManagerFactory PM_FACTORY = JDOHelper.getPersistenceManagerFactory("default");
     private static final ThreadLocal<Boolean> REQ_THREAD_LOCAL = new ThreadLocal<Boolean>();
     private static final ThreadLocal<PersistenceManager> PM_THREAD_LOCAL = new ThreadLocal<PersistenceManager>();
     private static final ThreadLocal<Transaction> TX_THREAD_LOCAL = new ThreadLocal<Transaction>();
 
-    public static PersistenceManager getPM() {
+    public static PersistenceManager instance() {
         if (REQ_THREAD_LOCAL.get() != Boolean.TRUE)
             throw new IllegalStateException("Not serving a request");
         PersistenceManager pm = PM_THREAD_LOCAL.get();
@@ -28,7 +30,7 @@ public class Factory {
     public static void beginTransaction() {
         Transaction tx = TX_THREAD_LOCAL.get();
         if (tx == null) {
-            tx = getPM().currentTransaction();
+            tx = instance().currentTransaction();
             tx.begin();
             TX_THREAD_LOCAL.set(tx);
         }

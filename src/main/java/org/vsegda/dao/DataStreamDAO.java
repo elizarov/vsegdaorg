@@ -3,7 +3,7 @@ package org.vsegda.dao;
 import com.google.appengine.api.datastore.Key;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
-import org.vsegda.factory.Factory;
+import org.vsegda.factory.PM;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.Query;
@@ -35,7 +35,7 @@ public class DataStreamDAO {
 
     @SuppressWarnings({"unchecked"})
     public static DataStream resolveDataStreamByTag(String tag) {
-        Query query = Factory.getPM().newQuery(DataStream.class);
+        Query query = PM.instance().newQuery(DataStream.class);
         query.setOrdering("streamId asc");
         query.declareParameters("String code");
         query.setFilter("tag == code");
@@ -44,14 +44,14 @@ public class DataStreamDAO {
         if (streams.isEmpty()) {
             log.info("Creating new data stream with tag=" + tag);
             // find last stream
-            query = Factory.getPM().newQuery(DataStream.class);
+            query = PM.instance().newQuery(DataStream.class);
             query.setOrdering("streamId desc");
             query.setRange(0, 1);
             streams = (Collection<DataStream>) query.execute();
             long id = streams.isEmpty() ? 100 : streams.iterator().next().getStreamId() + 1;
             stream = new DataStream(id);
             stream.setTag(tag);
-            Factory.getPM().makePersistent(stream);
+            PM.instance().makePersistent(stream);
         } else
             stream = streams.iterator().next();
         return stream;
@@ -59,11 +59,11 @@ public class DataStreamDAO {
 
     public static DataStream resolveDataStreamById(long id) {
         try {
-            return Factory.getPM().getObjectById(DataStream.class, id);
+            return PM.instance().getObjectById(DataStream.class, id);
         } catch (JDOObjectNotFoundException e) {
             log.info("Creating new data stream with id=" + id);
             DataStream stream = new DataStream(id);
-            Factory.getPM().makePersistent(stream);
+            PM.instance().makePersistent(stream);
             return stream;
         }
     }
@@ -76,7 +76,7 @@ public class DataStreamDAO {
 
     @SuppressWarnings({"unchecked"})
     public static DataItem findFistItem(long streamId) {
-        Query query = Factory.getPM().newQuery(DataItem.class);
+        Query query = PM.instance().newQuery(DataItem.class);
         query.setFilter("streamId == id");
         query.setOrdering("timeMillis asc");
         query.declareParameters("long id");
@@ -91,7 +91,7 @@ public class DataStreamDAO {
         Key key = stream.getFirstItemKey();
         if (key != null)
             try {
-                return Factory.getPM().getObjectById(DataItem.class, key);
+                return PM.instance().getObjectById(DataItem.class, key);
             } catch (JDOObjectNotFoundException e) {
                 log.warning("First item for streamId=" + stream.getStreamId() + " is not found with key=" + key);
             }

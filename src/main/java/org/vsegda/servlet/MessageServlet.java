@@ -4,7 +4,7 @@ import org.vsegda.dao.MessageRequest;
 import org.vsegda.data.MessageItem;
 import org.vsegda.data.MessageQueue;
 import org.vsegda.data.MessageSession;
-import org.vsegda.factory.Factory;
+import org.vsegda.factory.PM;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.servlet.ServletException;
@@ -57,7 +57,7 @@ public class MessageServlet extends HttpServlet {
     }
 
     private long postToQueue(long queueId, Long sessionId, List<MessageItem> items, long now) {
-        Factory.beginTransaction();
+        PM.beginTransaction();
         MessageQueue queue = getOrCreateMessageQueue(queueId);
         MessageSession session = getOrCreateMessageSession(queue, sessionId, now);
         long maxSessionPostIndex = session.getLastPostIndex();
@@ -69,7 +69,7 @@ public class MessageServlet extends HttpServlet {
                 long index = queue.getLastPostIndex() + 1;
                 queue.setLastPostIndex(index);
                 item.setMessageIndex(index);
-                Factory.getPM().makePersistent(item);
+                PM.instance().makePersistent(item);
             }
         session.setLastPostIndex(maxSessionPostIndex);
         return session.getSessionId();
@@ -77,18 +77,18 @@ public class MessageServlet extends HttpServlet {
 
     private MessageQueue getOrCreateMessageQueue(long queueId) {
         try {
-            return Factory.getPM().getObjectById(MessageQueue.class, MessageQueue.createKey(queueId));
+            return PM.instance().getObjectById(MessageQueue.class, MessageQueue.createKey(queueId));
         } catch (JDOObjectNotFoundException e) {
-            return Factory.getPM().makePersistent(new MessageQueue(MessageQueue.createKey(queueId)));
+            return PM.instance().makePersistent(new MessageQueue(MessageQueue.createKey(queueId)));
         }
     }
 
     private MessageSession getOrCreateMessageSession(MessageQueue queue, Long sessionId, long now) {
         if (sessionId != null)
-            return Factory.getPM().getObjectById(MessageSession.class, MessageSession.createKey(queue.getQueueId(), sessionId));
+            return PM.instance().getObjectById(MessageSession.class, MessageSession.createKey(queue.getQueueId(), sessionId));
         sessionId = queue.getLastSessionId() + 1;
         queue.setLastSessionId(sessionId);
-        return Factory.getPM().makePersistent(new MessageSession(queue.getQueueId(), sessionId, now));
+        return PM.instance().makePersistent(new MessageSession(queue.getQueueId(), sessionId, now));
     }
 
     @SuppressWarnings({"unchecked"})

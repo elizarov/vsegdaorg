@@ -7,7 +7,7 @@ import org.vsegda.dao.DataStreamDAO;
 import org.vsegda.data.DataArchive;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
-import org.vsegda.factory.Factory;
+import org.vsegda.factory.PM;
 import org.vsegda.shared.DataStreamMode;
 import org.vsegda.util.TimeUtil;
 
@@ -41,7 +41,7 @@ public class DataArchiveTaskServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long streamId = Long.parseLong(req.getParameter("id"));
         log.info("Archiving data for streamId=" + streamId);
-        DataStream stream = Factory.getPM().getObjectById(DataStream.class, streamId);
+        DataStream stream = PM.instance().getObjectById(DataStream.class, streamId);
         if (stream.getMode() == DataStreamMode.LAST) {
             log.warning("Stream mode is " + stream.getMode() + ", ignoring task");
             return;
@@ -53,7 +53,7 @@ public class DataArchiveTaskServlet extends HttpServlet {
         }
         // Archive up to next midnight
         long limit = TimeUtil.getArchiveLimit(firstItem.getTimeMillis());
-        Query query = Factory.getPM().newQuery(DataItem.class);
+        Query query = PM.instance().newQuery(DataItem.class);
         query.setOrdering("timeMillis asc");
         query.declareParameters("long id, long limit");
         query.setFilter("streamId == id && timeMillis <= limit");
@@ -69,16 +69,16 @@ public class DataArchiveTaskServlet extends HttpServlet {
 
         if (stream.getMode() == DataStreamMode.RECENT) {
             log.info("Only recent items are kept, removing old ones");
-            Factory.getPM().deletePersistentAll(items);
+            PM.instance().deletePersistentAll(items);
             return;
         }
         // Actually archive
         DataArchive archive = new DataArchive(streamId);
         archive.setItems(items);
         log.info("Creating archive " + archive);
-        Factory.getPM().makePersistent(archive);
+        PM.instance().makePersistent(archive);
         stream.setFirstItemKey(null);
-        Factory.getPM().deletePersistentAll(items);
+        PM.instance().deletePersistentAll(items);
         // create next task to check this stream
         enqueueTask(streamId);
     }

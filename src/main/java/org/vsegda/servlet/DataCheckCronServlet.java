@@ -4,7 +4,7 @@ import org.vsegda.dao.DataStreamDAO;
 import org.vsegda.data.DataArchive;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
-import org.vsegda.factory.Factory;
+import org.vsegda.factory.PM;
 import org.vsegda.service.Alert;
 import org.vsegda.shared.DataStreamMode;
 
@@ -27,11 +27,11 @@ public class DataCheckCronServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         log.info("Checking data items for timeouts, archival needs, and cache updates");
         long now = System.currentTimeMillis();
-        Collection<DataStream> streams = (Collection<DataStream>) Factory.getPM().newQuery(DataStream.class).execute();
+        Collection<DataStream> streams = (Collection<DataStream>) PM.instance().newQuery(DataStream.class).execute();
         for (DataStream stream : streams) {
             // check for data update timeout
             if (stream.getAlertTimeout() != null && stream.getLastItemKey() != null) {
-                DataItem item = (DataItem) Factory.getPM().getObjectById(stream.getLastItemKey());
+                DataItem item = (DataItem) PM.instance().getObjectById(stream.getLastItemKey());
                 if (now - item.getTimeMillis() > stream.getAlertTimeout())
                     Alert.sendAlertEmail("" + stream.getStreamId(), "Data update timeout");
             }

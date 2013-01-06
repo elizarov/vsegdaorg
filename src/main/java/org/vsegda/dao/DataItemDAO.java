@@ -8,7 +8,7 @@ import net.sf.jsr107cache.CacheFactory;
 import net.sf.jsr107cache.CacheManager;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
-import org.vsegda.factory.Factory;
+import org.vsegda.factory.PM;
 import org.vsegda.shared.DataStreamMode;
 import org.vsegda.util.TimeInstant;
 import org.vsegda.util.TimeUtil;
@@ -54,7 +54,7 @@ public class DataItemDAO {
     private DataItemDAO() {} // do not create
 
     public static void persistDataItem(DataItem dataItem) {
-        Factory.getPM().makePersistent(dataItem);
+        PM.instance().makePersistent(dataItem);
         ITEM_BY_KEY_CACHE.put(dataItem.getKey(), dataItem);
         ListEntry entry = (ListEntry) LIST_CACHE.get(dataItem.getStreamId());
         if (entry != null) {
@@ -76,7 +76,7 @@ public class DataItemDAO {
             if (dataItem == null)
                 return; // already removed
         }
-        Factory.getPM().deletePersistent(dataItem);
+        PM.instance().deletePersistent(dataItem);
     }
 
     public static void persistDataItems(List<DataItem> items) {
@@ -98,7 +98,7 @@ public class DataItemDAO {
 
     private static DataItem performGetDataItemByKey(Key key) {
         try {
-            return Factory.getPM().getObjectById(DataItem.class, key);
+            return PM.instance().getObjectById(DataItem.class, key);
         } catch (JDOObjectNotFoundException e) {
             log.info("Data item is not found by key=" + key);
             return null;
@@ -134,7 +134,7 @@ public class DataItemDAO {
 
     @SuppressWarnings({"unchecked"})
     private static List<DataItem> performItemsQuery(long streamId, TimeInstant since, int first, int last) {
-        Query query = Factory.getPM().newQuery(DataItem.class);
+        Query query = PM.instance().newQuery(DataItem.class);
         String queryFilter = "streamId == id";
         String queryParams = "long id";
         Map<String, Object> queryArgs = new HashMap<String, Object>();

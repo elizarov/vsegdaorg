@@ -4,7 +4,7 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.vsegda.data.MessageItem;
 import org.vsegda.data.MessageQueue;
-import org.vsegda.factory.Factory;
+import org.vsegda.factory.PM;
 import org.vsegda.util.IdList;
 
 import javax.jdo.JDOObjectNotFoundException;
@@ -47,21 +47,21 @@ public class MessageRequest {
         long startTimeMillis = System.currentTimeMillis();
         List<MessageItem> items = new ArrayList<MessageItem>();
         if (id == null) {
-            Query query = Factory.getPM().newQuery(MessageQueue.class);
+            Query query = PM.instance().newQuery(MessageQueue.class);
             query.setOrdering("key asc");
             query.setRange(first, first + last);
             for (MessageQueue queue : (Collection<MessageQueue>)query.execute())
                 try {
-                    items.add(Factory.getPM().getObjectById(MessageItem.class, MessageItem.createKey(queue.getQueueId(), queue.getLastPostIndex())));
+                    items.add(PM.instance().getObjectById(MessageItem.class, MessageItem.createKey(queue.getQueueId(), queue.getLastPostIndex())));
                 } catch (JDOObjectNotFoundException e) {
                     // just ignore
                 }
         } else {
             for (String code : this.id) {
                 long id = MessageQueueDAO.resolveQueueCode(code);
-                Query query = Factory.getPM().newQuery(MessageItem.class);
+                Query query = PM.instance().newQuery(MessageItem.class);
                 if (take) {
-                    MessageQueue queue = Factory.getPM().getObjectById(MessageQueue.class, MessageQueue.createKey(id));
+                    MessageQueue queue = PM.instance().getObjectById(MessageQueue.class, MessageQueue.createKey(id));
                     index = Math.max(index, queue.getLastGetIndex());
                     queue.setLastGetIndex(index);
                     query.setFilter("queueId == id && messageIndex > index");

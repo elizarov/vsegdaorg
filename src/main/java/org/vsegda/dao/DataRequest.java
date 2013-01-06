@@ -4,7 +4,7 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
-import org.vsegda.factory.Factory;
+import org.vsegda.factory.PM;
 import org.vsegda.util.IdList;
 import org.vsegda.util.TimeInstant;
 
@@ -40,7 +40,7 @@ public class DataRequest {
         long startTimeMillis = System.currentTimeMillis();
         List<DataItem> result = new ArrayList<DataItem>();
         if (id == null) {
-            Query query = Factory.getPM().newQuery(DataStream.class);
+            Query query = PM.instance().newQuery(DataStream.class);
             query.setOrdering("streamId asc");
             query.setRange(first, first + last);
             query.getFetchPlan().setFetchSize(last);
