@@ -3,7 +3,7 @@ package org.vsegda.admin.server;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.vsegda.admin.client.AdminService;
+import org.vsegda.admin.client.rpc.AdminService;
 import org.vsegda.admin.shared.DataStreamDTO;
 import org.vsegda.dao.DataRequest;
 import org.vsegda.dao.DataStreamDAO;

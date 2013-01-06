@@ -1,4 +1,4 @@
-package org.vsegda.admin.client;
+package org.vsegda.admin.client.rpc;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.vsegda.admin.shared.DataStreamDTO;

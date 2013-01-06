@@ -7,5 +7,4 @@ import org.vsegda.admin.shared.DataStreamDTO;
  */
 public interface DataStreamEditorListener {
     public void dataStreamEditorSaved(DataStreamDTO sd);
-    public void dataStreamEditorCanceled();
 }
