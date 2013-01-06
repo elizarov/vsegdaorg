@@ -5,7 +5,6 @@ import org.vsegda.dao.DataRequest;
 import org.vsegda.dao.DataStreamDAO;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
-import org.vsegda.factory.PM;
 import org.vsegda.shared.DataStreamMode;
 
 import javax.servlet.ServletException;
@@ -38,7 +37,6 @@ public class DataServlet extends HttpServlet {
 
     @SuppressWarnings({"unchecked"})
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        PM.beginTransaction();
         List<DataItem> items = parseDataItems(req.getReader());
         // resolve all stream tags
         for (DataItem item : items)
