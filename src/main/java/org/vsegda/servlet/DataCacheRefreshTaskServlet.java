@@ -25,7 +25,7 @@ public class DataCacheRefreshTaskServlet extends HttpServlet {
         try {
             queue.add(TaskOptions.Builder
                     .withUrl("/task/dataCacheRefresh")
-                    .taskName("id=" + streamId)
+                    .taskName("id-" + streamId)
                     .param("id", String.valueOf(streamId)));
         } catch (TaskAlreadyExistsException e) {
             log.info("Task already exists");

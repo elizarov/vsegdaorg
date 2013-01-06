@@ -36,7 +36,7 @@ public class DataArchiveTaskServlet extends HttpServlet {
         try {
             queue.add(TaskOptions.Builder
                     .withUrl("/task/dataArchive")
-                    .taskName("id=" + streamId + ",seq=" + seq)
+                    .taskName("id-" + streamId + "-seq-" + seq)
                     .param("id", String.valueOf(streamId))
                     .param("seq", String.valueOf(seq)));
         } catch (TaskAlreadyExistsException e) {
