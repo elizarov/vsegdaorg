@@ -8,13 +8,21 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import java.io.Serializable;
+import java.util.Comparator;
 
 /**
  * @author Roman Elizarov
  */
 @PersistenceCapable
 public class DataItem implements Serializable {
-	@PrimaryKey
+    public static final Comparator<DataItem> ORDER_BY_TIME = new Comparator<DataItem>() {
+        @Override
+        public int compare(DataItem o1, DataItem o2) {
+            return o1.getTimeMillis() < o2.getTimeMillis() ? -1 : o1.getTimeMillis() > o2.getTimeMillis() ? 1 : 0;
+        }
+    };
+
+    @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     private Key key;
 

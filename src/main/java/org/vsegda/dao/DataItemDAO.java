@@ -26,13 +26,6 @@ public class DataItemDAO {
     private static final int INITIAL_LIST_CACHE_SIZE = 2000;
     private static final int MAX_LIST_SIZE = (int)(1.5 * INITIAL_LIST_CACHE_SIZE);
 
-    private static final Comparator<DataItem> ORDER_BY_TIME = new Comparator<DataItem>() {
-        @Override
-        public int compare(DataItem o1, DataItem o2) {
-            return o1.getTimeMillis() < o2.getTimeMillis() ? -1 : o1.getTimeMillis() > o2.getTimeMillis() ? 1 : 0;
-        }
-    };
-
     private static final Cache ITEM_BY_KEY_CACHE;
     private static final Cache LIST_CACHE;
 
@@ -55,8 +48,8 @@ public class DataItemDAO {
         if (entry != null) {
             entry.items.add(dataItem);
             int size = entry.items.size();
-            if (size >= 2 && ORDER_BY_TIME.compare(entry.items.get(size - 1), entry.items.get(size - 2)) < 0)
-                Collections.sort(entry.items, ORDER_BY_TIME);
+            if (size >= 2 && DataItem.ORDER_BY_TIME.compare(entry.items.get(size - 1), entry.items.get(size - 2)) < 0)
+                Collections.sort(entry.items, DataItem.ORDER_BY_TIME);
             if (size > MAX_LIST_SIZE)
                 entry.items.subList(0, size - INITIAL_LIST_CACHE_SIZE).clear();
             LIST_CACHE.put(dataItem.getStreamId(), entry);

@@ -56,9 +56,10 @@ public class DataRequest {
                 int s0 = result.size();
                 result.addAll(items);
                 List<DataItem> subList = result.subList(s0, result.size());
-                Collections.reverse(subList);
                 filter(subList);
             }
+            // reorder descending by time (it is stable, for order by ids is kept for same time)
+            Collections.sort(result, Collections.reverseOrder(DataItem.ORDER_BY_TIME));
         }
         log.info("Completed data query in " + (System.currentTimeMillis() - startTimeMillis) + " ms");
         return result;
