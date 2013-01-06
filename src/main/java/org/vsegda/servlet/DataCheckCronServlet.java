@@ -40,7 +40,7 @@ public class DataCheckCronServlet extends HttpServlet {
                         !firstItem.getKey().equals(stream.getLastItemKey()))
                 {
                     // need to archive
-                    DataArchiveTaskServlet.enqueueTask(stream.getStreamId());
+                    DataArchiveTaskServlet.enqueueTask(stream.getStreamId(), 0);
                 }
             }
         }

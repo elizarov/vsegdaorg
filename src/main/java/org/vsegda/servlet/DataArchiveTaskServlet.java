@@ -2,6 +2,7 @@ package org.vsegda.servlet;
 
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskAlreadyExistsException;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import org.vsegda.dao.DataStreamDAO;
 import org.vsegda.data.DataArchive;
@@ -28,18 +29,27 @@ import java.util.logging.Logger;
 public class DataArchiveTaskServlet extends HttpServlet {
     private static final Logger log = Logger.getLogger(DataArchiveTaskServlet.class.getName());
 
-    public static void enqueueTask(long streamId) {
-        log.info("Enqueueing data archive task for streamId=" + streamId);
+    public static void enqueueTask(long streamId, int seq) {
+        seq %= 2; // only 0 and 1
+        log.info("Enqueueing data archive task for id=" + streamId + ", seq=" + seq);
         Queue queue = QueueFactory.getQueue("archiveTaskQueue");
-        queue.add(TaskOptions.Builder
-                .withUrl("/task/dataArchive")
-                .param("id", String.valueOf(streamId)));
+        try {
+            queue.add(TaskOptions.Builder
+                    .withUrl("/task/dataArchive")
+                    .taskName("id=" + streamId + ",seq=" + seq)
+                    .param("id", String.valueOf(streamId))
+                    .param("seq", String.valueOf(seq)));
+        } catch (TaskAlreadyExistsException e) {
+            log.info("Task already exists");
+        }
     }
 
     @SuppressWarnings({"unchecked"})
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long streamId = Long.parseLong(req.getParameter("id"));
+        long streamId = Long.parseLong(req.getParameter("id"));
+        int seq = Integer.parseInt(req.getParameter("seq"));
+
         log.info("Archiving data for streamId=" + streamId);
         DataStream stream = PM.instance().getObjectById(DataStream.class, streamId);
         if (stream.getMode() == DataStreamMode.LAST) {
@@ -80,6 +90,6 @@ public class DataArchiveTaskServlet extends HttpServlet {
         stream.setFirstItemKey(null);
         PM.instance().deletePersistentAll(items);
         // create next task to check this stream
-        enqueueTask(streamId);
+        enqueueTask(streamId, seq + 1);
     }
 }
