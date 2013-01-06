@@ -86,6 +86,7 @@
       </classpath>
       <jvmarg value="-Xmx256M"/>
       <jvmarg value="-javaagent:${appengine.sdk}/lib/agent/appengine-agent.jar"/>
+      <jvmarg value="-Ddatastore.default_high_rep_job_policy_unapplied_job_pct=20"/>
       <arg value="-startupUrl"/>
       <arg value="admin"/>
       <arg value="-port"/>
