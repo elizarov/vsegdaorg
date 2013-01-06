@@ -23,8 +23,8 @@ import java.util.logging.Logger;
 public class DataItemDAO {
     private static final Logger log = Logger.getLogger(DataItemDAO.class.getName());
 
-    private static final int MAX_LIST_SIZE = 4000;
-    private static final int TRIM_LIST_SIZE = 3000;
+    private static final int INITIAL_LIST_CACHE_SIZE = 2000;
+    private static final int MAX_LIST_SIZE = (int)(1.5 * INITIAL_LIST_CACHE_SIZE);
 
     private static final Comparator<DataItem> ORDER_BY_TIME = new Comparator<DataItem>() {
         @Override
@@ -58,7 +58,7 @@ public class DataItemDAO {
             if (size >= 2 && ORDER_BY_TIME.compare(entry.items.get(size - 1), entry.items.get(size - 2)) < 0)
                 Collections.sort(entry.items, ORDER_BY_TIME);
             if (size > MAX_LIST_SIZE)
-                entry.items.subList(0, size - TRIM_LIST_SIZE).clear();
+                entry.items.subList(0, size - INITIAL_LIST_CACHE_SIZE).clear();
             LIST_CACHE.put(dataItem.getStreamId(), entry);
         }
     }
@@ -158,7 +158,7 @@ public class DataItemDAO {
     }
 
     public static void refreshCache(long streamId) {
-        performItemsQuery(streamId, null, 0, MAX_LIST_SIZE);
+        performItemsQuery(streamId, null, 0, INITIAL_LIST_CACHE_SIZE);
     }
 
     private static class ListEntry implements Serializable {
