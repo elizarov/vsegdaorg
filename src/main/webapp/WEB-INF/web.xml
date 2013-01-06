@@ -48,7 +48,7 @@
     <servlet-name>adminView</servlet-name>
     <url-pattern>/admin</url-pattern>
   </servlet-mapping>
-  
+
   <servlet>
     <servlet-name>dataView</servlet-name>
     <jsp-file>/WEB-INF/jsps/data.jsp</jsp-file>
@@ -158,4 +158,11 @@
     <servlet-name>messageCsv</servlet-name>
     <url-pattern>/message.csv</url-pattern>
   </servlet-mapping>
+
+  <!-- Preload cache on GAE warmup request -->
+
+  <servlet>
+    <servlet-name>_ah_warmup</servlet-name>
+    <servlet-class>org.vsegda.servlet.DataCacheRefreshCronServlet</servlet-class>
+  </servlet>
 </web-app>
