@@ -88,6 +88,8 @@
       <jvmarg value="-javaagent:${appengine.sdk}/lib/agent/appengine-agent.jar"/>
       <arg value="-startupUrl"/>
       <arg value="admin"/>
+      <arg value="-port"/>
+      <arg value="8080"/>
       <arg value="-server"/>
       <arg value="com.google.appengine.tools.development.gwt.AppEngineLauncher"/>
       <arg value="org.vsegda.admin"/>
