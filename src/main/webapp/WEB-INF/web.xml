@@ -106,6 +106,15 @@
   </servlet-mapping>
 
   <servlet>
+    <servlet-name>cronDataCacheRefresh</servlet-name>
+    <servlet-class>org.vsegda.servlet.DataCacheRefreshCronServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>cronDataCacheRefresh</servlet-name>
+    <url-pattern>/cron/dataCacheRefresh</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>taskDataArchive</servlet-name>
     <servlet-class>org.vsegda.servlet.DataArchiveTaskServlet</servlet-class>
   </servlet>

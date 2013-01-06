@@ -1,7 +1,6 @@
 package org.vsegda.dao;
 
 import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.memcache.jsr107cache.GCacheFactory;
 import net.sf.jsr107cache.Cache;
 import net.sf.jsr107cache.CacheException;
 import net.sf.jsr107cache.CacheFactory;
@@ -11,7 +10,6 @@ import org.vsegda.data.DataStream;
 import org.vsegda.factory.PM;
 import org.vsegda.shared.DataStreamMode;
 import org.vsegda.util.TimeInstant;
-import org.vsegda.util.TimeUtil;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.Query;
@@ -25,7 +23,6 @@ import java.util.logging.Logger;
 public class DataItemDAO {
     private static final Logger log = Logger.getLogger(DataItemDAO.class.getName());
 
-    private static final int LIST_CACHE_EXPIRATION_MILLIS = (int)(15 * TimeUtil.MINUTE);
     private static final int MAX_LIST_SIZE = 4000;
     private static final int TRIM_LIST_SIZE = 3000;
 
@@ -43,9 +40,7 @@ public class DataItemDAO {
         try {
             CacheFactory cf = CacheManager.getInstance().getCacheFactory();
             ITEM_BY_KEY_CACHE = cf.createCache(Collections.emptyMap());
-            Map<String, Object> props = new HashMap<String, Object>();
-            props.put(GCacheFactory.EXPIRATION_DELTA_MILLIS, LIST_CACHE_EXPIRATION_MILLIS);
-            LIST_CACHE = cf.createCache(props);
+            LIST_CACHE = cf.createCache(Collections.emptyMap());
         } catch (CacheException e) {
             throw new ExceptionInInitializerError(e);
         }

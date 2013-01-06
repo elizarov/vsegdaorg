@@ -5,4 +5,9 @@
     <description>Check data stream timeouts and archival needs</description>
     <schedule>every 15 minutes</schedule>
   </cron>
+  <cron>
+    <url>/cron/dataCacheRefresh</url>
+    <description>Update cache</description>
+    <schedule>every 12 hours</schedule>
+  </cron>
 </cronentries>
