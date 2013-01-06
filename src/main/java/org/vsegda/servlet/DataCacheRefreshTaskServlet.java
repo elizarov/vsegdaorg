@@ -2,7 +2,6 @@ package org.vsegda.servlet;
 
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
-import com.google.appengine.api.taskqueue.TaskAlreadyExistsException;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import org.vsegda.dao.DataItemDAO;
 
@@ -22,14 +21,9 @@ public class DataCacheRefreshTaskServlet extends HttpServlet {
     public static void enqueueTask(long streamId) {
         log.info("Enqueueing data cache refresh task for id=" + streamId);
         Queue queue = QueueFactory.getQueue("dataCacheRefreshTaskQueue");
-        try {
-            queue.add(TaskOptions.Builder
-                    .withUrl("/task/dataCacheRefresh")
-                    .taskName("id-" + streamId)
-                    .param("id", String.valueOf(streamId)));
-        } catch (TaskAlreadyExistsException e) {
-            log.info("Task already exists");
-        }
+        queue.add(TaskOptions.Builder
+                .withUrl("/task/dataCacheRefresh")
+                .param("id", String.valueOf(streamId)));
     }
 
     @Override
