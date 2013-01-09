@@ -96,7 +96,7 @@ public class DataItemDAO {
     /**
      * Returns a list of last data items in ASCENDING order.
      */
-    public static List<DataItem> listDataItems(DataStream stream, TimeInstant since, int first, int last) {
+    public static List<DataItem> listDataItems(DataStream stream, TimeInstant since, int n) {
         if (stream.getMode() == DataStreamMode.LAST) {
             DataItem theOne = getDataItemByKey(stream.getLastItemKey());
             if (theOne == null)
@@ -112,17 +112,17 @@ public class DataItemDAO {
                 while (start < size && entry.items.get(start).getTimeMillis() < since.time())
                     start++;
             }
-            if (entry.complete || start > 0 || size >= first + last)
+            if (entry.complete || start > 0 || size >= n)
                 // return from cache
                 return fillStream(stream,
-                        entry.items.subList(Math.max(start, size - first - last), Math.max(start, size - first)));
+                        entry.items.subList(Math.max(start, size - n), size));
         }
         // perform query
-        return fillStream(stream, performItemsQuery(stream.getStreamId(), since, first, last));
+        return fillStream(stream, performItemsQuery(stream.getStreamId(), since, n));
     }
 
     @SuppressWarnings({"unchecked"})
-    private static List<DataItem> performItemsQuery(long streamId, TimeInstant since, int first, int last) {
+    private static List<DataItem> performItemsQuery(long streamId, TimeInstant since, int n) {
         Query query = PM.instance().newQuery(DataItem.class);
         String queryFilter = "streamId == id";
         String queryParams = "long id";
@@ -136,12 +136,11 @@ public class DataItemDAO {
         query.setFilter(queryFilter);
         query.declareParameters(queryParams);
         query.setOrdering("timeMillis desc");
-        query.setRange(first, first + last);
-        query.getFetchPlan().setFetchSize(last);
+        query.setRange(0, n);
+        query.getFetchPlan().setFetchSize(n);
         List<DataItem> items = new ArrayList<DataItem>((Collection<DataItem>)query.executeWithMap(queryArgs));
         Collections.reverse(items); // turn descending into ascending order
-        if (first == 0)
-            LIST_CACHE.put(streamId, new ListEntry(items, items.size() < last));
+        LIST_CACHE.put(streamId, new ListEntry(items, items.size() < n));
         return items;
     }
 
@@ -152,7 +151,7 @@ public class DataItemDAO {
     }
 
     public static void refreshCache(long streamId) {
-        performItemsQuery(streamId, null, 0, INITIAL_LIST_CACHE_SIZE);
+        performItemsQuery(streamId, null, INITIAL_LIST_CACHE_SIZE);
     }
 
     private static class ListEntry implements Serializable {
