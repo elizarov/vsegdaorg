@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>vsegda.org | Data items | Plot</title>
+  <title>Data plot @ vsegda.org</title>
   <link rel="stylesheet" href="/style.css" type="text/css">
   <!--[if lte IE 8]>
   <script language="javascript" type="text/javascript" src="/js/excanvas.min.js"></script><![endif]-->
@@ -15,7 +15,11 @@
   <script language="javascript" type="text/javascript" src="/js/dataPlot.js"></script>
 </head>
 <body>
-<div class="par">Data Items | Plot</div>
+<div class="par">
+  <span class="hdr">Data Items<span>
+  | <span class="hdr">Plot</span>
+  [<a href="data?${pageContext.request.queryString}">Table</a>]
+</div>
 <div id="plot" class="flt" style="width:700px;height:300px;"></div>
 <div class="flt">
   <div id="legend"></div>

@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="/style.css" type="text/css">
 </head>
 <body>
-<div class="par">
+<div class="par hdr">
   Message items
 </div>
 <table class="par data">

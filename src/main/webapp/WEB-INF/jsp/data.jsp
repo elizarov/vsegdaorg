@@ -4,14 +4,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>vsegda.org | Data items</title>
+  <title>Data items @ vsegda.org</title>
   <link rel="stylesheet" href="/style.css" type="text/css">
 </head>
 <body>
 <div class="par">
-  Data Items
+  <span class="hdr">Data Items</span>
   <c:if test="${param.id != null}">
-    <a href="dataGraph?${pageContext.request.queryString}">Graph</a>
+    | <span class="hdr">Table</span>
+    [<a href="dataPlot?${pageContext.request.queryString}">Plot</a>]
   </c:if>
 </div>
 <table class="par data">

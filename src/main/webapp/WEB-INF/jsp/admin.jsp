@@ -3,7 +3,7 @@
 <head>
 <link type="text/css" rel="stylesheet" href="/style.css">
 <script type="text/javascript" language="javascript" src="admin/admin.nocache.js"></script>
-<title>vsegda.org | Admin</title>
+<title>Admin @ vsegda.org</title>
 </head>
 <body>
     <!-- OPTIONAL: include this if you want history support -->
@@ -17,7 +17,7 @@
       </div>
     </noscript>
 
-    <div class="par">Admin</div>
+    <div class="par hdr">Admin</div>
     <div class="par" id="actions"></div>
     <div class="par" id="table"></div>
     <div class="par" id="status"></div>
