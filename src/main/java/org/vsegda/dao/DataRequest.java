@@ -47,18 +47,8 @@ public class DataRequest {
         long startTimeMillis = System.currentTimeMillis();
         Map<DataStream, List<DataItem>> map = new LinkedHashMap<DataStream, List<DataItem>>();
         if (id == null) {
-            for (DataStream stream : DataStreamDAO.listDataStreams(first, last)) {
-                DataItem item = null;
-                if (stream.getLastItemKey() != null) {
-                    item = DataItemDAO.getDataItemByKey(stream.getLastItemKey());
-                    if (item == null)
-                        stream.setLastItemKey(null);
-                }
-                if (item == null)
-                    item = new DataItem(stream.getStreamId(), Double.NaN, 0);
-                item.setStream(stream);
-                map.put(stream, Collections.singletonList(item));
-            }
+            for (DataStream stream : DataStreamDAO.listDataStreams(first, last))
+                map.put(stream, Collections.singletonList(DataItemDAO.getLastDataItem(stream)));
         } else {
             for (String code : this.id) {
                 DataStream stream = DataStreamDAO.resolveDataStreamByCode(code, false);

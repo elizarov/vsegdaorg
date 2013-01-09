@@ -62,6 +62,13 @@ public class DataItem implements Serializable {
         this.timeMillis = timeMillis;
     }
 
+    public DataItem(DataStream stream, double value, int timeMillis) {
+        this.streamId = stream.getStreamId();
+        this.stream = stream;
+        this.value = value;
+        this.timeMillis = timeMillis;
+    }
+
     public Key getKey() {
         return key;
     }

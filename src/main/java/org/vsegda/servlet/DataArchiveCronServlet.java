@@ -1,5 +1,6 @@
 package org.vsegda.servlet;
 
+import org.vsegda.dao.DataItemDAO;
 import org.vsegda.dao.DataStreamDAO;
 import org.vsegda.data.DataArchive;
 import org.vsegda.data.DataItem;
@@ -29,7 +30,7 @@ public class DataArchiveCronServlet extends HttpServlet {
             if (stream.getMode() != DataStreamMode.LAST) {
                 DataItem firstItem = DataStreamDAO.findFirstItem(stream.getStreamId());
                 if (firstItem != null && firstItem.getTimeMillis() < threshold &&
-                        !firstItem.getKey().equals(stream.getLastItemKey()))
+                        !firstItem.getKey().equals(DataItemDAO.getLastDataItem(stream).getKey()))
                 {
                     // need to archive
                     DataArchiveTaskServlet.enqueueTask(stream.getStreamId());

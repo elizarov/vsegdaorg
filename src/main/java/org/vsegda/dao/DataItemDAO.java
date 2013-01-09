@@ -1,6 +1,5 @@
 package org.vsegda.dao;
 
-import com.google.appengine.api.datastore.Key;
 import net.sf.jsr107cache.Cache;
 import net.sf.jsr107cache.CacheException;
 import net.sf.jsr107cache.CacheFactory;
@@ -11,7 +10,6 @@ import org.vsegda.factory.PM;
 import org.vsegda.shared.DataStreamMode;
 import org.vsegda.util.TimeInstant;
 
-import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.Query;
 import java.io.Serializable;
 import java.util.*;
@@ -26,13 +24,11 @@ public class DataItemDAO {
     private static final int INITIAL_LIST_CACHE_SIZE = 2000;
     private static final int MAX_LIST_SIZE = (int)(1.5 * INITIAL_LIST_CACHE_SIZE);
 
-    private static final Cache ITEM_BY_KEY_CACHE;
     private static final Cache LIST_CACHE;
 
     static {
         try {
             CacheFactory cf = CacheManager.getInstance().getCacheFactory();
-            ITEM_BY_KEY_CACHE = cf.createCache(Collections.emptyMap());
             LIST_CACHE = cf.createCache(Collections.emptyMap());
         } catch (CacheException e) {
             throw new ExceptionInInitializerError(e);
@@ -43,7 +39,6 @@ public class DataItemDAO {
 
     public static void persistDataItem(DataItem dataItem) {
         PM.instance().makePersistent(dataItem);
-        ITEM_BY_KEY_CACHE.put(dataItem.getKey(), dataItem);
         ListEntry entry = (ListEntry) LIST_CACHE.get(dataItem.getStreamId());
         if (entry != null) {
             entry.items.add(dataItem);
@@ -56,54 +51,22 @@ public class DataItemDAO {
         }
     }
 
-    public static void deleteDataItem(DataItem dataItem) {
-        ITEM_BY_KEY_CACHE.remove(dataItem.getKey());
-        if (!((javax.jdo.spi.PersistenceCapable)dataItem).jdoIsPersistent()) {
-            // data item came from cache -- reload
-            dataItem = performGetDataItemByKey(dataItem.getKey());
-            if (dataItem == null)
-                return; // already removed
-        }
-        PM.instance().deletePersistent(dataItem);
-    }
-
     public static void persistDataItems(List<DataItem> items) {
         for (DataItem item : items)
             persistDataItem(item);
     }
 
-    public static DataItem getDataItemByKey(Key key) {
-        if (key == null)
-            return null;
-        DataItem dataItem = (DataItem) ITEM_BY_KEY_CACHE.get(key);
-        if (dataItem != null)
-            return dataItem;
-        dataItem = performGetDataItemByKey(key);
-        if (dataItem != null)
-            ITEM_BY_KEY_CACHE.put(key, dataItem);
-        return dataItem;
-    }
-
-    private static DataItem performGetDataItemByKey(Key key) {
-        try {
-            return PM.instance().getObjectById(DataItem.class, key);
-        } catch (JDOObjectNotFoundException e) {
-            log.info("Data item is not found by key=" + key);
-            return null;
-        }
+    public static DataItem getLastDataItem(DataStream stream) {
+        List<DataItem> items = listDataItems(stream, null, 1);
+        return items.isEmpty() ? new DataItem(stream, Double.NaN, 0) : items.get(0);
     }
 
     /**
      * Returns a list of last data items in ASCENDING order.
      */
     public static List<DataItem> listDataItems(DataStream stream, TimeInstant since, int n) {
-        if (stream.getMode() == DataStreamMode.LAST) {
-            DataItem theOne = getDataItemByKey(stream.getLastItemKey());
-            if (theOne == null)
-                return Collections.emptyList();
-            theOne.setStream(stream);
-            return Collections.singletonList(theOne);
-        }
+        if (stream.getMode() == DataStreamMode.LAST)
+            n = 1;
         ListEntry entry = (ListEntry) LIST_CACHE.get(stream.getStreamId());
         if (entry != null) {
             int start = 0;

@@ -1,6 +1,5 @@
 package org.vsegda.data;
 
-import com.google.appengine.api.datastore.Key;
 import org.vsegda.shared.DataStreamMode;
 
 import javax.jdo.annotations.PersistenceCapable;
@@ -26,9 +25,6 @@ public class DataStream implements Serializable {
 
     @Persistent
     private String name = "";
-
-    @Persistent
-    private Key lastItemKey;
 
     @Persistent
     private Long alertTimeout;
@@ -82,14 +78,6 @@ public class DataStream implements Serializable {
 
     public void setName(String name) {
         this.name = name == null ? "" : name.trim();
-    }
-
-    public Key getLastItemKey() {
-        return lastItemKey;
-    }
-
-    public void setLastItemKey(Key lastItemKey) {
-        this.lastItemKey = lastItemKey;
     }
 
     public Long getAlertTimeout() {

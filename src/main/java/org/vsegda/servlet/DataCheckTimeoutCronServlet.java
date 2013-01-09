@@ -1,9 +1,9 @@
 package org.vsegda.servlet;
 
+import org.vsegda.dao.DataItemDAO;
 import org.vsegda.dao.DataStreamDAO;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
-import org.vsegda.factory.PM;
 import org.vsegda.service.Alert;
 
 import javax.servlet.ServletException;
@@ -25,8 +25,8 @@ public class DataCheckTimeoutCronServlet extends HttpServlet {
         long startTimeMillis = System.currentTimeMillis();
         for (DataStream stream : DataStreamDAO.listDataStreams()) {
             // check for data update timeout
-            if (stream.getAlertTimeout() != null && stream.getLastItemKey() != null) {
-                DataItem item = (DataItem) PM.instance().getObjectById(stream.getLastItemKey());
+            if (stream.getAlertTimeout() != null) {
+                DataItem item = DataItemDAO.getLastDataItem(stream);
                 if (startTimeMillis - item.getTimeMillis() > stream.getAlertTimeout())
                     Alert.sendAlertEmail(stream.getCode(), "Data update timeout");
             }

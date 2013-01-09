@@ -4,8 +4,6 @@ import org.vsegda.dao.DataItemDAO;
 import org.vsegda.dao.DataRequest;
 import org.vsegda.dao.DataStreamDAO;
 import org.vsegda.data.DataItem;
-import org.vsegda.data.DataStream;
-import org.vsegda.shared.DataStreamMode;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -43,26 +41,6 @@ public class DataServlet extends HttpServlet {
             item.setStream(DataStreamDAO.resolveDataStream(item.getStream()));
         // persist all items
         DataItemDAO.persistDataItems(items);
-        // update all streams
-        for (DataItem item : items) {
-            DataStream stream = item.getStream();
-            // update last item key
-            if (stream.getLastItemKey() != null) {
-                DataItem lastItem = DataItemDAO.getDataItemByKey(stream.getLastItemKey());
-                if (lastItem == null)
-                    stream.setLastItemKey(item.getKey()); // something wrong -- update to cur item
-                else {
-                    // remove last item in LAST mode
-                    if (stream.getMode() == DataStreamMode.LAST) {
-                        stream.setLastItemKey(null);
-                        DataItemDAO.deleteDataItem(lastItem);
-                        stream.setLastItemKey(item.getKey());
-                    } else if (item.getTimeMillis() >= lastItem.getTimeMillis())
-                        stream.setLastItemKey(item.getKey());
-                }
-            } else
-                stream.setLastItemKey(item.getKey());
-        }
     }
 
     private List<DataItem> parseDataItems(BufferedReader in) throws IOException {

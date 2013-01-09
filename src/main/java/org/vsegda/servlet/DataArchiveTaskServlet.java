@@ -3,6 +3,7 @@ package org.vsegda.servlet;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
+import org.vsegda.dao.DataItemDAO;
 import org.vsegda.dao.DataStreamDAO;
 import org.vsegda.data.DataArchive;
 import org.vsegda.data.DataItem;
@@ -60,7 +61,7 @@ public class DataArchiveTaskServlet extends HttpServlet {
         List<DataItem> items = new ArrayList<DataItem>((Collection<DataItem>) query.execute(streamId, limit));
 
         // never remove or archive the last item !!!
-        if (!items.isEmpty() && items.get(items.size() - 1).getKey().equals(stream.getLastItemKey()))
+        if (!items.isEmpty() && items.get(items.size() - 1).getKey().equals(DataItemDAO.getLastDataItem(stream).getKey()))
             items.remove(items.size() - 1);
         if (items.isEmpty()) {
             log.warning("No items to archive");
