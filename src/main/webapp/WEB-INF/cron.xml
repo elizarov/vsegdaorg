@@ -8,7 +8,7 @@
   <cron>
     <url>/cron/dataArchive</url>
     <description>Check data archival needs</description>
-    <schedule>every 1 day</schedule>
+    <schedule>every 24 hours</schedule>
   </cron>
   <cron>
     <url>/cron/dataCacheRefresh</url>
