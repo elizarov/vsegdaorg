@@ -75,6 +75,10 @@ public class DataStream implements Serializable {
                 String.valueOf(streamId);
     }
 
+    public String getNameOrCode() {
+        return name.isEmpty() ? getCode() : name;
+    }
+
     public String getName() {
         return name;
     }

@@ -99,9 +99,10 @@ public class DataItemDAO {
     public static List<DataItem> listDataItems(DataStream stream, TimeInstant since, int first, int last) {
         if (stream.getMode() == DataStreamMode.LAST) {
             DataItem theOne = getDataItemByKey(stream.getLastItemKey());
-            return theOne != null ?
-                    Collections.<DataItem>singletonList(theOne) :
-                    Collections.<DataItem>emptyList();
+            if (theOne == null)
+                return Collections.emptyList();
+            theOne.setStream(stream);
+            return Collections.singletonList(theOne);
         }
         ListEntry entry = (ListEntry) LIST_CACHE.get(stream.getStreamId());
         if (entry != null) {

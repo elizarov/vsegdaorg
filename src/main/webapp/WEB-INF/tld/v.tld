@@ -15,6 +15,15 @@
     </variable>
   </tag>
   <tag>
+    <name>dataStreams</name>
+    <tag-class>org.vsegda.tags.DataStreamsTag</tag-class>
+    <body-content>scriptless</body-content>
+    <variable>
+      <name-given>stream</name-given>
+      <variable-class>org.vsegda.data.DataStream</variable-class>
+    </variable>
+  </tag>
+  <tag>
     <name>dataItems</name>
     <tag-class>org.vsegda.tags.DataItemsTag</tag-class>
     <body-content>scriptless</body-content>

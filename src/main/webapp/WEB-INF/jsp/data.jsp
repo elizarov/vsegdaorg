@@ -28,7 +28,7 @@
     <tr class="${item.formatClass}">
       <c:choose>
         <c:when test="${param.id == null}">
-          <td><a href="?id=${item.stream.code}"><c:out value="${item.stream.code}"/></a></td>
+          <td><a href="/dataPlot?id=${item.stream.code}"><c:out value="${item.stream.code}"/></a></td>
         </c:when>
         <c:otherwise>
           <td><c:out value="${item.stream.code}"/></td>

@@ -77,6 +77,15 @@
     <url-pattern>/dataGraph</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>dataPlotView</servlet-name>
+    <jsp-file>/WEB-INF/jsp/dataPlot.jsp</jsp-file>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>dataPlotView</servlet-name>
+    <url-pattern>/dataPlot</url-pattern>
+  </servlet-mapping>
+
   <!-- Other servlets -->
 
   <servlet>
