@@ -49,30 +49,30 @@ $(function () {
         updateLegendTimeout = null;
         var axes = plot.getAxes();
         var legend = $("#legend .legendLabel");
-        var lastTime = 0;
+        var time = axes.xaxis.max;
         for (var i = 0; i < data.length; ++i) {
             var series = data[i];
             var lastData = series.data[series.data.length - 1];
-            lastTime = Math.max(lastTime, lastData[0]);
             var y = lastData[1];
             if (lastPos !== null) {
-                if (lastPos.x < axes.xaxis.min)
+                if (lastPos.x < axes.xaxis.min) {
+                    time = axes.xaxis.min;
                     y = series.data[0][1];
-                else for (var j = 0; j < series.data.length; ++j)
-                    if (series.data[j][0] > lastPos.x) {
-                        y = series.data[j][1];
-                        break;
-                    }
+                } else if (lastPos.x < axes.xaxis.max) {
+                    time = lastPos.x;
+                    for (var j = 0; j < series.data.length; ++j)
+                        if (series.data[j][0] > lastPos.x) {
+                            y = series.data[j][1];
+                            break;
+                        }
+                }
             }
             var node = legend.eq(i);
             node.html("<span class='legendValue'></span><span class='legendText'></span>");
             node.children(".legendValue").text(y);
             node.children(".legendText").text(series.label);
         }
-        if (lastPos === null)
-            $("#time").text("Last time: " + fmtTime(lastTime))
-        else
-            $("#time").text("At time: " + fmtTime(lastPos.x))
+        $("#time").text("time: " + fmtTime(time))
     }
 
     function scheduleUpdateLegend(pos) {
