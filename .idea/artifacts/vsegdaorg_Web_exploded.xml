@@ -12,6 +12,7 @@
           <element id="library" level="project" name="jakarta-taglibs-standard-1.1.2" />
           <element id="library" level="project" name="commons-beanutils-1.7.0" />
           <element id="library" level="application" name="gwt-servlet" />
+          <element id="library" level="project" name="commons-lang3-3.1" />
         </element>
       </element>
       <element id="gwt-compiler-output" facet="vsegdaorg/gwt/GWT" />
