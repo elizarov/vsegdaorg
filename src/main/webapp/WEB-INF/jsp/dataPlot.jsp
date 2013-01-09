@@ -17,7 +17,10 @@
 <body>
 <div class="par">Data Items | Plot</div>
 <div id="plot" class="flt" style="width:700px;height:300px;"></div>
-<div id="legend" class="flt"></div>
+<div class="flt">
+  <div id="legend"></div>
+  <span id="time" style="font-size:smaller"></span>
+</div>
 <div id="overview" class="clear" style="width:700px;height:60px;"></div>
 
 <script>

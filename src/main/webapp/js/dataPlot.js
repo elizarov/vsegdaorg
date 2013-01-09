@@ -38,13 +38,23 @@ $(function () {
     var updateLegendTimeout = null;
     var lastPos = null;
 
+    function fmtTime(time) {
+        var d = new Date(time);
+        return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + " " +
+                d.getHours() + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2);
+
+    }
+
     function updateLegend() {
         updateLegendTimeout = null;
         var axes = plot.getAxes();
         var legend = $("#legend .legendLabel");
+        var lastTime = 0;
         for (var i = 0; i < data.length; ++i) {
             var series = data[i];
-            var y = series.data[series.data.length - 1][1];
+            var lastData = series.data[series.data.length - 1];
+            lastTime = Math.max(lastTime, lastData[0]);
+            var y = lastData[1];
             if (lastPos !== null) {
                 if (lastPos.x < axes.xaxis.min)
                     y = series.data[0][1];
@@ -59,6 +69,10 @@ $(function () {
             node.children(".legendValue").text(y);
             node.children(".legendText").text(series.label);
         }
+        if (lastPos === null)
+            $("#time").text("Last time: " + fmtTime(lastTime))
+        else
+            $("#time").text("At time: " + fmtTime(lastPos.x))
     }
 
     function scheduleUpdateLegend(pos) {
