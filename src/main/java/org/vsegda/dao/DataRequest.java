@@ -59,7 +59,7 @@ public class DataRequest {
             }
         } else {
             for (String code : this.id) {
-                DataStream stream = DataStreamDAO.resolveDataStreamByCode(code);
+                DataStream stream = DataStreamDAO.resolveDataStreamByCode(code, false);
                 List<DataItem> items = new ArrayList<DataItem>(DataItemDAO.listDataItems(stream, since, first, last));
                 filter(items);
                 map.put(stream, items);

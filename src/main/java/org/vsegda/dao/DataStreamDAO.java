@@ -35,7 +35,7 @@ public class DataStreamDAO {
         return new ArrayList<DataStream>((Collection<DataStream>) query.execute());
     }
 
-    public static DataStream resolveDataStreamByCode(String code) {
+    public static DataStream resolveDataStreamByCode(String code, boolean createIfAbsent) {
         int i = code.lastIndexOf(DataStream.TAG_ID_SEPARATOR);
         String id;
         if (i >= 0)
@@ -43,15 +43,15 @@ public class DataStreamDAO {
         else
             id = code;
         try {
-            return resolveDataStreamById(Long.parseLong(id));
+            return resolveDataStreamById(Long.parseLong(id), createIfAbsent);
         } catch (NumberFormatException e) {
             // ignore and try to find by tag
         }
-        return resolveDataStreamByTag(code);
+        return resolveDataStreamByTag(code, createIfAbsent);
     }
 
     @SuppressWarnings({"unchecked"})
-    public static DataStream resolveDataStreamByTag(String tag) {
+    public static DataStream resolveDataStreamByTag(String tag, boolean createIfAbsent) {
         Query query = PM.instance().newQuery(DataStream.class);
         query.setOrdering("streamId asc");
         query.declareParameters("String code");
@@ -59,6 +59,8 @@ public class DataStreamDAO {
         Collection<DataStream> streams = (Collection<DataStream>) query.execute(tag);
         DataStream stream;
         if (streams.isEmpty()) {
+            if (!createIfAbsent)
+                return null;
             log.info("Creating new data stream with tag=" + tag);
             // find last stream
             query = PM.instance().newQuery(DataStream.class);
@@ -74,10 +76,12 @@ public class DataStreamDAO {
         return stream;
     }
 
-    public static DataStream resolveDataStreamById(long id) {
+    public static DataStream resolveDataStreamById(long id, boolean createIfAbsent) {
         try {
             return PM.instance().getObjectById(DataStream.class, id);
         } catch (JDOObjectNotFoundException e) {
+            if (!createIfAbsent)
+                return null;
             log.info("Creating new data stream with id=" + id);
             DataStream stream = new DataStream(id);
             PM.instance().makePersistent(stream);
@@ -87,8 +91,8 @@ public class DataStreamDAO {
 
     public static DataStream resolveDataStream(DataStream stream) {
         return stream.getStreamId() != null ?
-                resolveDataStreamById(stream.getStreamId()) :
-                resolveDataStreamByCode(stream.getTag());
+                resolveDataStreamById(stream.getStreamId(), true) :
+                resolveDataStreamByCode(stream.getTag(), true);
     }
 
     @SuppressWarnings({"unchecked"})

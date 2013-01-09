@@ -30,7 +30,7 @@ public class DataCheckCronServlet extends HttpServlet {
             if (stream.getAlertTimeout() != null && stream.getLastItemKey() != null) {
                 DataItem item = (DataItem) PM.instance().getObjectById(stream.getLastItemKey());
                 if (startTimeMillis - item.getTimeMillis() > stream.getAlertTimeout())
-                    Alert.sendAlertEmail("" + stream.getStreamId(), "Data update timeout");
+                    Alert.sendAlertEmail(stream.getCode(), "Data update timeout");
             }
             // check for archive or purge (find non-recent items)
             long threshold = System.currentTimeMillis() - DataArchive.RECENT_TIME_INTERVAL - 2 * DataArchive.ARCHIVE_INTERVAL;

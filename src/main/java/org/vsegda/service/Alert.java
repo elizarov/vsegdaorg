@@ -1,5 +1,8 @@
 package org.vsegda.service;
 
+import org.vsegda.dao.DataStreamDAO;
+import org.vsegda.data.DataStream;
+
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -13,13 +16,14 @@ import java.util.Properties;
  * @author Roman Elizarov
  */
 public class Alert {
-    public static void sendAlertEmail(String id, String text) throws IOException {
+    public static void sendAlertEmail(String code, String text) throws IOException {
         Session session = Session.getDefaultInstance(new Properties(), null);
         String subject = "ALERT: " + text;
         String body = text;
-        if (id != null) {
-            subject += " (" + id + ")";
-            body += "\nhttp://apps.vsegda.org/dataGraph?id=" + id;
+        if (code != null) {
+            DataStream stream = DataStreamDAO.resolveDataStreamByCode(code, false);
+            subject += ": " + (stream != null ? stream.getNameOrCode() : code);
+            body += "\nhttp://apps.vsegda.org/dataPlot?id=" + code;
         }
         try {
             Message msg = new MimeMessage(session);

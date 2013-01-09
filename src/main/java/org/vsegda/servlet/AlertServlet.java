@@ -19,6 +19,5 @@ public class AlertServlet extends HttpServlet {
 			throw new ServletException("text parameter required");
 		String id = req.getParameter("id");
 		Alert.sendAlertEmail(id, text);
-		
 	}
 }

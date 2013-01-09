@@ -48,7 +48,7 @@ public class AdminServiceImpl extends RemoteServiceServlet implements AdminServi
         log.info("Updating data stream " + ReflectionToStringBuilder.toString(sd, ToStringStyle.SHORT_PREFIX_STYLE));
         // update stream
         PM.beginTransaction();
-        DataStream stream = DataStreamDAO.resolveDataStreamById(sd.getId());
+        DataStream stream = DataStreamDAO.resolveDataStreamById(sd.getId(), true);
         stream.setTag(sd.getTag());
         stream.setName(sd.getName());
         stream.setAlertTimeout(TimePeriod.valueOf(sd.getAlert()).periodOrNull());
