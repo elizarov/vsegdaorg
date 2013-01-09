@@ -33,6 +33,11 @@ table.data th, .th {
     font-weight: bold;
 }
 
+.legendValue {
+    float: left;
+    width: 40px;
+}
+
 .flt {
     float: left;
 }

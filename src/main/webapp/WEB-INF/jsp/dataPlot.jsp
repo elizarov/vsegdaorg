@@ -12,6 +12,7 @@
   <script language="javascript" type="text/javascript" src="/js/jquery.flot.time.js"></script>
   <script language="javascript" type="text/javascript" src="/js/jquery.flot.selection.js"></script>
   <script language="javascript" type="text/javascript" src="/js/jquery.flot.crosshair.js"></script>
+  <script language="javascript" type="text/javascript" src="/js/dataPlot.js"></script>
 </head>
 <body>
 <div class="par">Data Items | Plot</div>
@@ -32,52 +33,6 @@
     },
     </v:dataStreams>
   ];
-
-  $(function () {
-    var marginLeft = 50;
-    var marginRight = 30;
-
-    var plotOptions = {
-      xaxis: { mode: "time", timezone: "browser" },
-      yaxes: [
-        { labelWidth: marginLeft, reserveSpace: true },
-        { labelWidth: marginRight, reserveSpace: true, position: "right" }
-      ],
-      legend: { container: "#legend" },
-      selection: { mode: "x" }
-    };
-
-    var overviewOptions = {
-      series: {
-        lines: { show: true, lineWidth: 1 },
-        shadowSize: 0
-      },
-      xaxis: { mode: "time", ticks: [] },
-      yaxes: [
-        { labelWidth: marginLeft, reserveSpace: true, ticks: [] },
-        { labelWidth: marginRight, reserveSpace: true, ticks: [], position: "right" }
-      ],
-      legend: { show: false },
-      selection: { mode: "x" }
-    };
-
-    var plot = $.plot($("#plot"), data, plotOptions);
-    var overview = null; // show overview on first zoom
-
-    $("#plot").bind("plotselected", function (event, ranges) {
-      plot = $.plot($("#plot"), data,
-          $.extend(true, {}, plotOptions, {
-            xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to }
-          }));
-      if (overview === null)
-        overview = $.plot($("#overview"), [data[0]], overviewOptions);
-      overview.setSelection(ranges, true);
-    });
-
-    $("#overview").bind("plotselected", function (event, ranges) {
-      plot.setSelection(ranges);
-    });
-  });
 </script>
 </body>
 </html>
