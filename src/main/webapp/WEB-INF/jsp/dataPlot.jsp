@@ -11,6 +11,7 @@
   <script language="javascript" type="text/javascript" src="/js/jquery.flot.js"></script>
   <script language="javascript" type="text/javascript" src="/js/jquery.flot.time.js"></script>
   <script language="javascript" type="text/javascript" src="/js/jquery.flot.selection.js"></script>
+  <script language="javascript" type="text/javascript" src="/js/jquery.flot.crosshair.js"></script>
 </head>
 <body>
 <div class="par">Data Items | Plot</div>
