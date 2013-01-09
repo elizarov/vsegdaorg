@@ -30,6 +30,7 @@ public class DataArchiveTest extends TestCase {
         put.add(new DataItem(sid, 12.0, TimeUtil.parseTime("20120101T160500.000", 0)));
         // encode
         archive.encodeItems(put);
+        assertEquals(put.size(), archive.getCount());
         // decode
         List<DataItem> got = archive.getItems();
         assertEquals(put.size(), got.size());

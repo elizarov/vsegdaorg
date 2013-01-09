@@ -116,8 +116,7 @@ public class DataArchive {
 
     // encodes only up to a limit. Use getCount
     public void encodeItems(Collection<DataItem> items) {
-        count = items.size();
-        if (count == 0)
+        if (items.isEmpty())
             throw new IllegalArgumentException("empty");
         Iterator<DataItem> it = items.iterator();
         DataItem firstItem = it.next();
@@ -126,6 +125,7 @@ public class DataArchive {
         firstTimeMillis = encoder.getLastTimeMillis();
         highValue = firstValue;
         lowValue = firstValue;
+        count = 1;
         int lastGoodSize = encoder.size();
         while (it.hasNext()) {
             DataItem item = it.next();
@@ -138,6 +138,7 @@ public class DataArchive {
             lastGoodSize = size;
             highValue = Math.max(highValue, value);
             lowValue = Math.min(lowValue, value);
+            count++;
         }
         encodedItems = encoder.toByteArray(lastGoodSize);
     }
