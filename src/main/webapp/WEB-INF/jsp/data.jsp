@@ -13,6 +13,7 @@
   <c:if test="${param.id != null}">
     | <span class="hdr">Table</span>
     [<a href="dataPlot?${pageContext.request.queryString}">Plot</a>]
+    [<a href="data">Up</a>]
   </c:if>
 </div>
 <table class="par data">

@@ -19,6 +19,7 @@
   <span class="hdr">Data Items<span>
   | <span class="hdr">Plot</span>
   [<a href="data?${pageContext.request.queryString}">Table</a>]
+  [<a href="data">Up</a>]
 </div>
 <div id="plot" class="flt" style="width:700px;height:300px;"></div>
 <div class="flt">
