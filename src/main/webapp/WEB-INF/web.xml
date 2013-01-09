@@ -143,15 +143,6 @@
   </servlet-mapping>
 
   <servlet>
-    <servlet-name>dataSource</servlet-name>
-    <servlet-class>org.vsegda.servlet.DataItemSourceServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>dataSource</servlet-name>
-    <url-pattern>/dataSource</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
     <servlet-name>dataCsv</servlet-name>
     <servlet-class>org.vsegda.servlet.DataServlet</servlet-class>
   </servlet>
