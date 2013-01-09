@@ -50,8 +50,10 @@
     <orderEntry type="library" scope="PROVIDED" name="appengine-shared" level="application" />
     <orderEntry type="library" name="appengine-user" level="application" />
     <orderEntry type="library" name="jakarta-taglibs-standard-1.1.2" level="project" />
-    <orderEntry type="library" name="visualization-datasource-1.0.2" level="project" />
     <orderEntry type="library" name="commons-beanutils-1.7.0" level="project" />
+    <orderEntry type="library" name="commons-lang3-3.1" level="project" />
+    <orderEntry type="library" name="gwt-user" level="application" />
+    <orderEntry type="library" name="gwt-servlet" level="application" />
     <orderEntry type="module-library" scope="TEST">
       <library>
         <CLASSES>
@@ -61,8 +63,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="gwt-user" level="application" />
-    <orderEntry type="library" name="gwt-servlet" level="application" />
   </component>
 </module>
 

@@ -10,7 +10,6 @@
         <element id="directory" name="lib">
           <element id="library" level="application" name="appengine-user" />
           <element id="library" level="project" name="jakarta-taglibs-standard-1.1.2" />
-          <element id="library" level="project" name="visualization-datasource-1.0.2" />
           <element id="library" level="project" name="commons-beanutils-1.7.0" />
           <element id="library" level="application" name="gwt-servlet" />
         </element>
