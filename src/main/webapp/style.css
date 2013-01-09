@@ -34,11 +34,15 @@ table.data th, .th {
 }
 
 .flt {
-    float: left !important;
+    float: left;
 }
 
 .frt {
-    float: right !important;
+    float: right;
+}
+
+.clear {
+    clear: both;
 }
 
 .mrt {

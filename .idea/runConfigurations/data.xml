@@ -2,6 +2,7 @@
   <configuration default="false" name="data" type="GoogleAppEngineDevServer" factoryName="Local" APPLICATION_SERVER_NAME="AppEngine Dev">
     <option name="OPEN_IN_BROWSER_URL" value="http://localhost:8080/data" />
     <option name="COMMON_VM_ARGUMENTS" value="-Ddatastore.default_high_rep_job_policy_unapplied_job_pct=20" />
+    <option name="SHOW_DIALOG_ON_UPDATE" value="false" />
     <option name="UPDATING_POLICY" value="update-resources" />
     <server-settings>
       <option name="artifact" value="vsegdaorg:Web exploded" />
