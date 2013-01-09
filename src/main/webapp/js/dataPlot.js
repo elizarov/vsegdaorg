@@ -1,3 +1,5 @@
+var data = []; // will be set by the JSP
+
 $(function () {
     var marginLeft = 20;
     var marginRight = 40;
@@ -6,7 +8,7 @@ $(function () {
         xaxis: { mode: "time", timezone: "browser" },
         yaxes: [
             { labelWidth: marginRight, reserveSpace: true, position: "right" },
-            { labelWidth: marginLeft, reserveSpace: true },
+            { labelWidth: marginLeft, reserveSpace: true }
         ],
         legend: { container: "#legend" },
         selection: { mode: "x" },
@@ -22,7 +24,7 @@ $(function () {
         xaxis: { mode: "time", ticks: [] },
         yaxes: [
             { labelWidth: marginRight, reserveSpace: true, ticks: [], position: "right" },
-            { labelWidth: marginLeft, reserveSpace: true, ticks: [] },
+            { labelWidth: marginLeft, reserveSpace: true, ticks: [] }
         ],
         legend: { show: false },
         selection: { mode: "x" },
@@ -46,7 +48,7 @@ $(function () {
             if (lastPos !== null) {
                 if (lastPos.x < axes.xaxis.min)
                     y = series.data[0][1];
-                else for (j = 0; j < series.data.length; ++j)
+                else for (var j = 0; j < series.data.length; ++j)
                     if (series.data[j][0] > lastPos.x) {
                         y = series.data[j][1];
                         break;

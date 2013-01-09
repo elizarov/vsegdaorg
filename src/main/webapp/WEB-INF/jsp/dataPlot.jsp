@@ -21,7 +21,7 @@
 <div id="overview" class="clear" style="width:700px;height:60px;"></div>
 
 <script>
-  var data = [
+  data = [
     <v:dataStreams>
     {
       label: "<c:out value="${stream.nameOrCode}"/>",
