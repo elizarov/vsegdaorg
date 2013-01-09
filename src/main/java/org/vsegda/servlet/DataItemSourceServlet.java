@@ -34,7 +34,7 @@ public class DataItemSourceServlet extends DataSourceServlet {
     };
 
     public DataTable generateDataTable(Query query, HttpServletRequest req) throws DataSourceException {
-        List<DataItem> items = new DataRequest(req).query();
+        List<DataItem> items = new DataRequest(req).queryListDescending();
         Collections.sort(items, ORDER_BY_TIME_ID);
         SortedSet<Long> ids = new TreeSet<Long>();
         for (DataItem item : items) {

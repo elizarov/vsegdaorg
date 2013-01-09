@@ -8,9 +8,7 @@ import org.vsegda.util.IdList;
 import org.vsegda.util.TimeInstant;
 
 import javax.servlet.ServletRequest;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -31,11 +29,21 @@ public class DataRequest {
         RequestUtil.populate(this, req);
 	}
 
+    public List<DataItem> queryListDescending() {
+        Map<DataStream, List<DataItem>> map = queryMapAscending();
+        List<DataItem> result = new ArrayList<DataItem>();
+        for (List<DataItem> list : map.values())
+            result.addAll(list);
+        // reorder descending by time (it is stable, for order by ids is kept for same time)
+        Collections.sort(result, Collections.reverseOrder(DataItem.ORDER_BY_TIME));
+        return result;
+    }
+
     @SuppressWarnings({"unchecked"})
-    public List<DataItem> query() {
+    public Map<DataStream, List<DataItem>> queryMapAscending() {
         log.info("Performing data query " + this);
         long startTimeMillis = System.currentTimeMillis();
-        List<DataItem> result = new ArrayList<DataItem>();
+        Map<DataStream, List<DataItem>> map = new LinkedHashMap<DataStream, List<DataItem>>();
         if (id == null) {
             for (DataStream stream : DataStreamDAO.listDataStreams(first, last)) {
                 DataItem item = null;
@@ -47,22 +55,18 @@ public class DataRequest {
                 if (item == null)
                     item = new DataItem(stream.getStreamId(), Double.NaN, 0);
                 item.setStream(stream);
-                result.add(item);
+                map.put(stream, Collections.singletonList(item));
             }
         } else {
             for (String code : this.id) {
                 DataStream stream = DataStreamDAO.resolveDataStreamByCode(code);
-                List<DataItem> items = DataItemDAO.listDataItems(stream, since, first, last);
-                int s0 = result.size();
-                result.addAll(items);
-                List<DataItem> subList = result.subList(s0, result.size());
-                filter(subList);
+                List<DataItem> items = new ArrayList<DataItem>(DataItemDAO.listDataItems(stream, since, first, last));
+                filter(items);
+                map.put(stream, items);
             }
-            // reorder descending by time (it is stable, for order by ids is kept for same time)
-            Collections.sort(result, Collections.reverseOrder(DataItem.ORDER_BY_TIME));
         }
         log.info("Completed data query in " + (System.currentTimeMillis() - startTimeMillis) + " ms");
-        return result;
+        return map;
     }
 
     private void filter(List<DataItem> items) {

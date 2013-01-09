@@ -8,8 +8,6 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,14 +19,7 @@ public class DataStreamsTag extends SimpleTagSupport {
     @Override
     public void doTag() throws JspException, IOException {
         PageContext ctx = (PageContext)getJspContext();
-        List<DataItem> list = new DataRequest(ctx.getRequest()).query();
-        Map<DataStream, List<DataItem>> streamItemsMap = new HashMap<DataStream, List<DataItem>>();
-        for (DataItem item : list) {
-            List<DataItem> items = streamItemsMap.get(item.getStream());
-            if (items == null)
-                streamItemsMap.put(item.getStream(), items = new ArrayList<DataItem>());
-            items.add(item);
-        }
+        Map<DataStream, List<DataItem>> streamItemsMap = new DataRequest(ctx.getRequest()).queryMapAscending();
         ctx.setAttribute("streamItemsMap", streamItemsMap);
         for (DataStream stream : streamItemsMap.keySet()) {
             ctx.setAttribute("stream", stream);
