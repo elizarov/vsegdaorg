@@ -24,7 +24,7 @@ public class AdminServiceImpl extends RemoteServiceServlet implements AdminServi
 
     @Override
     public List<DataStreamDTO> getDataStreams() {
-        List<DataItem> items = new DataRequest().queryListDescending();
+        List<DataItem> items = new DataRequest().queryList();
         List<DataStreamDTO> result = new ArrayList<DataStreamDTO>();
         for (DataItem item : items) {
             DataStream stream = item.getStream();

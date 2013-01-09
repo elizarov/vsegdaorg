@@ -19,7 +19,7 @@ public class DataStreamsTag extends SimpleTagSupport {
     @Override
     public void doTag() throws JspException, IOException {
         PageContext ctx = (PageContext)getJspContext();
-        Map<DataStream, List<DataItem>> streamItemsMap = new DataRequest(ctx.getRequest()).queryMapAscending();
+        Map<DataStream, List<DataItem>> streamItemsMap = new DataRequest(ctx.getRequest()).queryMap();
         ctx.setAttribute("streamItemsMap", streamItemsMap);
         for (DataStream stream : streamItemsMap.keySet()) {
             ctx.setAttribute("stream", stream);

@@ -29,18 +29,20 @@ public class DataRequest {
         RequestUtil.populate(this, req);
 	}
 
-    public List<DataItem> queryListDescending() {
-        Map<DataStream, List<DataItem>> map = queryMapAscending();
+    public List<DataItem> queryList() {
+        Map<DataStream, List<DataItem>> map = queryMap();
         List<DataItem> result = new ArrayList<DataItem>();
         for (List<DataItem> list : map.values())
             result.addAll(list);
-        // reorder descending by time (it is stable, for order by ids is kept for same time)
-        Collections.sort(result, Collections.reverseOrder(DataItem.ORDER_BY_TIME));
+        if (id != null) {
+            // reorder descending by time (it is stable, for order by ids is kept for same time)
+            Collections.sort(result, Collections.reverseOrder(DataItem.ORDER_BY_TIME));
+        }
         return result;
     }
 
     @SuppressWarnings({"unchecked"})
-    public Map<DataStream, List<DataItem>> queryMapAscending() {
+    public Map<DataStream, List<DataItem>> queryMap() {
         log.info("Performing data query " + this);
         long startTimeMillis = System.currentTimeMillis();
         Map<DataStream, List<DataItem>> map = new LinkedHashMap<DataStream, List<DataItem>>();

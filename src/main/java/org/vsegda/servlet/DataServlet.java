@@ -31,7 +31,7 @@ public class DataServlet extends HttpServlet {
         resp.setContentType("text/csv");
         resp.setCharacterEncoding("UTF-8");
         ServletOutputStream out = resp.getOutputStream();
-        for (DataItem item : dataRequest.queryListDescending())
+        for (DataItem item : dataRequest.queryList())
             out.println(item.toString());
     }
 

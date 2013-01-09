@@ -25,7 +25,7 @@ public class DataItemsTag extends SimpleTagSupport {
         if (streamItemsMap != null && stream != null)
             list = streamItemsMap.get(stream);
         else
-            list = new DataRequest(ctx.getRequest()).queryListDescending();
+            list = new DataRequest(ctx.getRequest()).queryList();
         for (DataItem item : list) {
             ctx.setAttribute("item", item);
             getJspBody().invoke(null);
