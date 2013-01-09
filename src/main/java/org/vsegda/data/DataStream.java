@@ -13,6 +13,8 @@ import java.io.Serializable;
  */
 @PersistenceCapable
 public class DataStream implements Serializable {
+    public static final String TAG_ID_SEPARATOR = ":";
+
     @PrimaryKey
     @Persistent
     private Long streamId;
@@ -67,7 +69,7 @@ public class DataStream implements Serializable {
      */
     public String getCode() {
         return tag != null ?
-                tag + (streamId == null ? "" : "@" + streamId) :
+                tag + (streamId == null ? "" : TAG_ID_SEPARATOR + streamId) :
                 String.valueOf(streamId);
     }
 

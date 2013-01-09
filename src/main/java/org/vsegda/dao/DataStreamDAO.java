@@ -36,10 +36,10 @@ public class DataStreamDAO {
     }
 
     public static DataStream resolveDataStreamByCode(String code) {
-        int i = code.lastIndexOf('@');
+        int i = code.lastIndexOf(DataStream.TAG_ID_SEPARATOR);
         String id;
         if (i >= 0)
-            id = code.substring(i + 1);
+            id = code.substring(i + DataStream.TAG_ID_SEPARATOR.length());
         else
             id = code;
         try {

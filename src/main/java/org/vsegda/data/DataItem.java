@@ -92,9 +92,7 @@ public class DataItem implements Serializable {
      * Returns stream id or tag of the stream if defined.
      */
     public String getStreamCode() {
-        return stream != null && stream.getTag() != null ?
-                stream.getTag() + (streamId != 0 ? "@" + streamId : ""):
-                String.valueOf(streamId);
+        return stream != null ? stream.getCode() : String.valueOf(streamId);
     }
 
     public double getValue() {
