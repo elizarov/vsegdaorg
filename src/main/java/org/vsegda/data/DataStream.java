@@ -13,6 +13,8 @@ import java.io.Serializable;
  */
 @PersistenceCapable
 public class DataStream implements Serializable {
+    private static final long serialVersionUID = -5570677468800411934L;
+
     public static final String TAG_ID_SEPARATOR = ":";
 
     @PrimaryKey

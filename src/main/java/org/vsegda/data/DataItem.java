@@ -15,6 +15,8 @@ import java.util.Comparator;
  */
 @PersistenceCapable
 public class DataItem implements Serializable {
+    private static final long serialVersionUID = -5432277262446595404L;
+
     public static final Comparator<DataItem> ORDER_BY_TIME = new Comparator<DataItem>() {
         @Override
         public int compare(DataItem o1, DataItem o2) {
