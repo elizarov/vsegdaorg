@@ -28,9 +28,6 @@ public class DataStream implements Serializable {
     private String name = "";
 
     @Persistent
-    private Key firstItemKey;
-
-    @Persistent
     private Key lastItemKey;
 
     @Persistent
@@ -85,14 +82,6 @@ public class DataStream implements Serializable {
 
     public void setName(String name) {
         this.name = name == null ? "" : name.trim();
-    }
-
-    public Key getFirstItemKey() {
-        return firstItemKey;
-    }
-
-    public void setFirstItemKey(Key firstItemKey) {
-        this.firstItemKey = firstItemKey;
     }
 
     public Key getLastItemKey() {

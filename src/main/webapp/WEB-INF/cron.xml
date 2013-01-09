@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cronentries>
   <cron>
-    <url>/cron/dataCheck</url>
-    <description>Check data stream timeouts and archival needs</description>
+    <url>/cron/dataCheckTimeout</url>
+    <description>Check data timeouts</description>
     <schedule>every 15 minutes</schedule>
+  </cron>
+  <cron>
+    <url>/cron/dataArchive</url>
+    <description>Check data archival needs</description>
+    <schedule>every 1 day</schedule>
   </cron>
   <cron>
     <url>/cron/dataCacheRefresh</url>

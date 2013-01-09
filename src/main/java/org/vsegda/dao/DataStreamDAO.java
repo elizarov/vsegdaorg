@@ -1,6 +1,5 @@
 package org.vsegda.dao;
 
-import com.google.appengine.api.datastore.Key;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
 import org.vsegda.factory.PM;
@@ -96,7 +95,7 @@ public class DataStreamDAO {
     }
 
     @SuppressWarnings({"unchecked"})
-    public static DataItem findFistItem(long streamId) {
+    public static DataItem findFirstItem(long streamId) {
         Query query = PM.instance().newQuery(DataItem.class);
         query.setFilter("streamId == id");
         query.setOrdering("timeMillis asc");
@@ -106,20 +105,5 @@ public class DataStreamDAO {
         if (items.isEmpty())
             return null;
         return items.iterator().next();
-    }
-
-    public static DataItem getOrFindFirstItem(DataStream stream) {
-        Key key = stream.getFirstItemKey();
-        if (key != null)
-            try {
-                return PM.instance().getObjectById(DataItem.class, key);
-            } catch (JDOObjectNotFoundException e) {
-                log.warning("First item for streamId=" + stream.getStreamId() + " is not found with key=" + key);
-            }
-        DataItem firstItem = findFistItem(stream.getStreamId());
-        if (firstItem == null)
-            return null;
-        stream.setFirstItemKey(firstItem.getKey());
-        return firstItem;
     }
 }

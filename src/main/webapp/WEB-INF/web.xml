@@ -107,12 +107,21 @@
   </servlet-mapping>
 
   <servlet>
-    <servlet-name>cronDataCheck</servlet-name>
-    <servlet-class>org.vsegda.servlet.DataCheckCronServlet</servlet-class>
+    <servlet-name>cronDataCheckTimeout</servlet-name>
+    <servlet-class>org.vsegda.servlet.DataCheckTimeoutCronServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>cronDataCheck</servlet-name>
-    <url-pattern>/cron/dataCheck</url-pattern>
+    <servlet-name>cronDataCheckTimeout</servlet-name>
+    <url-pattern>/cron/dataCheckTimeout</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>cronDataArchive</servlet-name>
+    <servlet-class>org.vsegda.servlet.DataArchiveCronServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>cronDataArchive</servlet-name>
+    <url-pattern>/cron/dataArchive</url-pattern>
   </servlet-mapping>
 
   <servlet>

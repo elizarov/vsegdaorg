@@ -55,8 +55,6 @@ public class DataServlet extends HttpServlet {
                     // remove last item in LAST mode
                     if (stream.getMode() == DataStreamMode.LAST) {
                         stream.setLastItemKey(null);
-                        if (stream.getFirstItemKey() == lastItem.getKey())
-                            stream.setFirstItemKey(null);
                         DataItemDAO.deleteDataItem(lastItem);
                         stream.setLastItemKey(item.getKey());
                     } else if (item.getTimeMillis() >= lastItem.getTimeMillis())
@@ -64,14 +62,6 @@ public class DataServlet extends HttpServlet {
                 }
             } else
                 stream.setLastItemKey(item.getKey());
-            // update first item key
-            if (stream.getFirstItemKey() != null) {
-                DataItem firstItem = DataItemDAO.getDataItemByKey(stream.getFirstItemKey());
-                if (firstItem == null)
-                    stream.setFirstItemKey(null); // something wrong -- clear it
-                else if (item.getTimeMillis() < firstItem.getTimeMillis())
-                    stream.setFirstItemKey(item.getKey());
-            }
         }
     }
 

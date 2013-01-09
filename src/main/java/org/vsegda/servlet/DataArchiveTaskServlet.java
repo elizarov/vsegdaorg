@@ -46,7 +46,7 @@ public class DataArchiveTaskServlet extends HttpServlet {
             log.warning("Stream mode is " + stream.getMode() + ", ignoring task");
             return;
         }
-        DataItem firstItem = DataStreamDAO.getOrFindFirstItem(stream);
+        DataItem firstItem = DataStreamDAO.findFirstItem(stream.getStreamId());
         if (firstItem == null || firstItem.isRecent()) {
             log.info("First stream item is recent or missing: " + firstItem);
             return;
@@ -78,7 +78,6 @@ public class DataArchiveTaskServlet extends HttpServlet {
         items.subList(archive.getCount(), items.size()).clear(); // remove all that wasn't encoded
         log.info("Creating archive " + archive);
         PM.instance().makePersistent(archive);
-        stream.setFirstItemKey(null);
         PM.instance().deletePersistentAll(items);
         // create next task to check this stream
         enqueueTask(streamId);
