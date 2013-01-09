@@ -1,6 +1,6 @@
 <%@ page import="org.vsegda.data.DataStream" %>
-<%@taglib uri="/WEB-INF/tlds/c.tld" prefix="c" %>
-<%@taglib uri="/WEB-INF/tlds/v.tld" prefix="v" %>
+<%@taglib uri="/WEB-INF/tld/c.tld" prefix="c" %>
+<%@taglib uri="/WEB-INF/tld/v.tld" prefix="v" %>
 <!DOCTYPE html>
 <html>
 <head>
