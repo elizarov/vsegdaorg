@@ -7,6 +7,7 @@ import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+import java.io.EOFException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -109,7 +110,12 @@ public class DataArchive {
         if (encodedItems != null) {
             DeltaDecoder decoder = new DeltaDecoder(firstValue, firstTimeMillis, encodedItems);
             for (int i = 1; i < count; i++)
-                result.add(new DataItem(streamId, decoder.readValue(), decoder.readTime()));
+                try {
+                    result.add(new DataItem(streamId, decoder.readValue(), decoder.readTime()));
+                } catch (EOFException e) {
+                    // Some DataArchives were encoded with count that is too high.
+                    // just ignore EOFException and break to decode only as much as possible
+                }
         }
         return result;
     }

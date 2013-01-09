@@ -1,6 +1,7 @@
 package org.vsegda.data;
 
 import java.io.ByteArrayInputStream;
+import java.io.EOFException;
 
 /**
  * @author Roman Elizarov
@@ -20,7 +21,7 @@ class DeltaDecoder {
         lastTimeMillis = DeltaUtil.roundTime(firstTimeMillis);
     }
 
-    public double readValue() {
+    public double readValue() throws EOFException {
         int flag = readBit();
         if (flag == 0)
             return lastValue;
@@ -33,7 +34,7 @@ class DeltaDecoder {
         return lastValue;
     }
 
-    public long readTime() {
+    public long readTime() throws EOFException {
         long flag = readBit();
         if (flag == 0)
             return lastTimeMillis;
@@ -41,13 +42,13 @@ class DeltaDecoder {
         return lastTimeMillis;
     }
 
-    long readNonZero() {
+    long readNonZero() throws EOFException {
         int sign = readBit();
         long value = readPositive();
         return sign == 0 ? value : -value;
     }
 
-    long readPositive() {
+    long readPositive() throws EOFException {
         long result = 1L << 63;
         int shift = 63;
         while (readBit() == 1) {
@@ -57,11 +58,11 @@ class DeltaDecoder {
         return result >>> shift;
     }
 
-    int readBit() {
+    int readBit() throws EOFException {
         if (bitCount == 0) {
             bits = in.read();
             if (bits == -1)
-                throw new IllegalStateException();
+                throw new EOFException();
             bitCount = 8;
         }
         bitCount--;

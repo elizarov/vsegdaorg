@@ -2,11 +2,13 @@ package org.vsegda.data;
 
 import junit.framework.TestCase;
 
+import java.io.EOFException;
+
 /**
  * @author Roman Elizarov
  */
 public class DeltaCodecTest extends TestCase {
-    public void testBits() {
+    public void testBits() throws EOFException {
         int[] bits = { 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1 };
         DeltaEncoder encoder = new DeltaEncoder(0, 0);
         for (int bit : bits) {
@@ -18,7 +20,7 @@ public class DeltaCodecTest extends TestCase {
         }
     }
 
-    public void testPositive() {
+    public void testPositive() throws EOFException {
         int[] xs = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 };
         DeltaEncoder encoder = new DeltaEncoder(0, 0);
         for (int x : xs) {
@@ -30,7 +32,7 @@ public class DeltaCodecTest extends TestCase {
         }
     }
 
-    public void testNonZero() {
+    public void testNonZero() throws EOFException {
         int[] xs = { 1, 2, 3, 4, 5, 6, 7, 8, 9, -1, -2, -3, -4, -5, -6, -7, -8, -9 };
         DeltaEncoder encoder = new DeltaEncoder(0, 0);
         for (int x : xs) {
@@ -42,7 +44,7 @@ public class DeltaCodecTest extends TestCase {
         }
     }
 
-    public void testValues() {
+    public void testValues() throws EOFException {
         double[] xs = { 1, 2, 3, 4, 5, 5, 5, 5.1, 5.2, 5.3, 5.3, 5.2, 5.1, 5.01, 5.001, 5.0001 };
         DeltaEncoder encoder = new DeltaEncoder(0, 0);
         for (double x : xs) {
