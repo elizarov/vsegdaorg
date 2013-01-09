@@ -12,7 +12,7 @@ public class DeltaCodecTest extends TestCase {
         for (int bit : bits) {
             encoder.writeBit(bit);
         }
-        DeltaDecoder decoder = new DeltaDecoder(0, 0, encoder.toByteArray());
+        DeltaDecoder decoder = new DeltaDecoder(0, 0, encoder.toByteArray(encoder.size()));
         for (int bit : bits) {
             assertEquals(bit, decoder.readBit());
         }
@@ -24,7 +24,7 @@ public class DeltaCodecTest extends TestCase {
         for (int x : xs) {
             encoder.writePositive(x);
         }
-        DeltaDecoder decoder = new DeltaDecoder(0, 0, encoder.toByteArray());
+        DeltaDecoder decoder = new DeltaDecoder(0, 0, encoder.toByteArray(encoder.size()));
         for (int x : xs) {
             assertEquals(x, decoder.readPositive());
         }
@@ -36,7 +36,7 @@ public class DeltaCodecTest extends TestCase {
         for (int x : xs) {
             encoder.writeNonZero(x);
         }
-        DeltaDecoder decoder = new DeltaDecoder(0, 0, encoder.toByteArray());
+        DeltaDecoder decoder = new DeltaDecoder(0, 0, encoder.toByteArray(encoder.size()));
         for (int x : xs) {
             assertEquals(x, decoder.readNonZero());
         }
@@ -48,7 +48,7 @@ public class DeltaCodecTest extends TestCase {
         for (double x : xs) {
             encoder.writeValue(x);
         }
-        DeltaDecoder decoder = new DeltaDecoder(0, 0, encoder.toByteArray());
+        DeltaDecoder decoder = new DeltaDecoder(0, 0, encoder.toByteArray(encoder.size()));
         for (double x : xs) {
             assertEquals(x, decoder.readValue());
         }

@@ -74,7 +74,8 @@ public class DataArchiveTaskServlet extends HttpServlet {
         }
         // Actually archive
         DataArchive archive = new DataArchive(streamId);
-        archive.setItems(items);
+        archive.encodeItems(items);
+        items.subList(archive.getCount(), items.size()).clear(); // remove all that wasn't encoded
         log.info("Creating archive " + archive);
         PM.instance().makePersistent(archive);
         stream.setFirstItemKey(null);

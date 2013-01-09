@@ -1,23 +1,30 @@
 package org.vsegda.data;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 
 /**
  * @author Roman Elizarov
  */
 class DeltaEncoder {
+    private static final int INITIAL_BIT_INDEX = 8;
+
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
     private double lastValue;
     private int lastPrecision;
     private long lastTimeMillis;
     private int bits;
-    private int bitIndex = 8;
+    private int bitIndex = INITIAL_BIT_INDEX;
 
     public DeltaEncoder(double firstValue, long firstTimeMillis) {
         checkValue(firstValue);
         lastValue = firstValue;
         lastPrecision = DeltaUtil.getPrecision(firstValue);
         lastTimeMillis = DeltaUtil.roundTime(firstTimeMillis);
+    }
+
+    public int size() {
+        return out.size() + (bitIndex < INITIAL_BIT_INDEX ? 1 : 0);
     }
 
     public double getLastValue() {
@@ -66,10 +73,11 @@ class DeltaEncoder {
         }
     }
 
-    public byte[] toByteArray() {
-        if (bitIndex < 8)
+    public byte[] toByteArray(int size) {
+        if (bitIndex < INITIAL_BIT_INDEX)
             flushBits();
-        return out.toByteArray();
+        byte[] bytes = out.toByteArray();
+        return bytes.length == size ? bytes : Arrays.copyOf(bytes, size);
     }
 
     void writeNonZero(long x) {
@@ -101,6 +109,6 @@ class DeltaEncoder {
     private void flushBits() {
         out.write(bits);
         bits = 0;
-        bitIndex = 8;
+        bitIndex = INITIAL_BIT_INDEX;
     }
 }

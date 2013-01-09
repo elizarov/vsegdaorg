@@ -27,6 +27,11 @@ public class DataArchive {
      */
     public static final long RECENT_TIME_INTERVAL = 20 * TimeUtil.DAY;
 
+    /**
+     * GAE limits byte[] attributes to 500 bytes.
+     */
+    public static final int MAX_ENCODED_SIZE = 500;
+
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     private Key key;
@@ -109,7 +114,8 @@ public class DataArchive {
         return result;
     }
 
-    public void setItems(Collection<DataItem> items) {
+    // encodes only up to a limit. Use getCount
+    public void encodeItems(Collection<DataItem> items) {
         count = items.size();
         if (count == 0)
             throw new IllegalArgumentException("empty");
@@ -120,15 +126,20 @@ public class DataArchive {
         firstTimeMillis = encoder.getLastTimeMillis();
         highValue = firstValue;
         lowValue = firstValue;
+        int lastGoodSize = encoder.size();
         while (it.hasNext()) {
             DataItem item = it.next();
             double value = item.getValue();
             encoder.writeValue(value);
             encoder.writeTime(item.getTimeMillis());
+            int size = encoder.size();
+            if (size > MAX_ENCODED_SIZE)
+                break;
+            lastGoodSize = size;
             highValue = Math.max(highValue, value);
             lowValue = Math.min(lowValue, value);
         }
-        encodedItems = encoder.toByteArray();
+        encodedItems = encoder.toByteArray(lastGoodSize);
     }
 
     @Override
