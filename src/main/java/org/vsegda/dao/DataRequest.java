@@ -48,7 +48,7 @@ public class DataRequest {
         Map<DataStream, List<DataItem>> map = new LinkedHashMap<DataStream, List<DataItem>>();
         if (id == null) {
             for (DataStream stream : DataStreamDAO.listDataStreams(first, last))
-                map.put(stream, Collections.singletonList(DataItemDAO.getLastDataItem(stream)));
+                map.put(stream, Collections.singletonList(DataItemDAO.findLastDataItem(stream)));
         } else {
             for (String code : this.id) {
                 DataStream stream = DataStreamDAO.resolveDataStreamByCode(code, false);

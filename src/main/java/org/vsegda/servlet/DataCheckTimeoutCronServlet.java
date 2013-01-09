@@ -26,7 +26,7 @@ public class DataCheckTimeoutCronServlet extends HttpServlet {
         for (DataStream stream : DataStreamDAO.listDataStreams()) {
             // check for data update timeout
             if (stream.getAlertTimeout() != null) {
-                DataItem item = DataItemDAO.getLastDataItem(stream);
+                DataItem item = DataItemDAO.findLastDataItem(stream);
                 if (startTimeMillis - item.getTimeMillis() > stream.getAlertTimeout())
                     Alert.sendAlertEmail(stream.getCode(), "Data update timeout");
             }

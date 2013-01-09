@@ -26,15 +26,17 @@ public class DataArchiveCronServlet extends HttpServlet {
         long startTimeMillis = System.currentTimeMillis();
         for (DataStream stream : DataStreamDAO.listDataStreams()) {
             // check for archive or purge (find non-recent items)
-            long threshold = System.currentTimeMillis() - DataArchive.RECENT_TIME_INTERVAL - 2 * DataArchive.ARCHIVE_INTERVAL;
-            if (stream.getMode() != DataStreamMode.LAST) {
-                DataItem firstItem = DataStreamDAO.findFirstItem(stream.getStreamId());
-                if (firstItem != null && firstItem.getTimeMillis() < threshold &&
-                        !firstItem.getKey().equals(DataItemDAO.getLastDataItem(stream).getKey()))
-                {
-                    // need to archive
-                    DataArchiveTaskServlet.enqueueTask(stream.getStreamId());
-                }
+            DataItem firstItem = DataItemDAO.findFirstDataItem(stream);
+            DataItem lastItem = DataItemDAO.findLastDataItem(stream);
+            log.fine("First item is " + firstItem + "; last item is " + lastItem);
+            long threshold =
+                    stream.getMode() == DataStreamMode.LAST ? lastItem.getTimeMillis() :
+                    System.currentTimeMillis() - DataArchive.RECENT_TIME_INTERVAL - 2 * DataArchive.ARCHIVE_INTERVAL;
+            if (firstItem != null && firstItem.getTimeMillis() < threshold &&
+                    !firstItem.getKey().equals(lastItem.getKey()))
+            {
+                // need to archive
+                DataArchiveTaskServlet.enqueueTask(stream.getStreamId());
             }
         }
         log.info("Done in " + (System.currentTimeMillis() - startTimeMillis) + " ms");

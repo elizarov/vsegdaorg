@@ -81,10 +81,11 @@ public class TimeUtil {
     public static long getArchiveLimit(long firstTime) {
         Calendar cal = Calendar.getInstance(TIMEZONE);
         cal.setTimeInMillis(firstTime);
-        cal.set(Calendar.HOUR_OF_DAY, cal.getMaximum(Calendar.HOUR_OF_DAY));
-        cal.set(Calendar.MINUTE, cal.getMaximum(Calendar.MINUTE));
-        cal.set(Calendar.SECOND, cal.getMaximum(Calendar.SECOND));
-        cal.set(Calendar.MILLISECOND, cal.getMaximum(Calendar.MILLISECOND));
+        cal.add(Calendar.DATE, 1);
+        cal.set(Calendar.HOUR_OF_DAY, cal.getMinimum(Calendar.HOUR_OF_DAY));
+        cal.set(Calendar.MINUTE, cal.getMinimum(Calendar.MINUTE));
+        cal.set(Calendar.SECOND, cal.getMinimum(Calendar.SECOND));
+        cal.set(Calendar.MILLISECOND, cal.getMinimum(Calendar.MILLISECOND));
         return cal.getTimeInMillis();
     }
 }

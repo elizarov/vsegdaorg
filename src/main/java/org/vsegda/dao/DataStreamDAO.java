@@ -1,6 +1,5 @@
 package org.vsegda.dao;
 
-import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
 import org.vsegda.factory.PM;
 
@@ -92,18 +91,5 @@ public class DataStreamDAO {
         return stream.getStreamId() != null ?
                 resolveDataStreamById(stream.getStreamId(), true) :
                 resolveDataStreamByCode(stream.getTag(), true);
-    }
-
-    @SuppressWarnings({"unchecked"})
-    public static DataItem findFirstItem(long streamId) {
-        Query query = PM.instance().newQuery(DataItem.class);
-        query.setFilter("streamId == id");
-        query.setOrdering("timeMillis asc");
-        query.declareParameters("long id");
-        query.setRange(0, 1);
-        Collection<DataItem> items = (Collection<DataItem>) query.execute(streamId);
-        if (items.isEmpty())
-            return null;
-        return items.iterator().next();
     }
 }

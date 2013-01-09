@@ -4,7 +4,6 @@ import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import org.vsegda.dao.DataItemDAO;
-import org.vsegda.dao.DataStreamDAO;
 import org.vsegda.data.DataArchive;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
@@ -28,6 +27,7 @@ import java.util.logging.Logger;
  */
 public class DataArchiveTaskServlet extends HttpServlet {
     private static final Logger log = Logger.getLogger(DataArchiveTaskServlet.class.getName());
+    private static final int MAX_ARCHIVE_ITEMS = 1000; // max in one batch
 
     public static void enqueueTask(long streamId) {
         log.info("Enqueueing data archive task for id=" + streamId);
@@ -41,46 +41,56 @@ public class DataArchiveTaskServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         long streamId = Long.parseLong(req.getParameter("id"));
-        log.info("Archiving data for streamId=" + streamId);
         DataStream stream = PM.instance().getObjectById(DataStream.class, streamId);
-        if (stream.getMode() == DataStreamMode.LAST) {
-            log.warning("Stream mode is " + stream.getMode() + ", ignoring task");
-            return;
-        }
-        DataItem firstItem = DataStreamDAO.findFirstItem(stream.getStreamId());
-        if (firstItem == null || firstItem.isRecent()) {
+        log.info("Archiving data for streamId=" + streamId + ", mode=" + stream.getMode());
+        DataItem firstItem = DataItemDAO.findFirstDataItem(stream);
+        if (firstItem == null || (stream.getMode() != DataStreamMode.LAST && firstItem.isRecent())) {
             log.info("First stream item is recent or missing: " + firstItem);
             return;
         }
-        // Archive up to next midnight
-        long limit = TimeUtil.getArchiveLimit(firstItem.getTimeMillis());
+        DataItem lastItem = DataItemDAO.findLastDataItem(stream);
+        log.info("First item is " + firstItem + "; last item is " + lastItem);
+        // Archive up to next midnight (or up to last item for LAST mode)
+        long limit =
+                stream.getMode() == DataStreamMode.LAST ? lastItem.getTimeMillis() :
+                TimeUtil.getArchiveLimit(firstItem.getTimeMillis());
+
         Query query = PM.instance().newQuery(DataItem.class);
         query.setOrdering("timeMillis asc");
         query.declareParameters("long id, long limit");
-        query.setFilter("streamId == id && timeMillis <= limit");
+        query.setFilter("streamId == id && timeMillis < limit");
+        query.setRange(0, MAX_ARCHIVE_ITEMS);
+        query.getFetchPlan().setFetchSize(MAX_ARCHIVE_ITEMS);
         List<DataItem> items = new ArrayList<DataItem>((Collection<DataItem>) query.execute(streamId, limit));
 
         // never remove or archive the last item !!!
-        if (!items.isEmpty() && items.get(items.size() - 1).getKey().equals(DataItemDAO.getLastDataItem(stream).getKey()))
+        if (!items.isEmpty() && items.get(items.size() - 1).getKey().equals(lastItem.getKey()))
             items.remove(items.size() - 1);
         if (items.isEmpty()) {
             log.warning("No items to archive");
             return;
         }
 
-        if (stream.getMode() == DataStreamMode.RECENT) {
-            log.info("Only recent items are kept, removing old ones");
-            PM.instance().deletePersistentAll(items);
-            return;
+        switch (stream.getMode()) {
+            case LAST:
+                log.info("Only last item is kept, removing other ones");
+                DataItemDAO.removeDataItems(stream, items);
+                break;
+            case RECENT:
+                log.info("Only recent items are kept, removing old ones");
+                DataItemDAO.removeDataItems(stream, items);
+                break;
+            case ARCHIVE:
+                // Actually archive
+                DataArchive archive = new DataArchive(streamId);
+                archive.encodeItems(items);
+                items.subList(archive.getCount(), items.size()).clear(); // remove all that wasn't encoded
+                log.info("Creating archive " + archive);
+                PM.instance().makePersistent(archive);
+                PM.instance().deletePersistentAll(items);
+                break;
         }
-        // Actually archive
-        DataArchive archive = new DataArchive(streamId);
-        archive.encodeItems(items);
-        items.subList(archive.getCount(), items.size()).clear(); // remove all that wasn't encoded
-        log.info("Creating archive " + archive);
-        PM.instance().makePersistent(archive);
-        PM.instance().deletePersistentAll(items);
-        // create next task to check this stream
+        // create next task to check this stream again
         enqueueTask(streamId);
     }
 }

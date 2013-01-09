@@ -56,7 +56,13 @@ public class DataItemDAO {
             persistDataItem(item);
     }
 
-    public static DataItem getLastDataItem(DataStream stream) {
+    public static void removeDataItems(DataStream stream, List<DataItem> items) {
+        PM.instance().deletePersistentAll(items);
+        // just kill cache completely for the stream in this case
+        LIST_CACHE.remove(stream.getStreamId());
+    }
+
+    public static DataItem findLastDataItem(DataStream stream) {
         List<DataItem> items = listDataItems(stream, null, 1);
         return items.isEmpty() ? new DataItem(stream, Double.NaN, 0) : items.get(0);
     }
@@ -115,6 +121,21 @@ public class DataItemDAO {
 
     public static void refreshCache(long streamId) {
         performItemsQuery(streamId, null, INITIAL_LIST_CACHE_SIZE);
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public static DataItem findFirstDataItem(DataStream stream) {
+        Query query = PM.instance().newQuery(DataItem.class);
+        query.setFilter("streamId == id");
+        query.setOrdering("timeMillis asc");
+        query.declareParameters("long id");
+        query.setRange(0, 1);
+        Collection<DataItem> items = (Collection<DataItem>) query.execute(stream.getStreamId());
+        if (items.isEmpty())
+            return null;
+        DataItem item = items.iterator().next();
+        item.setStream(stream);
+        return item;
     }
 
     private static class ListEntry implements Serializable {
