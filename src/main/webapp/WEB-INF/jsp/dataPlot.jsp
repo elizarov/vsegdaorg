@@ -12,7 +12,8 @@
 </head>
 <body>
 <div class="par">Data Items | Plot</div>
-<div id="plot" style="width:600px;height:300px;"></div>
+<div id="plot" class="flt" style="width:600px;height:300px;"></div>
+<div id="legend" class="flt"></div>
 
 <script>
 var data = [
@@ -29,7 +30,8 @@ var data = [
 ];
 $(document).ready(function () {
     $.plot($("#plot"), data, {
-      xaxis: { mode: "time", timezone: "browser" }
+      xaxis: { mode: "time", timezone: "browser" },
+      legend: { container: "#legend" }
     });
 });
 </script>

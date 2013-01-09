@@ -33,6 +33,10 @@ table.data th, .th {
     font-weight: bold;
 }
 
+.flt {
+    float: left !important;
+}
+
 .frt {
     float: right !important;
 }
