@@ -13,7 +13,7 @@ $(function () {
         legend: { container: "#legend" },
         selection: { mode: "x" },
         crosshair: { mode: "x" },
-        grid: { hoverable: true }
+        grid: { hoverable: true, autoHighlight: false }
     };
 
     var overviewOptions = {
@@ -29,7 +29,7 @@ $(function () {
         legend: { show: false },
         selection: { mode: "x" },
         crosshair: { mode: "x" },
-        grid: { hoverable: true }
+        grid: { hoverable: true, autoHighlight: false }
     };
 
     var plot = $.plot($("#plot"), data, plotOptions);
