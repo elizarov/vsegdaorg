@@ -115,6 +115,7 @@ public class DataArchive {
                 } catch (EOFException e) {
                     // Some DataArchives were encoded with count that is too high.
                     // just ignore EOFException and break to decode only as much as possible
+                    break;
                 }
         }
         return result;
