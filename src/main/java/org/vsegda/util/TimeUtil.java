@@ -17,6 +17,7 @@ public class TimeUtil {
     public static final long MINUTE = 60 * SECOND;
     public static final long HOUR = 60 * MINUTE;
     public static final long DAY = 24 * HOUR;
+    public static final long WEEK = 7 * DAY;
 
     private static SimpleDateFormat getDateTimeFormat() {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd'T'HHmmss");

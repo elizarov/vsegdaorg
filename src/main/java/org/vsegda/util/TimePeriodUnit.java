@@ -4,11 +4,11 @@ package org.vsegda.util;
  * @author Roman Elizarov
  */
 public enum TimePeriodUnit {
-    SECOND('s', 1000),
-    MINUTE('m', SECOND.period * 60),
-    HOUR('h', MINUTE.period * 60),
-    DAY('d', HOUR.period * 24),
-    WEEK('w', DAY.period * 7);
+    SECOND('s', TimeUtil.SECOND),
+    MINUTE('m', TimeUtil.MINUTE),
+    HOUR('h', TimeUtil.HOUR),
+    DAY('d', TimeUtil.DAY),
+    WEEK('w', TimeUtil.WEEK);
 
     private final char code;
     private final long period;

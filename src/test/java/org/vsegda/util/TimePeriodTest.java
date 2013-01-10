@@ -1,7 +1,6 @@
 package org.vsegda.util;
 
 import junit.framework.TestCase;
-import org.vsegda.util.TimePeriod;
 
 /**
  * @author Roman Elizarov
@@ -25,14 +24,14 @@ public class TimePeriodTest extends TestCase {
 
     public void testString() {
         assertEquals("0", TimePeriod.valueOf(0).toString());
-        assertEquals("1", TimePeriod.valueOf(1).toString());
-        assertEquals("-1", TimePeriod.valueOf(-1).toString());
+        assertEquals("0.001s", TimePeriod.valueOf(1).toString());
+        assertEquals("-0.001s", TimePeriod.valueOf(-1).toString());
         assertEquals("1s", TimePeriod.valueOf(1000).toString());
         assertEquals("1.234s", TimePeriod.valueOf(1234).toString());
-        assertEquals("1m0s", TimePeriod.valueOf(60000).toString());
-        assertEquals("1h0m0s", TimePeriod.valueOf(60 * 60000).toString());
-        assertEquals("1d0h0m0s", TimePeriod.valueOf(24 * 60 * 60000).toString());
-        assertEquals("1w0d0h0m0s", TimePeriod.valueOf(7 * 24 * 60 * 60000).toString());
-        assertEquals("1w0d0h30m0s", TimePeriod.valueOf(7 * 24 * 60 * 60000 + 30 * 60000).toString());
+        assertEquals("1m", TimePeriod.valueOf(60000).toString());
+        assertEquals("1h", TimePeriod.valueOf(60 * 60000).toString());
+        assertEquals("1d", TimePeriod.valueOf(24 * 60 * 60000).toString());
+        assertEquals("1w", TimePeriod.valueOf(7 * 24 * 60 * 60000).toString());
+        assertEquals("1w30m", TimePeriod.valueOf(7 * 24 * 60 * 60000 + 30 * 60000).toString());
     }
 }

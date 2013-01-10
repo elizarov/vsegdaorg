@@ -71,36 +71,6 @@ public class TimePeriod {
         return period == 0 ? null : period;
     }
 
-    public String format(int limit) {
-        StringBuilder sb = new StringBuilder();
-        long r = period;
-        if (r < 0) {
-            sb.append('-');
-            r = -r;
-        }
-        TimePeriodUnit[] units = TimePeriodUnit.values();
-        int cnt = 0;
-        for (int i = units.length; --i >= 0; ) {
-            TimePeriodUnit unit = units[i];
-            if (cnt > 0 || r >= unit.period()) {
-                cnt++;
-                sb.append(r / unit.period());
-                r %= unit.period();
-                if (unit == TimePeriodUnit.SECOND && r > 0 && cnt < limit)
-                    sb.append('.')
-                            .append(r / 100)
-                            .append((r / 10) % 10)
-                            .append(r % 10);
-                sb.append(unit.code());
-                if (cnt >= limit)
-                    break;
-            }
-        }
-        if (cnt == 0)
-            sb.append(r);
-        return sb.toString();
-    }
-
     public TimePeriod subtract(TimePeriod other) {
         return valueOf(period - other.period);
     }
@@ -111,7 +81,33 @@ public class TimePeriod {
 
     @Override
     public String toString() {
-        return format(Integer.MAX_VALUE);
+        StringBuilder sb = new StringBuilder();
+        long r = period;
+        if (r < 0) {
+            sb.append('-');
+            r = -r;
+        }
+        TimePeriodUnit[] units = TimePeriodUnit.values();
+        int cnt = 0;
+        for (int i = units.length; --i >= 0; ) {
+            TimePeriodUnit unit = units[i];
+            long val = r / unit.period();
+            r %= unit.period();
+            boolean ms = unit == TimePeriodUnit.SECOND && r > 0;
+            if (val > 0 || ms) {
+                cnt++;
+                sb.append(val);
+                if (ms)
+                    sb.append('.')
+                            .append(r / 100)
+                            .append((r / 10) % 10)
+                            .append(r % 10);
+                sb.append(unit.code());
+            }
+        }
+        if (cnt == 0)
+            sb.append(r);
+        return sb.toString();
     }
 
     public static class Cnv implements Converter {
