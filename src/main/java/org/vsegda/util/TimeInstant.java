@@ -23,6 +23,8 @@ public class TimeInstant {
     }
 
     public static TimeInstant valueOf(String s) {
+        if (s.isEmpty())
+            return null;
         if (s.startsWith("+") || s.startsWith("-"))
             return new TimeInstant(0, TimePeriod.valueOf(s));
         else

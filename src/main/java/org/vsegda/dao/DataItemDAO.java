@@ -70,15 +70,15 @@ public class DataItemDAO {
         return items.isEmpty() ? new DataItem(stream, Double.NaN, 0) : items.get(0);
     }
 
-    public static List<DataItem> listDataItems(DataStream stream, TimeInstant since, int last, int first, HasNext hasNext) {
-        List<DataItem> list = listDataItems(stream, since, last + first, hasNext);
+    public static List<DataItem> listDataItems(DataStream stream, TimeInstant since, int last, int first, ReqFlags reqFlags) {
+        List<DataItem> list = listDataItems(stream, since, last + first, reqFlags);
         return list.subList(0, Math.min(last, list.size()));
     }
 
     /**
      * Returns a list of last data items in ASCENDING order.
      */
-    public static List<DataItem> listDataItems(DataStream stream, TimeInstant since, int last, HasNext hasNext) {
+    public static List<DataItem> listDataItems(DataStream stream, TimeInstant since, int last, ReqFlags reqFlags) {
         if (stream.getMode() == DataStreamMode.LAST)
             last = 1;
         ListEntry entry = (ListEntry) LIST_CACHE.get(stream.getStreamId());
@@ -96,8 +96,11 @@ public class DataItemDAO {
         // perform query if not found in cache
         if (items == null)
             items = performItemsQuery(stream.getStreamId(), since, last);
-        if (items.size() >= last && hasNext != null)
-            hasNext.set();
+        // always assume "hasNext" when since was set
+        if (since != null && items.size() < last && reqFlags != null)
+            reqFlags.setHasMore();
+        if (items.size() >= last && reqFlags != null)
+            reqFlags.setHasNext();
         return fillStream(stream, items);
     }
 

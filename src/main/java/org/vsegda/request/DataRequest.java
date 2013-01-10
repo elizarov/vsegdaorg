@@ -2,7 +2,7 @@ package org.vsegda.request;
 
 import org.vsegda.dao.DataItemDAO;
 import org.vsegda.dao.DataStreamDAO;
-import org.vsegda.dao.HasNext;
+import org.vsegda.dao.ReqFlags;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
 import org.vsegda.util.IdList;
@@ -24,7 +24,7 @@ public class DataRequest extends AbstractRequest {
     private int first;
     private double filter = 5; // 5 sigmas by default
 
-    private final HasNext hasNext = new HasNext(); // filled by query
+    private final ReqFlags reqFlags = new ReqFlags(); // filled by query
 
     public DataRequest() {}
 
@@ -50,12 +50,12 @@ public class DataRequest extends AbstractRequest {
         long startTimeMillis = System.currentTimeMillis();
         Map<DataStream, List<DataItem>> map = new LinkedHashMap<DataStream, List<DataItem>>();
         if (id == null) {
-            for (DataStream stream : DataStreamDAO.listDataStreams(last, first, hasNext))
+            for (DataStream stream : DataStreamDAO.listDataStreams(last, first, reqFlags))
                 map.put(stream, Collections.singletonList(DataItemDAO.findLastDataItem(stream)));
         } else {
             for (String code : this.id) {
                 DataStream stream = DataStreamDAO.resolveDataStreamByCode(code, false);
-                List<DataItem> items = new ArrayList<DataItem>(DataItemDAO.listDataItems(stream, since, last, first, hasNext));
+                List<DataItem> items = new ArrayList<DataItem>(DataItemDAO.listDataItems(stream, since, last, first, reqFlags));
                 filter(items);
                 map.put(stream, items);
             }
@@ -144,10 +144,15 @@ public class DataRequest extends AbstractRequest {
     }
 
     public void setSince(TimeInstant since) {
+        updateQueryString("since", since == null ? "" : since.toString());
         this.since = since;
     }
 
+    public boolean hasMore() {
+        return reqFlags.hasMore();
+    }
+
     public boolean hasNext() {
-        return hasNext.get();
+        return reqFlags.hasNext();
     }
 }

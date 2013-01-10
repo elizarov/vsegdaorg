@@ -24,15 +24,15 @@ public class DataStreamDAO {
     }
 
     @SuppressWarnings({"unchecked"})
-    public static List<DataStream> listDataStreams(int last, int first, HasNext hasNext) {
+    public static List<DataStream> listDataStreams(int last, int first, ReqFlags reqFlags) {
         Query query = PM.instance().newQuery(DataStream.class);
         query.setOrdering("streamId asc");
         if (last < Integer.MAX_VALUE)
             query.setRange(first, first + last);
         query.getFetchPlan().setFetchSize(Math.min(MAX_FETCH_SIZE, last));
         ArrayList<DataStream> list = new ArrayList<DataStream>((Collection<DataStream>) query.execute());
-        if (list.size() >= last && hasNext != null)
-            hasNext.set();
+        if (list.size() >= last && reqFlags != null)
+            reqFlags.setHasNext();
         return list;
     }
 
