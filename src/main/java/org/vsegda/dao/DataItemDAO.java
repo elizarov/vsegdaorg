@@ -24,9 +24,9 @@ public class DataItemDAO {
     private static final Logger log = Logger.getLogger(DataItemDAO.class.getName());
 
     public static final TimeInstant DEFAULT_SINCE = TimeInstant.valueOf(TimePeriod.valueOf(-1, TimePeriodUnit.WEEK));
-    public static final int DEFAULT_N = 2500;
+    public static final int DEFAULT_LAST = 2500;
 
-    private static final int MAX_LIST_SIZE = (int)(1.5 * DEFAULT_N);
+    private static final int MAX_LIST_SIZE = (int)(1.5 * DEFAULT_LAST);
     private static final Cache LIST_CACHE;
 
     static {
@@ -49,7 +49,7 @@ public class DataItemDAO {
             if (size >= 2 && DataItem.ORDER_BY_TIME.compare(entry.items.get(size - 1), entry.items.get(size - 2)) < 0)
                 Collections.sort(entry.items, DataItem.ORDER_BY_TIME);
             if (size > MAX_LIST_SIZE)
-                entry.items.subList(0, size - DEFAULT_N).clear();
+                entry.items.subList(0, size - DEFAULT_LAST).clear();
             LIST_CACHE.put(dataItem.getStreamId(), entry);
         }
     }
@@ -70,17 +70,17 @@ public class DataItemDAO {
         return items.isEmpty() ? new DataItem(stream, Double.NaN, 0) : items.get(0);
     }
 
-    public static List<DataItem> listDataItems(DataStream stream, TimeInstant since, int n, int ofs) {
-        List<DataItem> list = listDataItems(stream, since, n + ofs);
-        return list.subList(Math.min(ofs, list.size()), list.size());
+    public static List<DataItem> listDataItems(DataStream stream, TimeInstant since, int last, int first) {
+        List<DataItem> list = listDataItems(stream, since, last + first);
+        return list.subList(Math.min(first, list.size()), list.size());
     }
 
     /**
      * Returns a list of last data items in ASCENDING order.
      */
-    public static List<DataItem> listDataItems(DataStream stream, TimeInstant since, int n) {
+    public static List<DataItem> listDataItems(DataStream stream, TimeInstant since, int last) {
         if (stream.getMode() == DataStreamMode.LAST)
-            n = 1;
+            last = 1;
         ListEntry entry = (ListEntry) LIST_CACHE.get(stream.getStreamId());
         if (entry != null) {
             int start = 0;
@@ -89,13 +89,13 @@ public class DataItemDAO {
                 while (start < size && entry.items.get(start).getTimeMillis() < since.time())
                     start++;
             }
-            if (entry.complete || start > 0 || size >= n)
+            if (entry.complete || start > 0 || size >= last)
                 // return from cache
                 return fillStream(stream,
-                        entry.items.subList(Math.max(start, size - n), size));
+                        entry.items.subList(Math.max(start, size - last), size));
         }
         // perform query
-        return fillStream(stream, performItemsQuery(stream.getStreamId(), since, n));
+        return fillStream(stream, performItemsQuery(stream.getStreamId(), since, last));
     }
 
     @SuppressWarnings({"unchecked"})
@@ -128,7 +128,7 @@ public class DataItemDAO {
     }
 
     public static void refreshCache(long streamId) {
-        performItemsQuery(streamId, DEFAULT_SINCE, DEFAULT_N);
+        performItemsQuery(streamId, DEFAULT_SINCE, DEFAULT_LAST);
     }
 
     @SuppressWarnings({"unchecked"})

@@ -24,8 +24,8 @@ public class MessageRequest {
 	private IdList id;
     private boolean take;
 	private long index;
+    private int last = 100; // last 100 items by default
 	private int first;
-	private int last = 100; // last 100 items by default
 
     public MessageRequest(ServletRequest req, boolean post) {
         RequestUtil.populate(this, req);

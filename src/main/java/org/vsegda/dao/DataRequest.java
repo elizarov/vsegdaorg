@@ -19,8 +19,8 @@ public class DataRequest {
 
 	private IdList id;
     private TimeInstant since = DataItemDAO.DEFAULT_SINCE;
-	private int n = DataItemDAO.DEFAULT_N;
-    private int ofs;
+    private int last = DataItemDAO.DEFAULT_LAST;
+    private int first;
     private double filter = 5; // 5 sigmas by default
 
     public DataRequest() {}
@@ -47,12 +47,12 @@ public class DataRequest {
         long startTimeMillis = System.currentTimeMillis();
         Map<DataStream, List<DataItem>> map = new LinkedHashMap<DataStream, List<DataItem>>();
         if (id == null) {
-            for (DataStream stream : DataStreamDAO.listDataStreams(n, ofs))
+            for (DataStream stream : DataStreamDAO.listDataStreams(last, first))
                 map.put(stream, Collections.singletonList(DataItemDAO.findLastDataItem(stream)));
         } else {
             for (String code : this.id) {
                 DataStream stream = DataStreamDAO.resolveDataStreamByCode(code, false);
-                List<DataItem> items = new ArrayList<DataItem>(DataItemDAO.listDataItems(stream, since, n, ofs));
+                List<DataItem> items = new ArrayList<DataItem>(DataItemDAO.listDataItems(stream, since, last, first));
                 filter(items);
                 map.put(stream, items);
             }
@@ -111,20 +111,20 @@ public class DataRequest {
         this.id = id;
     }
 
-    public int getOfs() {
-        return ofs;
+    public int getFirst() {
+        return first;
     }
 
-    public void setOfs(int ofs) {
-        this.ofs = ofs;
+    public void setFirst(int first) {
+        this.first = first;
     }
 
-    public int getN() {
-        return n;
+    public int getLast() {
+        return last;
     }
 
-    public void setN(int n) {
-        this.n = n;
+    public void setLast(int last) {
+        this.last = last;
     }
 
     public double getFilter() {
