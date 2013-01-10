@@ -72,7 +72,7 @@ public class DataItemDAO {
 
     public static List<DataItem> listDataItems(DataStream stream, TimeInstant since, int last, int first) {
         List<DataItem> list = listDataItems(stream, since, last + first);
-        return list.subList(Math.min(first, list.size()), list.size());
+        return list.subList(0, Math.min(last, list.size()));
     }
 
     /**
