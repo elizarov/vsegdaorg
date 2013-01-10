@@ -92,7 +92,7 @@ public class DataItemDAO {
                     toIndex--;
             }
             if (entry.complete || fromIndex > 0 || toIndex - fromIndex >= n) // safely return from cache
-                items = entry.items.subList(fromIndex, toIndex);
+                items = entry.items.subList(Math.max(fromIndex, toIndex - n), toIndex);
         }
         // perform query if not found in cache
         if (items == null)
