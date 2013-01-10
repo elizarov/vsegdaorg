@@ -61,7 +61,10 @@ abstract class AbstractRequest {
         for (int i = 0; i < keyValues.size(); i++) {
             String keyValue = keyValues.get(i);
             if (keyValue.startsWith(eq)) {
-                keyValues.set(i, eq + value);
+                if (value == null)
+                    keyValues.remove(i);
+                else
+                    keyValues.set(i, eq + value);
                 return;
             }
         }

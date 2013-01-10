@@ -18,12 +18,12 @@ public class DataNavigationTag extends SimpleTagSupport {
         PageContext ctx = (PageContext) getJspContext();
         DataRequest dataRequest = (DataRequest) ctx.getAttribute("dataRequest");
         if (dataRequest.hasNavigation()) {
-            TimeInstant last = dataRequest.getLast();
-            dataRequest.setLast((last == null ? TimeInstant.now() : last).subtract(dataRequest.getSpan()));
+            TimeInstant last = dataRequest.getTo();
+            dataRequest.setTo((last == null ? TimeInstant.now() : last).subtract(dataRequest.getSpan()));
             ctx.getOut().println("[<a href=\"?" + dataRequest.getQueryString() + "\">Prev</a>]");
             if (last != null) {
                 TimeInstant nextLast = last.add(dataRequest.getSpan());
-                dataRequest.setLast(nextLast.isNowOrFuture() ? null : nextLast);
+                dataRequest.setTo(nextLast.isNowOrFuture() ? null : nextLast);
                 ctx.getOut().println("[<a href=\"?" + dataRequest.getQueryString() + "\">Next</a>]");
             }
         }

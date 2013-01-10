@@ -91,8 +91,10 @@ public class DataItemDAO {
                 while (toIndex > fromIndex && entry.items.get(toIndex - 1).getTimeMillis() >= to.time())
                     toIndex--;
             }
-            if (entry.complete || fromIndex > 0 || toIndex - fromIndex >= n) // safely return from cache
+            long fromTime = from == null ? 0 : from.time();
+            if (entry.fromTime <= fromTime || fromIndex > 0) { // can safely return from cache
                 items = entry.items.subList(Math.max(fromIndex, toIndex - n), toIndex);
+            }
         }
         // perform query if not found in cache
         if (items == null)
@@ -122,16 +124,22 @@ public class DataItemDAO {
         query.setOrdering("timeMillis desc");
         query.setRange(0, n);
         query.getFetchPlan().setFetchSize(n);
+        long queryStartTime = System.currentTimeMillis();
         List<DataItem> items = new ArrayList<DataItem>((Collection<DataItem>)query.executeWithMap(queryArgs));
+        log.info(String.format("performItemsQuery(streamId=%d, from=%s, to=%s, n=%d) retrieved %d data items from storage in %d ms",
+                streamId, from, to, n, items.size(), System.currentTimeMillis() - queryStartTime));
         Collections.reverse(items); // turn descending into ascending order
         // update cache if needed (only when querying up to now)
         if (to == null) {
+            long fromTime = from == null ? (items.size() < n ? 0 : items.get(0).getTimeMillis()) : from.time();
             ListEntry oldCacheEntry = (ListEntry) LIST_CACHE.get(streamId);
-            if (forceCacheUpdate || oldCacheEntry == null || oldCacheEntry.items.size() <= items.size()) {
+            if (forceCacheUpdate || oldCacheEntry == null ||
+                    oldCacheEntry.items.size() <= items.size() ||
+                    oldCacheEntry.fromTime >= fromTime)
+            {
                 List<DataItem> cacheItems = items.size() <= MAX_CACHED_LIST_SIZE ? items :
                         new ArrayList<DataItem>(items.subList(items.size() - MAX_CACHED_LIST_SIZE, items.size()));
-                boolean cacheComplete = from == null && items.size() < n;
-                LIST_CACHE.put(streamId, new ListEntry(cacheItems, cacheComplete));
+                LIST_CACHE.put(streamId, new ListEntry(fromTime, cacheItems));
             }
         }
         return items;
@@ -165,12 +173,12 @@ public class DataItemDAO {
     private static class ListEntry implements Serializable {
         private static final long serialVersionUID = 4488592054732566662L;
 
+        long fromTime;
         List<DataItem> items;
-        boolean complete;
 
-        ListEntry(List<DataItem> items, boolean complete) {
+        ListEntry(long fromTime, List<DataItem> items) {
+            this.fromTime = fromTime;
             this.items = items;
-            this.complete = complete;
         }
     }
 }

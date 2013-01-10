@@ -19,7 +19,7 @@ public class DataRequest extends AbstractRequest {
     private static final Logger log = Logger.getLogger(DataRequest.class.getName());
 
     private IdList id;
-    private TimeInstant last = null;
+    private TimeInstant to = null;
     private TimePeriod span = DataItemDAO.DEFAULT_SPAN;
     private int n = DataItemDAO.DEFAULT_N;
     private double filter = 5; // 5 sigmas by default
@@ -56,8 +56,8 @@ public class DataRequest extends AbstractRequest {
             for (String code : this.id) {
                 DataStream stream = DataStreamDAO.resolveDataStreamByCode(code, false);
                 TimeInstant from = span == null ? null :
-                        (last == null ? TimeInstant.now() : last).subtract(span);
-                List<DataItem> items = new ArrayList<DataItem>(DataItemDAO.listDataItems(stream, from, last, n));
+                        (to == null ? TimeInstant.now() : to).subtract(span);
+                List<DataItem> items = new ArrayList<DataItem>(DataItemDAO.listDataItems(stream, from, to, n));
                 filter(items);
                 map.put(stream, items);
             }
@@ -114,16 +114,17 @@ public class DataRequest extends AbstractRequest {
     }
 
     public void setId(IdList id) {
+        updateQueryString("id", id == null ? null : id.toString());
         this.id = id;
     }
 
-    public TimeInstant getLast() {
-        return last;
+    public TimeInstant getTo() {
+        return to;
     }
 
-    public void setLast(TimeInstant last) {
-        updateQueryString("last", last == null ? "" : last.toString());
-        this.last = last;
+    public void setTo(TimeInstant to) {
+        updateQueryString("to", to == null ? null : to.toString());
+        this.to = to;
     }
 
     public TimePeriod getSpan() {
@@ -131,7 +132,7 @@ public class DataRequest extends AbstractRequest {
     }
 
     public void setSpan(TimePeriod span) {
-        updateQueryString("span", span == null ? "" : span.toString());
+        updateQueryString("span", span == null ? null : span.toString());
         this.span = span;
     }
 
@@ -140,6 +141,7 @@ public class DataRequest extends AbstractRequest {
     }
 
     public void setN(int n) {
+        updateQueryString("n", n == 0 ? null : String.valueOf(n));
         this.n = n;
     }
 
