@@ -23,10 +23,10 @@ import java.util.logging.Logger;
 public class DataItemDAO {
     private static final Logger log = Logger.getLogger(DataItemDAO.class.getName());
 
-    public static final TimeInstant DEFAULT_SINCE = TimeInstant.valueOf(TimePeriod.valueOf(-1, TimePeriodUnit.WEEK));
-    public static final int DEFAULT_LAST = 2500;
+    public static final TimePeriod DEFAULT_SPAN = TimePeriod.valueOf(1, TimePeriodUnit.WEEK);
+    public static final int DEFAULT_N = 2500;
 
-    private static final int MAX_CACHED_LIST_SIZE = (int)(1.5 * DEFAULT_LAST);
+    private static final int MAX_CACHED_LIST_SIZE = (int)(1.5 * DEFAULT_N);
     private static final Cache LIST_CACHE;
 
     static {
@@ -49,7 +49,7 @@ public class DataItemDAO {
             if (size >= 2 && DataItem.ORDER_BY_TIME.compare(entry.items.get(size - 1), entry.items.get(size - 2)) < 0)
                 Collections.sort(entry.items, DataItem.ORDER_BY_TIME);
             if (size > MAX_CACHED_LIST_SIZE)
-                entry.items.subList(0, size - DEFAULT_LAST).clear();
+                entry.items.subList(0, size - DEFAULT_N).clear();
             LIST_CACHE.put(dataItem.getStreamId(), entry);
         }
     }
@@ -66,55 +66,56 @@ public class DataItemDAO {
     }
 
     public static DataItem findLastDataItem(DataStream stream) {
-        List<DataItem> items = listDataItems(stream, null, 1, null);
+        List<DataItem> items = listDataItems(stream, null, null, 1);
         return items.isEmpty() ? new DataItem(stream, Double.NaN, 0) : items.get(0);
     }
 
-    public static List<DataItem> listDataItems(DataStream stream, TimeInstant since, int last, int first, ReqFlags reqFlags) {
-        List<DataItem> list = listDataItems(stream, since, last + first, reqFlags);
-        return list.subList(0, Math.min(last, list.size()));
-    }
-
-    /**
-     * Returns a list of last data items in ASCENDING order.
-     */
-    public static List<DataItem> listDataItems(DataStream stream, TimeInstant since, int n, ReqFlags reqFlags) {
-        if (stream.getMode() == DataStreamMode.LAST)
+    public static List<DataItem> listDataItems(DataStream stream, TimeInstant from, TimeInstant to, int n) {
+        if (stream.getMode() == DataStreamMode.LAST) {
+            if (to != null)
+                return Collections.emptyList();
             n = 1;
+        }
+        // try cache
         ListEntry entry = (ListEntry) LIST_CACHE.get(stream.getStreamId());
         List<DataItem> items = null;
         if (entry != null) {
-            int start = 0;
             int size = entry.items.size();
-            if (since != null) {
-                while (start < size && entry.items.get(start).getTimeMillis() < since.time())
-                    start++;
+            int fromIndex = 0;
+            int toIndex = size;
+            if (from != null) {
+                while (fromIndex < size && entry.items.get(fromIndex).getTimeMillis() < from.time())
+                    fromIndex++;
             }
-            if (entry.complete || start > 0 || size >= n) // return from cache
-                items = entry.items.subList(Math.max(start, size - n), size);
+            if (to != null) {
+                while (toIndex > fromIndex && entry.items.get(toIndex - 1).getTimeMillis() >= to.time())
+                    toIndex--;
+            }
+            if (entry.complete || fromIndex > 0 || toIndex - fromIndex >= n) // safely return from cache
+                items = entry.items.subList(fromIndex, toIndex);
         }
         // perform query if not found in cache
         if (items == null)
-            items = performItemsQuery(stream.getStreamId(), since, n, false);
-        // always assume "hasNext" when since was set
-        if (since != null && items.size() < n && reqFlags != null)
-            reqFlags.setHasMore();
-        if (items.size() >= n && reqFlags != null)
-            reqFlags.setHasNext();
+            items = performItemsQuery(stream.getStreamId(), from, to, n, false);
         return fillStream(stream, items);
     }
 
     @SuppressWarnings({"unchecked"})
-    private static List<DataItem> performItemsQuery(long streamId, TimeInstant since, int n, boolean forceCacheUpdate) {
+    private static List<DataItem> performItemsQuery(long streamId, TimeInstant from, TimeInstant to, int n, boolean forceCacheUpdate) {
         Query query = PM.instance().newQuery(DataItem.class);
         String queryFilter = "streamId == id";
         String queryParams = "long id";
         Map<String, Object> queryArgs = new HashMap<String, Object>();
         queryArgs.put("id", streamId);
-        if (since != null) {
-            queryFilter += " && timeMillis >= since";
-            queryParams += ", long since";
-            queryArgs.put("since", since.time());
+        if (from != null) {
+            queryFilter += " && timeMillis >= from";
+            queryParams += ", long from";
+            queryArgs.put("from", from.time());
+        }
+        if (to != null) {
+            queryFilter += " && timeMillis < to";
+            queryParams += ", long to";
+            queryArgs.put("to", to.time());
         }
         query.setFilter(queryFilter);
         query.declareParameters(queryParams);
@@ -123,13 +124,15 @@ public class DataItemDAO {
         query.getFetchPlan().setFetchSize(n);
         List<DataItem> items = new ArrayList<DataItem>((Collection<DataItem>)query.executeWithMap(queryArgs));
         Collections.reverse(items); // turn descending into ascending order
-        // update cache if needed
-        ListEntry oldCacheEntry = (ListEntry) LIST_CACHE.get(streamId);
-        if (forceCacheUpdate || oldCacheEntry == null || oldCacheEntry.items.size() <= items.size()) {
-            List<DataItem> cacheItems = items.size() <= MAX_CACHED_LIST_SIZE ? items :
-                    new ArrayList<DataItem>(items.subList(items.size() - MAX_CACHED_LIST_SIZE, items.size()));
-            boolean cacheComplete = since == null && items.size() < n;
-            LIST_CACHE.put(streamId, new ListEntry(cacheItems, cacheComplete));
+        // update cache if needed (only when querying up to now)
+        if (to == null) {
+            ListEntry oldCacheEntry = (ListEntry) LIST_CACHE.get(streamId);
+            if (forceCacheUpdate || oldCacheEntry == null || oldCacheEntry.items.size() <= items.size()) {
+                List<DataItem> cacheItems = items.size() <= MAX_CACHED_LIST_SIZE ? items :
+                        new ArrayList<DataItem>(items.subList(items.size() - MAX_CACHED_LIST_SIZE, items.size()));
+                boolean cacheComplete = from == null && items.size() < n;
+                LIST_CACHE.put(streamId, new ListEntry(cacheItems, cacheComplete));
+            }
         }
         return items;
     }
@@ -141,7 +144,7 @@ public class DataItemDAO {
     }
 
     public static void refreshCache(long streamId) {
-        performItemsQuery(streamId, null, DEFAULT_LAST, true);
+        performItemsQuery(streamId, null, null, DEFAULT_N, true);
     }
 
     @SuppressWarnings({"unchecked"})

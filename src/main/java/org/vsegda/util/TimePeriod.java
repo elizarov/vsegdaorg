@@ -6,6 +6,8 @@ import org.apache.commons.beanutils.Converter;
  * @author Roman Elizarov
  */
 public class TimePeriod {
+    public static final TimePeriod ZERO = new TimePeriod(0);
+
     private final long period;
 
     public static TimePeriod valueOf(long period) {
@@ -97,6 +99,14 @@ public class TimePeriod {
         if (cnt == 0)
             sb.append(r);
         return sb.toString();
+    }
+
+    public TimePeriod subtract(TimePeriod other) {
+        return valueOf(period - other.period);
+    }
+
+    public TimePeriod add(TimePeriod other) {
+        return valueOf(period + other.period);
     }
 
     @Override

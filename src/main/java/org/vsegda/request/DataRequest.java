@@ -2,11 +2,11 @@ package org.vsegda.request;
 
 import org.vsegda.dao.DataItemDAO;
 import org.vsegda.dao.DataStreamDAO;
-import org.vsegda.dao.ReqFlags;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
 import org.vsegda.util.IdList;
 import org.vsegda.util.TimeInstant;
+import org.vsegda.util.TimePeriod;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -18,13 +18,13 @@ import java.util.logging.Logger;
 public class DataRequest extends AbstractRequest {
     private static final Logger log = Logger.getLogger(DataRequest.class.getName());
 
-	private IdList id;
-    private TimeInstant since = DataItemDAO.DEFAULT_SINCE;
-    private int last = DataItemDAO.DEFAULT_LAST;
-    private int first;
+    private IdList id;
+    private TimeInstant last = null;
+    private TimePeriod span = DataItemDAO.DEFAULT_SPAN;
+    private int n = DataItemDAO.DEFAULT_N;
     private double filter = 5; // 5 sigmas by default
 
-    private final ReqFlags reqFlags = new ReqFlags(); // filled by query
+    private boolean hasNavigation;
 
     public DataRequest() {}
 
@@ -50,15 +50,18 @@ public class DataRequest extends AbstractRequest {
         long startTimeMillis = System.currentTimeMillis();
         Map<DataStream, List<DataItem>> map = new LinkedHashMap<DataStream, List<DataItem>>();
         if (id == null) {
-            for (DataStream stream : DataStreamDAO.listDataStreams(last, first, reqFlags))
+            for (DataStream stream : DataStreamDAO.listDataStreams())
                 map.put(stream, Collections.singletonList(DataItemDAO.findLastDataItem(stream)));
         } else {
             for (String code : this.id) {
                 DataStream stream = DataStreamDAO.resolveDataStreamByCode(code, false);
-                List<DataItem> items = new ArrayList<DataItem>(DataItemDAO.listDataItems(stream, since, last, first, reqFlags));
+                TimeInstant from = span == null ? null :
+                        (last == null ? TimeInstant.now() : last).subtract(span);
+                List<DataItem> items = new ArrayList<DataItem>(DataItemDAO.listDataItems(stream, from, last, n));
                 filter(items);
                 map.put(stream, items);
             }
+            hasNavigation = span != null;
         }
         log.info("Completed data query in " + (System.currentTimeMillis() - startTimeMillis) + " ms");
         return map;
@@ -114,21 +117,30 @@ public class DataRequest extends AbstractRequest {
         this.id = id;
     }
 
-    public int getFirst() {
-        return first;
-    }
-
-    public void setFirst(int first) {
-        updateQueryString("first", String.valueOf(first));
-        this.first = first;
-    }
-
-    public int getLast() {
+    public TimeInstant getLast() {
         return last;
     }
 
-    public void setLast(int last) {
+    public void setLast(TimeInstant last) {
+        updateQueryString("last", last == null ? "" : last.toString());
         this.last = last;
+    }
+
+    public TimePeriod getSpan() {
+        return span;
+    }
+
+    public void setSpan(TimePeriod span) {
+        updateQueryString("span", span == null ? "" : span.toString());
+        this.span = span;
+    }
+
+    public int getN() {
+        return n;
+    }
+
+    public void setN(int n) {
+        this.n = n;
     }
 
     public double getFilter() {
@@ -139,20 +151,7 @@ public class DataRequest extends AbstractRequest {
         this.filter = filter;
     }
 
-    public TimeInstant getSince() {
-        return since;
-    }
-
-    public void setSince(TimeInstant since) {
-        updateQueryString("since", since == null ? "" : since.toString());
-        this.since = since;
-    }
-
-    public boolean hasMore() {
-        return reqFlags.hasMore();
-    }
-
-    public boolean hasNext() {
-        return reqFlags.hasNext();
+    public boolean hasNavigation() {
+        return hasNavigation;
     }
 }
