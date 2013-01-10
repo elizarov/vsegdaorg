@@ -18,9 +18,9 @@ public class DataRequest {
     private static final Logger log = Logger.getLogger(DataRequest.class.getName());
 
 	private IdList id;
-	private int skip;
     private TimeInstant since = DataItemDAO.DEFAULT_SINCE;
 	private int n = DataItemDAO.DEFAULT_N;
+    private int ofs;
     private double filter = 5; // 5 sigmas by default
 
     public DataRequest() {}
@@ -47,12 +47,12 @@ public class DataRequest {
         long startTimeMillis = System.currentTimeMillis();
         Map<DataStream, List<DataItem>> map = new LinkedHashMap<DataStream, List<DataItem>>();
         if (id == null) {
-            for (DataStream stream : DataStreamDAO.listDataStreams(skip, n))
+            for (DataStream stream : DataStreamDAO.listDataStreams(n, ofs))
                 map.put(stream, Collections.singletonList(DataItemDAO.findLastDataItem(stream)));
         } else {
             for (String code : this.id) {
                 DataStream stream = DataStreamDAO.resolveDataStreamByCode(code, false);
-                List<DataItem> items = new ArrayList<DataItem>(DataItemDAO.listDataItems(stream, since, n));
+                List<DataItem> items = new ArrayList<DataItem>(DataItemDAO.listDataItems(stream, since, n, ofs));
                 filter(items);
                 map.put(stream, items);
             }
@@ -111,12 +111,12 @@ public class DataRequest {
         this.id = id;
     }
 
-    public int getSkip() {
-        return skip;
+    public int getOfs() {
+        return ofs;
     }
 
-    public void setSkip(int skip) {
-        this.skip = skip;
+    public void setOfs(int ofs) {
+        this.ofs = ofs;
     }
 
     public int getN() {

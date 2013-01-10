@@ -70,6 +70,11 @@ public class DataItemDAO {
         return items.isEmpty() ? new DataItem(stream, Double.NaN, 0) : items.get(0);
     }
 
+    public static List<DataItem> listDataItems(DataStream stream, TimeInstant since, int n, int ofs) {
+        List<DataItem> list = listDataItems(stream, since, n + ofs);
+        return list.subList(Math.min(ofs, list.size()), list.size());
+    }
+
     /**
      * Returns a list of last data items in ASCENDING order.
      */
