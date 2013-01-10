@@ -147,6 +147,8 @@ public class DataItemDAO {
     }
 
     private static class ListEntry implements Serializable {
+        private static final long serialVersionUID = 4488592054732566662L;
+
         List<DataItem> items;
         boolean complete;
 
