@@ -1,9 +1,9 @@
 package org.vsegda.servlet;
 
 import org.vsegda.dao.DataItemDAO;
-import org.vsegda.dao.DataRequest;
 import org.vsegda.dao.DataStreamDAO;
 import org.vsegda.data.DataItem;
+import org.vsegda.request.DataRequest;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;

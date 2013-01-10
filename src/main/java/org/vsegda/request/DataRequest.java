@@ -1,7 +1,9 @@
-package org.vsegda.dao;
+package org.vsegda.request;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.vsegda.dao.DataItemDAO;
+import org.vsegda.dao.DataStreamDAO;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
 import org.vsegda.util.IdList;

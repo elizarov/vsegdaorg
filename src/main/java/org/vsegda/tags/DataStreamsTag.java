@@ -1,8 +1,8 @@
 package org.vsegda.tags;
 
-import org.vsegda.dao.DataRequest;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
+import org.vsegda.request.DataRequest;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;

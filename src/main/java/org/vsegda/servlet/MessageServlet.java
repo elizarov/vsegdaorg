@@ -1,10 +1,10 @@
 package org.vsegda.servlet;
 
-import org.vsegda.dao.MessageRequest;
 import org.vsegda.data.MessageItem;
 import org.vsegda.data.MessageQueue;
 import org.vsegda.data.MessageSession;
 import org.vsegda.factory.PM;
+import org.vsegda.request.MessageRequest;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.servlet.ServletException;

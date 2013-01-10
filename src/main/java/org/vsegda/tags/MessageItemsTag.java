@@ -1,7 +1,7 @@
 package org.vsegda.tags;
 
-import org.vsegda.dao.MessageRequest;
 import org.vsegda.data.MessageItem;
+import org.vsegda.request.MessageRequest;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;

@@ -1,7 +1,8 @@
-package org.vsegda.dao;
+package org.vsegda.request;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.vsegda.dao.MessageQueueDAO;
 import org.vsegda.data.MessageItem;
 import org.vsegda.data.MessageQueue;
 import org.vsegda.factory.PM;

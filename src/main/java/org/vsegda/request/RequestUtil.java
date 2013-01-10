@@ -1,4 +1,4 @@
-package org.vsegda.dao;
+package org.vsegda.request;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
