@@ -78,9 +78,9 @@ public class DataItemDAO {
     /**
      * Returns a list of last data items in ASCENDING order.
      */
-    public static List<DataItem> listDataItems(DataStream stream, TimeInstant since, int last, ReqFlags reqFlags) {
+    public static List<DataItem> listDataItems(DataStream stream, TimeInstant since, int n, ReqFlags reqFlags) {
         if (stream.getMode() == DataStreamMode.LAST)
-            last = 1;
+            n = 1;
         ListEntry entry = (ListEntry) LIST_CACHE.get(stream.getStreamId());
         List<DataItem> items = null;
         if (entry != null) {
@@ -90,16 +90,16 @@ public class DataItemDAO {
                 while (start < size && entry.items.get(start).getTimeMillis() < since.time())
                     start++;
             }
-            if (entry.complete || start > 0 || size >= last) // return from cache
-                items = entry.items.subList(Math.max(start, size - last), size);
+            if (entry.complete || start > 0 || size >= n) // return from cache
+                items = entry.items.subList(Math.max(start, size - n), size);
         }
         // perform query if not found in cache
         if (items == null)
-            items = performItemsQuery(stream.getStreamId(), since, last, false);
+            items = performItemsQuery(stream.getStreamId(), since, n, false);
         // always assume "hasNext" when since was set
-        if (since != null && items.size() < last && reqFlags != null)
+        if (since != null && items.size() < n && reqFlags != null)
             reqFlags.setHasMore();
-        if (items.size() >= last && reqFlags != null)
+        if (items.size() >= n && reqFlags != null)
             reqFlags.setHasNext();
         return fillStream(stream, items);
     }
@@ -128,7 +128,8 @@ public class DataItemDAO {
         if (forceCacheUpdate || oldCacheEntry == null || oldCacheEntry.items.size() <= items.size()) {
             List<DataItem> cacheItems = items.size() <= MAX_CACHED_LIST_SIZE ? items :
                     new ArrayList<DataItem>(items.subList(items.size() - MAX_CACHED_LIST_SIZE, items.size()));
-            LIST_CACHE.put(streamId, new ListEntry(cacheItems, since == null && cacheItems.size() < n));
+            boolean cacheComplete = since == null && items.size() < n;
+            LIST_CACHE.put(streamId, new ListEntry(cacheItems, cacheComplete));
         }
         return items;
     }
