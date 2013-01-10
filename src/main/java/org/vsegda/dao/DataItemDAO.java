@@ -66,22 +66,23 @@ public class DataItemDAO {
     }
 
     public static DataItem findLastDataItem(DataStream stream) {
-        List<DataItem> items = listDataItems(stream, null, 1);
+        List<DataItem> items = listDataItems(stream, null, 1, null);
         return items.isEmpty() ? new DataItem(stream, Double.NaN, 0) : items.get(0);
     }
 
-    public static List<DataItem> listDataItems(DataStream stream, TimeInstant since, int last, int first) {
-        List<DataItem> list = listDataItems(stream, since, last + first);
+    public static List<DataItem> listDataItems(DataStream stream, TimeInstant since, int last, int first, HasNext hasNext) {
+        List<DataItem> list = listDataItems(stream, since, last + first, hasNext);
         return list.subList(0, Math.min(last, list.size()));
     }
 
     /**
      * Returns a list of last data items in ASCENDING order.
      */
-    public static List<DataItem> listDataItems(DataStream stream, TimeInstant since, int last) {
+    public static List<DataItem> listDataItems(DataStream stream, TimeInstant since, int last, HasNext hasNext) {
         if (stream.getMode() == DataStreamMode.LAST)
             last = 1;
         ListEntry entry = (ListEntry) LIST_CACHE.get(stream.getStreamId());
+        List<DataItem> items = null;
         if (entry != null) {
             int start = 0;
             int size = entry.items.size();
@@ -89,13 +90,15 @@ public class DataItemDAO {
                 while (start < size && entry.items.get(start).getTimeMillis() < since.time())
                     start++;
             }
-            if (entry.complete || start > 0 || size >= last)
-                // return from cache
-                return fillStream(stream,
-                        entry.items.subList(Math.max(start, size - last), size));
+            if (entry.complete || start > 0 || size >= last) // return from cache
+                items = entry.items.subList(Math.max(start, size - last), size);
         }
-        // perform query
-        return fillStream(stream, performItemsQuery(stream.getStreamId(), since, last));
+        // perform query if not found in cache
+        if (items == null)
+            items = performItemsQuery(stream.getStreamId(), since, last);
+        if (items.size() >= last && hasNext != null)
+            hasNext.set();
+        return fillStream(stream, items);
     }
 
     @SuppressWarnings({"unchecked"})

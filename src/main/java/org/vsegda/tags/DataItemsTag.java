@@ -4,6 +4,7 @@ import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
 import org.vsegda.request.DataRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
@@ -24,8 +25,11 @@ public class DataItemsTag extends SimpleTagSupport {
         List<DataItem> list;
         if (streamItemsMap != null && stream != null)
             list = streamItemsMap.get(stream);
-        else
-            list = new DataRequest(ctx.getRequest()).queryList();
+        else {
+            DataRequest dataRequest = new DataRequest((HttpServletRequest) ctx.getRequest());
+            ctx.setAttribute("dataRequest", dataRequest);
+            list = dataRequest.queryList();
+        }
         for (DataItem item : list) {
             ctx.setAttribute("item", item);
             getJspBody().invoke(null);

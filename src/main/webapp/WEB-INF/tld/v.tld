@@ -32,4 +32,9 @@
       <variable-class>org.vsegda.data.DataItem</variable-class>
     </variable>
   </tag>
+  <tag>
+    <name>dataNavigation</name>
+    <tag-class>org.vsegda.tags.DataNavigationTag</tag-class>
+    <body-content>empty</body-content>
+  </tag>
 </taglib>

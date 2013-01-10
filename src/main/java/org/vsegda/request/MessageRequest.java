@@ -1,7 +1,5 @@
 package org.vsegda.request;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.vsegda.dao.MessageQueueDAO;
 import org.vsegda.data.MessageItem;
 import org.vsegda.data.MessageQueue;
@@ -10,7 +8,7 @@ import org.vsegda.util.IdList;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.Query;
-import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -19,7 +17,7 @@ import java.util.logging.Logger;
 /**
  * @author Roman Elizarov
  */
-public class MessageRequest {
+public class MessageRequest extends AbstractRequest {
     private static final Logger log = Logger.getLogger(MessageRequest.class.getName());
 
 	private IdList id;
@@ -28,8 +26,8 @@ public class MessageRequest {
     private int last = 100; // last 100 items by default
 	private int first;
 
-    public MessageRequest(ServletRequest req, boolean post) {
-        RequestUtil.populate(this, req);
+    public MessageRequest(HttpServletRequest req, boolean post) {
+        init(req);
         if (id != null && id.isSingleton() && post)
             take = true; // force take on POST request if "id" is set
 		if (index != 0 && (id == null || !id.isSingleton()))
@@ -121,10 +119,5 @@ public class MessageRequest {
 
     public void setLast(int last) {
         this.last = last;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }

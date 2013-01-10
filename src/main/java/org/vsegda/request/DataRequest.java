@@ -1,22 +1,21 @@
 package org.vsegda.request;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.vsegda.dao.DataItemDAO;
 import org.vsegda.dao.DataStreamDAO;
+import org.vsegda.dao.HasNext;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
 import org.vsegda.util.IdList;
 import org.vsegda.util.TimeInstant;
 
-import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.logging.Logger;
 
 /**
  * @author Roman Elizarov
  */
-public class DataRequest {
+public class DataRequest extends AbstractRequest {
     private static final Logger log = Logger.getLogger(DataRequest.class.getName());
 
 	private IdList id;
@@ -25,10 +24,12 @@ public class DataRequest {
     private int first;
     private double filter = 5; // 5 sigmas by default
 
+    private final HasNext hasNext = new HasNext(); // filled by query
+
     public DataRequest() {}
 
-    public DataRequest(ServletRequest req) {
-        RequestUtil.populate(this, req);
+    public DataRequest(HttpServletRequest req) {
+        init(req);
 	}
 
     public List<DataItem> queryList() {
@@ -49,12 +50,12 @@ public class DataRequest {
         long startTimeMillis = System.currentTimeMillis();
         Map<DataStream, List<DataItem>> map = new LinkedHashMap<DataStream, List<DataItem>>();
         if (id == null) {
-            for (DataStream stream : DataStreamDAO.listDataStreams(last, first))
+            for (DataStream stream : DataStreamDAO.listDataStreams(last, first, hasNext))
                 map.put(stream, Collections.singletonList(DataItemDAO.findLastDataItem(stream)));
         } else {
             for (String code : this.id) {
                 DataStream stream = DataStreamDAO.resolveDataStreamByCode(code, false);
-                List<DataItem> items = new ArrayList<DataItem>(DataItemDAO.listDataItems(stream, since, last, first));
+                List<DataItem> items = new ArrayList<DataItem>(DataItemDAO.listDataItems(stream, since, last, first, hasNext));
                 filter(items);
                 map.put(stream, items);
             }
@@ -118,6 +119,7 @@ public class DataRequest {
     }
 
     public void setFirst(int first) {
+        updateQueryString("first", String.valueOf(first));
         this.first = first;
     }
 
@@ -145,8 +147,7 @@ public class DataRequest {
         this.since = since;
     }
 
-    @Override
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    public boolean hasNext() {
+        return hasNext.get();
     }
 }

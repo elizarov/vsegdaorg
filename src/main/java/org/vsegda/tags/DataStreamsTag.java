@@ -4,6 +4,7 @@ import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
 import org.vsegda.request.DataRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
@@ -19,7 +20,9 @@ public class DataStreamsTag extends SimpleTagSupport {
     @Override
     public void doTag() throws JspException, IOException {
         PageContext ctx = (PageContext)getJspContext();
-        Map<DataStream, List<DataItem>> streamItemsMap = new DataRequest(ctx.getRequest()).queryMap();
+        DataRequest dataRequest = new DataRequest((HttpServletRequest) ctx.getRequest());
+        ctx.setAttribute("dataRequest", dataRequest);
+        Map<DataStream, List<DataItem>> streamItemsMap = dataRequest.queryMap();
         ctx.setAttribute("streamItemsMap", streamItemsMap);
         for (DataStream stream : streamItemsMap.keySet()) {
             ctx.setAttribute("stream", stream);

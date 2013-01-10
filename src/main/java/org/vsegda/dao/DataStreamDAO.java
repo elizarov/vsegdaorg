@@ -20,17 +20,20 @@ public class DataStreamDAO {
     private DataStreamDAO() {}
 
     public static List<DataStream> listDataStreams() {
-        return listDataStreams(Integer.MAX_VALUE, 0);
+        return listDataStreams(Integer.MAX_VALUE, 0, null);
     }
 
     @SuppressWarnings({"unchecked"})
-    public static List<DataStream> listDataStreams(int last, int first) {
+    public static List<DataStream> listDataStreams(int last, int first, HasNext hasNext) {
         Query query = PM.instance().newQuery(DataStream.class);
         query.setOrdering("streamId asc");
         if (last < Integer.MAX_VALUE)
             query.setRange(first, first + last);
         query.getFetchPlan().setFetchSize(Math.min(MAX_FETCH_SIZE, last));
-        return new ArrayList<DataStream>((Collection<DataStream>) query.execute());
+        ArrayList<DataStream> list = new ArrayList<DataStream>((Collection<DataStream>) query.execute());
+        if (list.size() >= last && hasNext != null)
+            hasNext.set();
+        return list;
     }
 
     public static DataStream resolveDataStreamByCode(String code, boolean createIfAbsent) {

@@ -42,5 +42,6 @@
     </v:dataStreams>
   ];
 </script>
+<v:dataNavigation/>
 </body>
 </html>
