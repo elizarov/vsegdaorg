@@ -92,7 +92,7 @@ public class DataItemDAO {
                     toIndex--;
             }
             long fromTime = from == null ? 0 : from.time();
-            if (entry.fromTime <= fromTime || fromIndex > 0 || toIndex - fromIndex <= n) {
+            if (entry.fromTime <= fromTime || fromIndex > 0 || toIndex - fromIndex >= n) {
                 // can safely return from cache
                 items = entry.items.subList(Math.max(fromIndex, toIndex - n), toIndex);
             }
