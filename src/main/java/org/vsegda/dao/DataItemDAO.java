@@ -26,7 +26,7 @@ public class DataItemDAO {
     public static final TimeInstant DEFAULT_SINCE = TimeInstant.valueOf(TimePeriod.valueOf(-1, TimePeriodUnit.WEEK));
     public static final int DEFAULT_LAST = 2500;
 
-    private static final int MAX_LIST_SIZE = (int)(1.5 * DEFAULT_LAST);
+    private static final int MAX_CACHED_LIST_SIZE = (int)(1.5 * DEFAULT_LAST);
     private static final Cache LIST_CACHE;
 
     static {
@@ -48,7 +48,7 @@ public class DataItemDAO {
             int size = entry.items.size();
             if (size >= 2 && DataItem.ORDER_BY_TIME.compare(entry.items.get(size - 1), entry.items.get(size - 2)) < 0)
                 Collections.sort(entry.items, DataItem.ORDER_BY_TIME);
-            if (size > MAX_LIST_SIZE)
+            if (size > MAX_CACHED_LIST_SIZE)
                 entry.items.subList(0, size - DEFAULT_LAST).clear();
             LIST_CACHE.put(dataItem.getStreamId(), entry);
         }
@@ -95,7 +95,7 @@ public class DataItemDAO {
         }
         // perform query if not found in cache
         if (items == null)
-            items = performItemsQuery(stream.getStreamId(), since, last);
+            items = performItemsQuery(stream.getStreamId(), since, last, false);
         // always assume "hasNext" when since was set
         if (since != null && items.size() < last && reqFlags != null)
             reqFlags.setHasMore();
@@ -105,7 +105,7 @@ public class DataItemDAO {
     }
 
     @SuppressWarnings({"unchecked"})
-    private static List<DataItem> performItemsQuery(long streamId, TimeInstant since, int n) {
+    private static List<DataItem> performItemsQuery(long streamId, TimeInstant since, int n, boolean forceCacheUpdate) {
         Query query = PM.instance().newQuery(DataItem.class);
         String queryFilter = "streamId == id";
         String queryParams = "long id";
@@ -123,7 +123,13 @@ public class DataItemDAO {
         query.getFetchPlan().setFetchSize(n);
         List<DataItem> items = new ArrayList<DataItem>((Collection<DataItem>)query.executeWithMap(queryArgs));
         Collections.reverse(items); // turn descending into ascending order
-        LIST_CACHE.put(streamId, new ListEntry(items, items.size() < n));
+        // update cache if needed
+        ListEntry oldCacheEntry = (ListEntry) LIST_CACHE.get(streamId);
+        if (forceCacheUpdate || oldCacheEntry == null || oldCacheEntry.items.size() <= items.size()) {
+            List<DataItem> cacheItems = items.size() <= MAX_CACHED_LIST_SIZE ? items :
+                    new ArrayList<DataItem>(items.subList(items.size() - MAX_CACHED_LIST_SIZE, items.size()));
+            LIST_CACHE.put(streamId, new ListEntry(cacheItems, since == null && cacheItems.size() < n));
+        }
         return items;
     }
 
@@ -134,7 +140,7 @@ public class DataItemDAO {
     }
 
     public static void refreshCache(long streamId) {
-        performItemsQuery(streamId, DEFAULT_SINCE, DEFAULT_LAST);
+        performItemsQuery(streamId, null, DEFAULT_LAST, true);
     }
 
     @SuppressWarnings({"unchecked"})
