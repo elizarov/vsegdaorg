@@ -28,7 +28,7 @@ public class TimeUtil {
         return timeMillis == 0 ? NA_STRING : getDateTimeFormat().format(new Date(timeMillis));
     }
 
-   public static String formatDateTimeDifference(long timeMillis, long now) {
+    public static String formatDateTimeDifference(long timeMillis, long now) {
         if (timeMillis == 0)
             return NA_STRING;
         StringBuilder sb = new StringBuilder();
@@ -46,29 +46,37 @@ public class TimeUtil {
         return sb.toString();
     }
 
-    public static long parseTime(String s, long now) {
-        if (s.isEmpty())
-            return now;
+    public static long parseTime(String s) {
         if (s.equalsIgnoreCase(NA_STRING))
             return 0;
         ParsePosition pos = new ParsePosition(0);
         Date date = getDateTimeFormat().parse(s, pos);
-        if (date != null) {
-            if (pos.getIndex() == s.length())
-                return date.getTime();
-            if (s.charAt(pos.getIndex()) == '.') {
-                // optional millis
-                try {
-                    double mf = Double.parseDouble("0" + s.substring(pos.getIndex()));
-                    return date.getTime() + (int)(1000 * mf);
-                } catch (NumberFormatException e) {
-                    // ignore & fallback to other pasing approach
-                }
-            }
+        if (date == null)
+            throw new IllegalArgumentException("Invalid time format: " + s);
+        if (pos.getIndex() == s.length())
+            return date.getTime();
+        if (s.charAt(pos.getIndex()) != '.')
+            throw new IllegalArgumentException("Invalid time format: " + s);
+        // optional millis
+        try {
+            double mf = Double.parseDouble("0" + s.substring(pos.getIndex()));
+            return date.getTime() + (int) (1000 * mf);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid time format: " + s, e);
+        }
+    }
+
+    public static long parseTime(String s, long now) {
+        if (s.isEmpty())
+            return now;
+        try {
+            return parseTime(s);
+        } catch (IllegalArgumentException e) {
+            // ignore & fallback to parse as time period offset
         }
         try {
-            return now + Long.parseLong(s);
-        } catch (NumberFormatException e) {
+            return now + TimePeriod.valueOf(s).period();
+        } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid time format: " + s, e);
         }
     }

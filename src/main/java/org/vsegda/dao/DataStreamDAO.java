@@ -24,12 +24,12 @@ public class DataStreamDAO {
     }
 
     @SuppressWarnings({"unchecked"})
-    public static List<DataStream> listDataStreams(int first, int last) {
+    public static List<DataStream> listDataStreams(int skip, int n) {
         Query query = PM.instance().newQuery(DataStream.class);
         query.setOrdering("streamId asc");
-        if (last < Integer.MAX_VALUE)
-            query.setRange(first, first + last);
-        query.getFetchPlan().setFetchSize(Math.min(MAX_FETCH_SIZE, last));
+        if (n < Integer.MAX_VALUE)
+            query.setRange(skip, skip + n);
+        query.getFetchPlan().setFetchSize(Math.min(MAX_FETCH_SIZE, n));
         return new ArrayList<DataStream>((Collection<DataStream>) query.execute());
     }
 

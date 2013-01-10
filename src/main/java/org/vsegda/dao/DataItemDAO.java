@@ -9,6 +9,8 @@ import org.vsegda.data.DataStream;
 import org.vsegda.factory.PM;
 import org.vsegda.shared.DataStreamMode;
 import org.vsegda.util.TimeInstant;
+import org.vsegda.util.TimePeriod;
+import org.vsegda.util.TimePeriodUnit;
 
 import javax.jdo.Query;
 import java.io.Serializable;
@@ -21,9 +23,10 @@ import java.util.logging.Logger;
 public class DataItemDAO {
     private static final Logger log = Logger.getLogger(DataItemDAO.class.getName());
 
-    private static final int INITIAL_LIST_CACHE_SIZE = 2000;
-    private static final int MAX_LIST_SIZE = (int)(1.5 * INITIAL_LIST_CACHE_SIZE);
+    public static final TimeInstant DEFAULT_SINCE = TimeInstant.valueOf(TimePeriod.valueOf(-1, TimePeriodUnit.WEEK));
+    public static final int DEFAULT_N = 2500;
 
+    private static final int MAX_LIST_SIZE = (int)(1.5 * DEFAULT_N);
     private static final Cache LIST_CACHE;
 
     static {
@@ -46,7 +49,7 @@ public class DataItemDAO {
             if (size >= 2 && DataItem.ORDER_BY_TIME.compare(entry.items.get(size - 1), entry.items.get(size - 2)) < 0)
                 Collections.sort(entry.items, DataItem.ORDER_BY_TIME);
             if (size > MAX_LIST_SIZE)
-                entry.items.subList(0, size - INITIAL_LIST_CACHE_SIZE).clear();
+                entry.items.subList(0, size - DEFAULT_N).clear();
             LIST_CACHE.put(dataItem.getStreamId(), entry);
         }
     }
@@ -120,7 +123,7 @@ public class DataItemDAO {
     }
 
     public static void refreshCache(long streamId) {
-        performItemsQuery(streamId, null, INITIAL_LIST_CACHE_SIZE);
+        performItemsQuery(streamId, DEFAULT_SINCE, DEFAULT_N);
     }
 
     @SuppressWarnings({"unchecked"})
