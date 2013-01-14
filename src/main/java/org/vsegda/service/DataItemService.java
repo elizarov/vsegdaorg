@@ -59,18 +59,12 @@ public class DataItemService {
     }
 
     public static void removeDataItems(DataStream stream, List<DataItem> items) {
-        long lastTime = 0;
         for (DataItem item : items) {
             if (item.getStreamId() != stream.getStreamId())
                 throw new IllegalArgumentException();
             DataItemStorage.deleteDataItem(item);
-            lastTime = Math.max(lastTime, item.getTimeMillis());
         }
-        // check if cache is still correct
-        ListEntry entry = (ListEntry) LIST_CACHE.get(stream.getStreamId());
-        if (entry != null && !entry.items.isEmpty() && entry.items.get(0).getTimeMillis() <= lastTime)
-            // just kill cache completely for the stream in this case
-            LIST_CACHE.remove(stream.getStreamId());
+        // DON'T REMOVE THEM FROM THE CACHE BY DESIGN AS THEY TYPICALLY MOVE TO ARCHIVES
     }
 
     public static void refreshCache(long streamId) {
