@@ -31,7 +31,7 @@ public class DataArchiveCronServlet extends HttpServlet {
             log.fine("First item is " + firstItem + "; last item is " + lastItem);
             long threshold =
                     stream.getMode() == DataStreamMode.LAST ? lastItem.getTimeMillis() :
-                    System.currentTimeMillis() - DataArchive.RECENT_TIME_INTERVAL - 2 * DataArchive.ARCHIVE_INTERVAL;
+                    System.currentTimeMillis() - DataArchive.RECENT_TIME_INTERVAL - DataArchive.ARCHIVE_INTERVAL;
             if (firstItem != null && firstItem.getTimeMillis() < threshold &&
                     !firstItem.getKey().equals(lastItem.getKey()))
             {

@@ -34,9 +34,9 @@ public class DataArchive {
     public static final int COUNT_ESTIMATE = (int)(ARCHIVE_INTERVAL / TIME_PRECISION);
 
     /**
-     * Data is considered recent for 20 days (then it is archived or deleted).
+     * Data is considered recent for 2 days (then it is archived or deleted).
      */
-    public static final long RECENT_TIME_INTERVAL = 20 * TimeUtil.DAY;
+    public static final long RECENT_TIME_INTERVAL = 2 * TimeUtil.DAY;
 
     /**
      * GAE limits byte[] attributes to 500 bytes.
