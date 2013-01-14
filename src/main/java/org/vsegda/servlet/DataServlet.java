@@ -1,9 +1,9 @@
 package org.vsegda.servlet;
 
-import org.vsegda.dao.DataItemDAO;
-import org.vsegda.dao.DataStreamDAO;
 import org.vsegda.data.DataItem;
 import org.vsegda.request.DataRequest;
+import org.vsegda.service.DataItemService;
+import org.vsegda.service.DataStreamService;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -38,9 +38,9 @@ public class DataServlet extends HttpServlet {
         List<DataItem> items = parseDataItems(req.getReader());
         // resolve all stream tags
         for (DataItem item : items)
-            item.setStream(DataStreamDAO.resolveDataStream(item.getStream()));
+            item.setStream(DataStreamService.resolveDataStream(item.getStream()));
         // persist all items
-        DataItemDAO.persistDataItems(items);
+        DataItemService.addDataItems(items);
     }
 
     private List<DataItem> parseDataItems(BufferedReader in) throws IOException {

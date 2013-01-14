@@ -3,7 +3,7 @@ package org.vsegda.servlet;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
-import org.vsegda.dao.DataItemDAO;
+import org.vsegda.service.DataItemService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -31,7 +31,7 @@ public class DataCacheRefreshTaskServlet extends HttpServlet {
         Long streamId = Long.parseLong(req.getParameter("id"));
         log.info("Refreshing cache for streamId=" + streamId);
         long startTimeMillis = System.currentTimeMillis();
-        DataItemDAO.refreshCache(streamId);
+        DataItemService.refreshCache(streamId);
         log.info("Completed cache refresh in " + (System.currentTimeMillis() - startTimeMillis) + " ms");
 
     }

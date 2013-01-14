@@ -1,10 +1,10 @@
-package org.vsegda.dao;
+package org.vsegda.service;
 
 /**
  * @author Roman Elizarov
  */
-public class MessageQueueDAO {
-    private MessageQueueDAO() {}
+public class MessageQueueService {
+    private MessageQueueService() {}
 
     public static long resolveQueueCode(String code) {
         // todo: support tagged message queues in the future

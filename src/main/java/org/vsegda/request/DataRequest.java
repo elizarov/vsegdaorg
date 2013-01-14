@@ -1,9 +1,9 @@
 package org.vsegda.request;
 
-import org.vsegda.dao.DataItemDAO;
-import org.vsegda.dao.DataStreamDAO;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
+import org.vsegda.service.DataItemService;
+import org.vsegda.service.DataStreamService;
 import org.vsegda.util.IdList;
 import org.vsegda.util.TimeInstant;
 import org.vsegda.util.TimePeriod;
@@ -20,8 +20,8 @@ public class DataRequest extends AbstractRequest {
 
     private IdList id;
     private TimeInstant to = null;
-    private TimePeriod span = DataItemDAO.DEFAULT_SPAN;
-    private int n = DataItemDAO.DEFAULT_N;
+    private TimePeriod span = DataItemService.DEFAULT_SPAN;
+    private int n = DataItemService.DEFAULT_N;
     private double filter = 5; // 5 sigmas by default
 
     private boolean hasNavigation;
@@ -50,14 +50,14 @@ public class DataRequest extends AbstractRequest {
         long startTimeMillis = System.currentTimeMillis();
         Map<DataStream, List<DataItem>> map = new LinkedHashMap<DataStream, List<DataItem>>();
         if (id == null) {
-            for (DataStream stream : DataStreamDAO.listDataStreams())
-                map.put(stream, Collections.singletonList(DataItemDAO.findLastDataItem(stream)));
+            for (DataStream stream : DataStreamService.getDataStreams())
+                map.put(stream, Collections.singletonList(DataItemService.getLastDataItem(stream)));
         } else {
             for (String code : this.id) {
-                DataStream stream = DataStreamDAO.resolveDataStreamByCode(code, false);
+                DataStream stream = DataStreamService.resolveDataStreamByCode(code, false);
                 TimeInstant from = span == null ? null :
                         (to == null ? TimeInstant.now() : to).subtract(span);
-                List<DataItem> items = new ArrayList<DataItem>(DataItemDAO.listDataItems(stream, from, to, n));
+                List<DataItem> items = new ArrayList<DataItem>(DataItemService.getDataItems(stream, from, to, n));
                 filter(items);
                 map.put(stream, items);
             }

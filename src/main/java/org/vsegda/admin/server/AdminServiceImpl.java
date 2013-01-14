@@ -5,11 +5,11 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.vsegda.admin.client.rpc.AdminService;
 import org.vsegda.admin.shared.DataStreamDTO;
-import org.vsegda.dao.DataStreamDAO;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
 import org.vsegda.factory.PM;
 import org.vsegda.request.DataRequest;
+import org.vsegda.service.DataStreamService;
 import org.vsegda.util.TimePeriod;
 
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public class AdminServiceImpl extends RemoteServiceServlet implements AdminServi
         log.info("Updating data stream " + ReflectionToStringBuilder.toString(sd, ToStringStyle.SHORT_PREFIX_STYLE));
         // update stream
         PM.beginTransaction();
-        DataStream stream = DataStreamDAO.resolveDataStreamById(sd.getId(), true);
+        DataStream stream = DataStreamService.resolveDataStreamById(sd.getId(), true);
         stream.setTag(sd.getTag());
         stream.setName(sd.getName());
         stream.setAlertTimeout(TimePeriod.valueOf(sd.getAlert()).periodOrNull());

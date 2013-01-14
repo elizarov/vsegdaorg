@@ -1,6 +1,6 @@
 package org.vsegda.servlet;
 
-import org.vsegda.service.Alert;
+import org.vsegda.service.AlertService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -18,6 +18,6 @@ public class AlertServlet extends HttpServlet {
 		if (text == null)
 			throw new ServletException("text parameter required");
 		String id = req.getParameter("id");
-		Alert.sendAlertEmail(id, text);
+		AlertService.sendAlertEmail(id, text);
 	}
 }

@@ -1,10 +1,10 @@
 package org.vsegda.servlet;
 
-import org.vsegda.dao.DataItemDAO;
-import org.vsegda.dao.DataStreamDAO;
 import org.vsegda.data.DataArchive;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
+import org.vsegda.service.DataItemService;
+import org.vsegda.service.DataStreamService;
 import org.vsegda.shared.DataStreamMode;
 
 import javax.servlet.ServletException;
@@ -24,10 +24,10 @@ public class DataArchiveCronServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         log.info("Checking data items for archival needs");
         long startTimeMillis = System.currentTimeMillis();
-        for (DataStream stream : DataStreamDAO.listDataStreams()) {
+        for (DataStream stream : DataStreamService.getDataStreams()) {
             // check for archive or purge (find non-recent items)
-            DataItem firstItem = DataItemDAO.findFirstDataItem(stream);
-            DataItem lastItem = DataItemDAO.findLastDataItem(stream);
+            DataItem firstItem = DataItemService.getFirstDataItem(stream);
+            DataItem lastItem = DataItemService.getLastDataItem(stream);
             log.fine("First item is " + firstItem + "; last item is " + lastItem);
             long threshold =
                     stream.getMode() == DataStreamMode.LAST ? lastItem.getTimeMillis() :

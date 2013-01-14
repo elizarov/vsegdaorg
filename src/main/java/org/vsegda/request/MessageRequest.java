@@ -1,9 +1,9 @@
 package org.vsegda.request;
 
-import org.vsegda.dao.MessageQueueDAO;
 import org.vsegda.data.MessageItem;
 import org.vsegda.data.MessageQueue;
 import org.vsegda.factory.PM;
+import org.vsegda.service.MessageQueueService;
 import org.vsegda.util.IdList;
 
 import javax.jdo.JDOObjectNotFoundException;
@@ -57,7 +57,7 @@ public class MessageRequest extends AbstractRequest {
                 }
         } else {
             for (String code : this.id) {
-                long id = MessageQueueDAO.resolveQueueCode(code);
+                long id = MessageQueueService.resolveQueueCode(code);
                 Query query = PM.instance().newQuery(MessageItem.class);
                 if (take) {
                     MessageQueue queue = PM.instance().getObjectById(MessageQueue.class, MessageQueue.createKey(id));

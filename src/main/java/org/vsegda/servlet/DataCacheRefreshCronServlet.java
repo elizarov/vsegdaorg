@@ -1,7 +1,7 @@
 package org.vsegda.servlet;
 
-import org.vsegda.dao.DataStreamDAO;
 import org.vsegda.data.DataStream;
+import org.vsegda.service.DataStreamService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,7 +20,7 @@ public class DataCacheRefreshCronServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         log.info("Scheduling cache updates");
         long startTimeMillis = System.currentTimeMillis();
-        for (DataStream stream : DataStreamDAO.listDataStreams()) {
+        for (DataStream stream : DataStreamService.getDataStreams()) {
             // enqueue cache update task
             DataCacheRefreshTaskServlet.enqueueTask(stream.getStreamId());
         }

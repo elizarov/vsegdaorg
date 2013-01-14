@@ -3,11 +3,11 @@ package org.vsegda.servlet;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
-import org.vsegda.dao.DataItemDAO;
 import org.vsegda.data.DataArchive;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
 import org.vsegda.factory.PM;
+import org.vsegda.service.DataItemService;
 import org.vsegda.shared.DataStreamMode;
 import org.vsegda.util.TimeUtil;
 
@@ -43,12 +43,12 @@ public class DataArchiveTaskServlet extends HttpServlet {
         long streamId = Long.parseLong(req.getParameter("id"));
         DataStream stream = PM.instance().getObjectById(DataStream.class, streamId);
         log.info("Archiving data for streamId=" + streamId + ", mode=" + stream.getMode());
-        DataItem firstItem = DataItemDAO.findFirstDataItem(stream);
+        DataItem firstItem = DataItemService.getFirstDataItem(stream);
         if (firstItem == null || (stream.getMode() != DataStreamMode.LAST && firstItem.isRecent())) {
             log.info("First stream item is recent or missing: " + firstItem);
             return;
         }
-        DataItem lastItem = DataItemDAO.findLastDataItem(stream);
+        DataItem lastItem = DataItemService.getLastDataItem(stream);
         log.info("First item is " + firstItem + "; last item is " + lastItem);
         // Archive up to next midnight (or up to last item for LAST mode)
         long limit =
@@ -74,11 +74,11 @@ public class DataArchiveTaskServlet extends HttpServlet {
         switch (stream.getMode()) {
             case LAST:
                 log.info("Only last item is kept, removing other ones");
-                DataItemDAO.removeDataItems(stream, items);
+                DataItemService.removeDataItems(stream, items);
                 break;
             case RECENT:
                 log.info("Only recent items are kept, removing old ones");
-                DataItemDAO.removeDataItems(stream, items);
+                DataItemService.removeDataItems(stream, items);
                 break;
             case ARCHIVE:
                 // Actually archive
