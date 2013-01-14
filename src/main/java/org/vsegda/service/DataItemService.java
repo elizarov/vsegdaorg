@@ -127,9 +127,9 @@ public class DataItemService {
         List<DataItem> items = new ArrayList<DataItem>();
         items.addAll(DataItemStorage.queryDataItems(streamId, from, to, n));
         if (items.size() < n)
-            items.addAll(DataArchiveStorage.queryItemsFromDataArchives(streamId, from, to, items.size() - n));
+            items.addAll(DataArchiveStorage.queryItemsFromDataArchives(streamId, from, to, n - items.size()));
         Collections.sort(items, DataItem.ORDER_BY_TIME);
-        if (items.size()  > n)
+        if (items.size() > n)
             items.subList(0, items.size() - n).clear(); // remove extra items
         // update cache if needed (only when querying up to now)
         if (to == null) {
