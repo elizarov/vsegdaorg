@@ -7,6 +7,7 @@ import net.sf.jsr107cache.CacheManager;
 import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
 import org.vsegda.shared.DataStreamMode;
+import org.vsegda.storage.DataArchiveStorage;
 import org.vsegda.storage.DataItemStorage;
 import org.vsegda.util.TimeInstant;
 import org.vsegda.util.TimePeriod;
@@ -58,10 +59,18 @@ public class DataItemService {
     }
 
     public static void removeDataItems(DataStream stream, List<DataItem> items) {
-        for (DataItem item : items)
+        long lastTime = 0;
+        for (DataItem item : items) {
+            if (item.getStreamId() != stream.getStreamId())
+                throw new IllegalArgumentException();
             DataItemStorage.deleteDataItem(item);
-        // just kill cache completely for the stream in this case
-        LIST_CACHE.remove(stream.getStreamId());
+            lastTime = Math.max(lastTime, item.getTimeMillis());
+        }
+        // check if cache is still correct
+        ListEntry entry = (ListEntry) LIST_CACHE.get(stream.getStreamId());
+        if (entry != null && !entry.items.isEmpty() && entry.items.get(0).getTimeMillis() <= lastTime)
+            // just kill cache completely for the stream in this case
+            LIST_CACHE.remove(stream.getStreamId());
     }
 
     public static void refreshCache(long streamId) {
@@ -114,7 +123,14 @@ public class DataItemService {
     }
 
     private static List<DataItem> performItemsQuery(long streamId, TimeInstant from, TimeInstant to, int n, boolean forceCacheUpdate) {
-        List<DataItem> items = DataItemStorage.queryDataItems(streamId, from, to, n);
+        // query both recent items and archive
+        List<DataItem> items = new ArrayList<DataItem>();
+        items.addAll(DataItemStorage.queryDataItems(streamId, from, to, n));
+        if (items.size() < n)
+            items.addAll(DataArchiveStorage.queryItemsFromDataArchives(streamId, from, to, items.size() - n));
+        Collections.sort(items, DataItem.ORDER_BY_TIME);
+        if (items.size()  > n)
+            items.subList(0, items.size() - n).clear(); // remove extra items
         // update cache if needed (only when querying up to now)
         if (to == null) {
             long fromTime = from == null ? (items.size() < n ? 0 : items.get(0).getTimeMillis()) : from.time();

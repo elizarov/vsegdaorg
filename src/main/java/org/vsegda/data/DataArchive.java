@@ -24,6 +24,16 @@ public class DataArchive {
     public static final long ARCHIVE_INTERVAL = TimeUtil.DAY;
 
     /**
+     * Data items usually come every 5 minutes and we round times in archive to it.
+     */
+    public static final long TIME_PRECISION = 5 * TimeUtil.MINUTE;
+
+    /**
+     * Estimated number of items per archive.
+     */
+    public static final int COUNT_ESTIMATE = (int)(ARCHIVE_INTERVAL / TIME_PRECISION);
+
+    /**
      * Data is considered recent for 20 days (then it is archived or deleted).
      */
     public static final long RECENT_TIME_INTERVAL = 20 * TimeUtil.DAY;

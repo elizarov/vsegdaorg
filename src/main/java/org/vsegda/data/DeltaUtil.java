@@ -1,13 +1,9 @@
 package org.vsegda.data;
 
-import org.vsegda.util.TimeUtil;
-
 /**
  * @author Roman Elizarov
  */
 class DeltaUtil {
-    static final long TIME_PRECISION = 5 * TimeUtil.MINUTE;
-
     static final int MAX_VALUE_PRECISION = 6;
     static final long[] POWER = new long[MAX_VALUE_PRECISION + 1];
     static final long MAX_VALUE_POWER;
@@ -29,6 +25,6 @@ class DeltaUtil {
     }
 
     static long roundTime(long timeMillis) {
-        return timeMillis / TIME_PRECISION * TIME_PRECISION;
+        return timeMillis / DataArchive.TIME_PRECISION * DataArchive.TIME_PRECISION;
     }
 }

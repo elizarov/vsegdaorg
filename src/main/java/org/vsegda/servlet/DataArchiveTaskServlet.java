@@ -9,16 +9,15 @@ import org.vsegda.data.DataStream;
 import org.vsegda.factory.PM;
 import org.vsegda.service.DataItemService;
 import org.vsegda.shared.DataStreamMode;
+import org.vsegda.storage.DataArchiveStorage;
+import org.vsegda.storage.DataItemStorage;
 import org.vsegda.util.TimeUtil;
 
-import javax.jdo.Query;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -55,13 +54,7 @@ public class DataArchiveTaskServlet extends HttpServlet {
                 stream.getMode() == DataStreamMode.LAST ? lastItem.getTimeMillis() :
                 TimeUtil.getArchiveLimit(firstItem.getTimeMillis());
 
-        Query query = PM.instance().newQuery(DataItem.class);
-        query.setOrdering("timeMillis asc");
-        query.declareParameters("long id, long limit");
-        query.setFilter("streamId == id && timeMillis < limit");
-        query.setRange(0, MAX_ARCHIVE_ITEMS);
-        query.getFetchPlan().setFetchSize(MAX_ARCHIVE_ITEMS);
-        List<DataItem> items = new ArrayList<DataItem>((Collection<DataItem>) query.execute(streamId, limit));
+        List<DataItem> items = DataItemStorage.queryFirstDataItems(streamId, limit, MAX_ARCHIVE_ITEMS);
 
         // never remove or archive the last item !!!
         if (!items.isEmpty() && items.get(items.size() - 1).getKey().equals(lastItem.getKey()))
@@ -86,11 +79,12 @@ public class DataArchiveTaskServlet extends HttpServlet {
                 archive.encodeItems(items);
                 items.subList(archive.getCount(), items.size()).clear(); // remove all that wasn't encoded
                 log.info("Creating archive " + archive);
-                PM.instance().makePersistent(archive);
-                PM.instance().deletePersistentAll(items);
+                DataArchiveStorage.storeDataArchive(archive);
+                DataItemService.removeDataItems(stream, items);
                 break;
         }
         // create next task to check this stream again
         enqueueTask(streamId);
     }
+
 }

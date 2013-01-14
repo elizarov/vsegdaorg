@@ -67,4 +67,15 @@ public class DataItemStorage {
                 streamId, items.size(), System.currentTimeMillis() - queryStartTime));
         return items.isEmpty() ? null : items.iterator().next();
     }
+
+    @SuppressWarnings({"unchecked"})
+    public static List<DataItem> queryFirstDataItems(long streamId, long timeLimit, int n) {
+        Query query = PM.instance().newQuery(DataItem.class);
+        query.setOrdering("timeMillis asc");
+        query.declareParameters("long _id, long _limit");
+        query.setFilter("streamId == _id && timeMillis < _limit");
+        query.setRange(0, n);
+        query.getFetchPlan().setFetchSize(n);
+        return new ArrayList<DataItem>((Collection<DataItem>) query.execute(streamId, timeLimit));
+    }
 }
