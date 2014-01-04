@@ -9,7 +9,9 @@ import org.vsegda.data.DataItem;
 import org.vsegda.data.DataStream;
 import org.vsegda.factory.PM;
 import org.vsegda.request.DataRequest;
+import org.vsegda.service.DataItemService;
 import org.vsegda.service.DataStreamService;
+import org.vsegda.shared.DataStreamMode;
 import org.vsegda.util.TimePeriod;
 
 import java.util.ArrayList;
@@ -44,11 +46,32 @@ public class AdminServiceImpl extends RemoteServiceServlet implements AdminServi
     }
 
     @Override
-    public void updateDataStream(DataStreamDTO sd) {
-        log.info("Updating data stream " + ReflectionToStringBuilder.toString(sd, ToStringStyle.SHORT_PREFIX_STYLE));
+    // use id == 0 to create new stream
+    public void updateDataStream(long id, DataStreamDTO sd) {
+        log.info("Updating data stream id=" + id + " with " + ReflectionToStringBuilder.toString(sd, ToStringStyle.SHORT_PREFIX_STYLE));
         // update stream
-        PM.beginTransaction();
-        DataStream stream = DataStreamService.resolveDataStreamById(sd.getId(), true);
+        DataStream stream = DataStreamService.resolveDataStreamById(id, id == 0);
+        if (sd.getMode() == DataStreamMode.DELETE) {
+            // delete existing stream
+            DataItemService.removeAllDataItems(stream);
+            DataStreamService.removeDataStream(stream);
+            return;
+        }
+        if (id != 0 && sd.getId() != id) {
+            // change existing stream id
+            if (DataStreamService.resolveDataStreamById(sd.getId(), false) != null)
+                throw new IllegalArgumentException("Stream with id=" + sd.getId() + " already exists");
+            DataStream newStream = DataStreamService.resolveDataStreamById(sd.getId(), true);
+            updateStream(newStream, sd);
+            DataItemService.updateStreamId(id, sd.getId());
+            DataStreamService.removeDataStream(stream);
+            return;
+        }
+        // only update
+        updateStream(stream, sd);
+    }
+
+    private void updateStream(DataStream stream, DataStreamDTO sd) {
         stream.setTag(sd.getTag());
         stream.setName(sd.getName());
         stream.setAlertTimeout(TimePeriod.valueOf(sd.getAlert()).periodOrNull());

@@ -118,12 +118,12 @@ public class Admin implements EntryPoint, DataStreamEditorListener, DataStreamTa
 
     @Override
     public void editDataStream(DataStreamDTO sd) {
-        new DataStreamEditor().edit(sd, this);
+        new DataStreamEditor(sd.getId()).edit(sd, this);
     }
 
     @Override
-    public void dataStreamEditorSaved(DataStreamDTO sd) {
-        executeAction(new DataStreamUpdateAction(sd, new AdminActionListener<Void>() {
+    public void dataStreamEditorSaved(long originalId, DataStreamDTO sd) {
+        executeAction(new DataStreamUpdateAction(originalId, sd, new AdminActionListener<Void>() {
             @Override
             public void actionCompleted(AdminAction action, boolean success, String status, Void result) {
                 completeAction(action, success, status);

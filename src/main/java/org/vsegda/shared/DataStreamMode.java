@@ -17,5 +17,10 @@ public enum DataStreamMode {
     /**
      * Keeps recent values and full archive.
      */
-    ARCHIVE
+    ARCHIVE,
+
+    /**
+     * Deletes the stream.
+     */
+    DELETE
 }

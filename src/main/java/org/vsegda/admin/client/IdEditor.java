@@ -2,26 +2,26 @@ package org.vsegda.admin.client;
 
 import com.google.gwt.editor.client.LeafValueEditor;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
 
 /**
  * @author Roman Elizarov
  */
 public class IdEditor extends Composite implements LeafValueEditor<Long> {
-    private Label label = new Label();
+    private TextBox text = new TextBox();
 
     public IdEditor() {
-        initWidget(label);
+        initWidget(text);
     }
 
     @Override
     public void setValue(Long id) {
-        label.setText(id == null ? "" : String.valueOf(id));
+        text.setText(id == null ? "" : String.valueOf(id));
     }
 
     @Override
     public Long getValue() {
-        String s = label.getText().trim();
+        String s = text.getText().trim();
         return s.isEmpty() ? null : Long.parseLong(s);
     }
 }

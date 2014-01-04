@@ -147,6 +147,17 @@ public class DataItemService {
         return items;
     }
 
+    public static void updateStreamId(long fromId, long toId) {
+        DataItemStorage.updateStreamId(fromId, toId);
+        DataArchiveStorage.updateStreamId(fromId, toId);
+    }
+
+    public static void removeAllDataItems(DataStream stream) {
+        DataItemStorage.removeAllByStreamId(stream.getStreamId());
+        DataArchiveStorage.removeAllByStreamId(stream.getStreamId());
+
+    }
+
     private static class ListEntry implements Serializable {
         private static final long serialVersionUID = 4488592054732566662L;
 

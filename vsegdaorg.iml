@@ -17,19 +17,17 @@
       </configuration>
       <facet type="google-app-engine" name="Google App Engine">
         <configuration>
-          <password>dfcddfc1dfc2dfdfdfc4df9cdfc1df93</password>
-          <files-to-enhance>
-            <file path="$MODULE_DIR$/src" />
-          </files-to-enhance>
-          <run-enhancer-on-make>true</run-enhancer-on-make>
           <sdk-home-path>C:/Java/appengine-java-sdk</sdk-home-path>
-          <email>elizarov@gmail.com</email>
+          <run-enhancer-on-make>true</run-enhancer-on-make>
+          <files-to-enhance>
+            <file path="$MODULE_DIR$/src/main/java" />
+          </files-to-enhance>
         </configuration>
       </facet>
     </facet>
     <facet type="gwt" name="GWT">
       <configuration>
-        <setting name="compilerMaxHeapSize" value="128" />
+        <setting name="compilerMaxHeapSize" value="512" />
         <setting name="gwtScriptOutputStyle" value="DETAILED" />
         <setting name="gwtSdkUrl" value="file://C:/Java/gwt" />
         <setting name="webFacet" value="Web" />
@@ -52,8 +50,8 @@
     <orderEntry type="library" name="jakarta-taglibs-standard-1.1.2" level="project" />
     <orderEntry type="library" name="commons-beanutils-1.7.0" level="project" />
     <orderEntry type="library" name="commons-lang3-3.1" level="project" />
-    <orderEntry type="library" name="gwt-user" level="application" />
     <orderEntry type="library" name="gwt-servlet" level="application" />
+    <orderEntry type="library" name="gwt-user" level="application" />
     <orderEntry type="module-library" scope="TEST">
       <library>
         <CLASSES>

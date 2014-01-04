@@ -73,4 +73,8 @@ public class DataStreamStorage {
             return null;
         }
     }
+
+    public static void removeDataStream(DataStream stream) {
+        PM.instance().deletePersistent(stream);
+    }
 }

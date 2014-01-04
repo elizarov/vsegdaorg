@@ -12,6 +12,8 @@ import java.util.logging.Logger;
 public class DataStreamService {
     private static final Logger log = Logger.getLogger(DataStreamService.class.getName());
 
+    private static final int FIRST_STREAM_ID = 1000;
+
     private DataStreamService() {}
 
     @SuppressWarnings({"unchecked"})
@@ -41,7 +43,8 @@ public class DataStreamService {
             log.info("Creating new data stream with tag=" + tag);
             // find last stream
             stream = DataStreamStorage.loadLastDataStream();
-            stream = new DataStream(stream == null ? 100 : stream.getStreamId() + 1);
+            stream = new DataStream(stream == null ? FIRST_STREAM_ID :
+                    Math.max(FIRST_STREAM_ID, stream.getStreamId() + 1));
             stream.setTag(tag);
             DataStreamStorage.storeDataStream(stream);
         }
@@ -62,5 +65,9 @@ public class DataStreamService {
         return stream.getStreamId() != null ?
                 resolveDataStreamById(stream.getStreamId(), true) :
                 resolveDataStreamByCode(stream.getTag(), true);
+    }
+
+    public static void removeDataStream(DataStream stream) {
+        DataStreamStorage.removeDataStream(stream);
     }
 }

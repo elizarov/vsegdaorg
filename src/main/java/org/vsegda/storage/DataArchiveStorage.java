@@ -80,4 +80,23 @@ public class DataArchiveStorage {
         return items;
     }
 
+    @SuppressWarnings("unchecked")
+    public static void updateStreamId(long fromId, long toId) {
+        Query query = PM.instance().newQuery(DataArchive.class);
+        query.setFilter("streamId == _id");
+        query.declareParameters("long _id");
+        Collection<DataArchive> items = (Collection<DataArchive>) query.execute(fromId);
+        for (DataArchive item : items)
+            item.setStreamId(toId);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void removeAllByStreamId(long streamId) {
+        Query query = PM.instance().newQuery(DataArchive.class);
+        query.setFilter("streamId == _id");
+        query.declareParameters("long _id");
+        Collection<DataArchive> items = (Collection<DataArchive>) query.execute(streamId);
+        for (DataArchive item : items)
+            PM.instance().deletePersistent(item);
+    }
 }

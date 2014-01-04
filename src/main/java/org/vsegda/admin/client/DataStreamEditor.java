@@ -13,7 +13,9 @@ import java.util.List;
 /**
  * @author Roman Elizarov
  */
-public class DataStreamEditor extends DialogBox implements Editor<DataStreamDTO>,ClickHandler {
+public class DataStreamEditor extends DialogBox implements Editor<DataStreamDTO>, ClickHandler {
+    private final long originalId;
+
     IdEditor id = new IdEditor();
     TextBox tag = new TextBox();
     TextBox name = new TextBox();
@@ -27,8 +29,9 @@ public class DataStreamEditor extends DialogBox implements Editor<DataStreamDTO>
     private DataStreamEditorDriver driver = GWT.create(DataStreamEditorDriver.class);
     private DataStreamEditorListener onSave;
 
-    public DataStreamEditor() {
+    public DataStreamEditor(long originalId) {
         super(false);
+        this.originalId = originalId;
         initLayout();
         initListeners();
     }
@@ -97,7 +100,7 @@ public class DataStreamEditor extends DialogBox implements Editor<DataStreamDTO>
                 status.setText("Error: " + errors.get(0).getMessage());
                 return; // just show first error and return
             }
-            onSave.dataStreamEditorSaved(sd);
+            onSave.dataStreamEditorSaved(originalId, sd);
         }
         hide();
     }

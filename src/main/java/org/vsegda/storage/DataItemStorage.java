@@ -78,4 +78,24 @@ public class DataItemStorage {
         query.getFetchPlan().setFetchSize(n);
         return new ArrayList<DataItem>((Collection<DataItem>) query.execute(streamId, timeLimit));
     }
+
+    @SuppressWarnings("unchecked")
+    public static void updateStreamId(long fromId, long toId) {
+        Query query = PM.instance().newQuery(DataItem.class);
+        query.setFilter("streamId == _id");
+        query.declareParameters("long _id");
+        Collection<DataItem> items = (Collection<DataItem>) query.execute(fromId);
+        for (DataItem item : items)
+            item.setStreamId(toId);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void removeAllByStreamId(long streamId) {
+        Query query = PM.instance().newQuery(DataItem.class);
+        query.setFilter("streamId == _id");
+        query.declareParameters("long _id");
+        Collection<DataItem> items = (Collection<DataItem>) query.execute(streamId);
+        for (DataItem item : items)
+            PM.instance().deletePersistent(item);
+    }
 }
