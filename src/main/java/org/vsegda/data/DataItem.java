@@ -50,7 +50,7 @@ public class DataItem implements Serializable {
         stream.setTag(tokens[0]);
         try {
             value = Double.parseDouble(tokens[1]);
-            timeMillis = tokens.length < 3 ? now : TimeUtil.parseTime(tokens[2], now);
+            timeMillis = tokens.length < 3 ? now : Math.min(TimeUtil.parseTime(tokens[2], now), now);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid line format: " + line, e);
         }

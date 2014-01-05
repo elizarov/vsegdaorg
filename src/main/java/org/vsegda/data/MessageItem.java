@@ -43,7 +43,7 @@ public class MessageItem {
         try {
             queueId = Long.parseLong(tokens[0]);
             text = tokens[1];
-            timeMillis = tokens.length < 3 ? now : TimeUtil.parseTime(tokens[2], now);
+            timeMillis = tokens.length < 3 ? now : Math.min(TimeUtil.parseTime(tokens[2], now), now);
             messageIndex = tokens.length < 4 ? 0 : Long.parseLong(tokens[3]);
             updateKey();
         } catch (NumberFormatException e) {
