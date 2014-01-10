@@ -56,6 +56,14 @@ public class DataArchiveTaskServlet extends HttpServlet {
 
         List<DataItem> items = DataItemStorage.queryFirstDataItems(streamId, limit, MAX_ARCHIVE_ITEMS);
 
+        // remove archives when needed
+        switch (stream.getMode()) {
+            case LAST:
+            case RECENT:
+                log.info("Removing archives in " + stream.getMode() + " mode");
+                DataArchiveStorage.removeAllByStreamId(stream.getStreamId());
+        }
+
         // never remove or archive the last item !!!
         if (!items.isEmpty() && items.get(items.size() - 1).getKey().equals(lastItem.getKey()))
             items.remove(items.size() - 1);
@@ -67,12 +75,10 @@ public class DataArchiveTaskServlet extends HttpServlet {
         switch (stream.getMode()) {
             case LAST:
                 log.info("Only last item is kept, removing other ones");
-                DataArchiveStorage.removeAllByStreamId(stream.getStreamId());
                 DataItemService.removeDataItems(stream, items);
                 break;
             case RECENT:
                 log.info("Only recent items are kept, removing old ones");
-                DataArchiveStorage.removeAllByStreamId(stream.getStreamId());
                 DataItemService.removeDataItems(stream, items);
                 break;
             case ARCHIVE:
