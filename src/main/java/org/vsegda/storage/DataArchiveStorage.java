@@ -16,6 +16,7 @@ import java.util.logging.Logger;
  */
 public class DataArchiveStorage {
     private static final Logger log = Logger.getLogger(DataArchiveStorage.class.getName());
+    private static final int BATCH_FETCH_SIZE = 10000;
 
     private DataArchiveStorage() {} // do not create
 
@@ -85,6 +86,7 @@ public class DataArchiveStorage {
         Query query = PM.instance().newQuery(DataArchive.class);
         query.setFilter("streamId == _id");
         query.declareParameters("long _id");
+        query.getFetchPlan().setFetchSize(BATCH_FETCH_SIZE);
         Collection<DataArchive> items = (Collection<DataArchive>) query.execute(fromId);
         for (DataArchive item : items)
             item.setStreamId(toId);
@@ -95,6 +97,7 @@ public class DataArchiveStorage {
         Query query = PM.instance().newQuery(DataArchive.class);
         query.setFilter("streamId == _id");
         query.declareParameters("long _id");
+        query.getFetchPlan().setFetchSize(BATCH_FETCH_SIZE);
         Collection<DataArchive> items = (Collection<DataArchive>) query.execute(streamId);
         for (DataArchive item : items)
             PM.instance().deletePersistent(item);
