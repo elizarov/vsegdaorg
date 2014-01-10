@@ -13,6 +13,7 @@ import java.util.logging.Logger;
  */
 public class DataItemStorage {
     private static final Logger log = Logger.getLogger(DataItemStorage.class.getName());
+    private static final int BATCH_FETCH_SIZE = 10000;
 
     private DataItemStorage() {} // do not create
 
@@ -84,6 +85,7 @@ public class DataItemStorage {
         Query query = PM.instance().newQuery(DataItem.class);
         query.setFilter("streamId == _id");
         query.declareParameters("long _id");
+        query.getFetchPlan().setFetchSize(BATCH_FETCH_SIZE);
         Collection<DataItem> items = (Collection<DataItem>) query.execute(fromId);
         for (DataItem item : items)
             item.setStreamId(toId);
@@ -94,6 +96,7 @@ public class DataItemStorage {
         Query query = PM.instance().newQuery(DataItem.class);
         query.setFilter("streamId == _id");
         query.declareParameters("long _id");
+        query.getFetchPlan().setFetchSize(BATCH_FETCH_SIZE);
         Collection<DataItem> items = (Collection<DataItem>) query.execute(streamId);
         for (DataItem item : items)
             PM.instance().deletePersistent(item);
