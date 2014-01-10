@@ -148,11 +148,14 @@ public class DataItemService {
     }
 
     public static void updateStreamId(long fromId, long toId) {
+        LIST_CACHE.remove(fromId);
+        LIST_CACHE.remove(toId);
         DataItemStorage.updateStreamId(fromId, toId);
         DataArchiveStorage.updateStreamId(fromId, toId);
     }
 
     public static void removeAllDataItems(DataStream stream) {
+        LIST_CACHE.remove(stream.getStreamId());
         DataItemStorage.removeAllByStreamId(stream.getStreamId());
         DataArchiveStorage.removeAllByStreamId(stream.getStreamId());
 
