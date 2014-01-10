@@ -67,10 +67,12 @@ public class DataArchiveTaskServlet extends HttpServlet {
         switch (stream.getMode()) {
             case LAST:
                 log.info("Only last item is kept, removing other ones");
+                DataArchiveStorage.removeAllByStreamId(stream.getStreamId());
                 DataItemService.removeDataItems(stream, items);
                 break;
             case RECENT:
                 log.info("Only recent items are kept, removing old ones");
+                DataArchiveStorage.removeAllByStreamId(stream.getStreamId());
                 DataItemService.removeDataItems(stream, items);
                 break;
             case ARCHIVE:
