@@ -26,9 +26,8 @@ public class DataStreamTable extends FlexTable {
     }
 
     public void updateTable(List<DataStreamDTO> sds) {
-        int r = 0;
+        int r = 1;
         for (final DataStreamDTO sd : sds) {
-            r++;
             String[] ss = {
                     String.valueOf(sd.getId()),
                     sd.getTag(),
@@ -53,6 +52,9 @@ public class DataStreamTable extends FlexTable {
                 }
             });
             setWidget(r, ss.length, edit);
+            r++;
         }
+        while (getRowCount() > r)
+            removeRow(getRowCount() - 1);
     }
 }
