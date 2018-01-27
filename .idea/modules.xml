@@ -2,8 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/vsegdaorg.iml" filepath="$PROJECT_DIR$/vsegdaorg.iml" />
+      <module fileurl="file://$PROJECT_DIR$/service/vsegdaorg.iml" filepath="$PROJECT_DIR$/service/vsegdaorg.iml" />
+      <module fileurl="file://$PROJECT_DIR$/admin/vsegdaorg-admin.iml" filepath="$PROJECT_DIR$/admin/vsegdaorg-admin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/admin/client/vsegdaorg-admin-client.iml" filepath="$PROJECT_DIR$/admin/client/vsegdaorg-admin-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/admin/shared/vsegdaorg-admin-shared.iml" filepath="$PROJECT_DIR$/admin/shared/vsegdaorg-admin-shared.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vsegdaorg-project.iml" filepath="$PROJECT_DIR$/vsegdaorg-project.iml" />
     </modules>
   </component>
 </project>
-

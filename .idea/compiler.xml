@@ -1,35 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="BuildJarProjectSettings">
-    <option name="BUILD_JARS_ON_MAKE" value="false" />
-  </component>
   <component name="CompilerConfiguration">
-    <option name="DEFAULT_COMPILER" value="Javac" />
-    <resourceExtensions>
-      <entry name=".+\.(properties|xml|html|dtd|tld)" />
-      <entry name=".+\.(gif|png|jpeg|jpg)" />
-    </resourceExtensions>
-    <wildcardResourcePatterns>
-      <entry name="?*.properties" />
-      <entry name="?*.xml" />
-      <entry name="?*.gif" />
-      <entry name="?*.png" />
-      <entry name="?*.jpeg" />
-      <entry name="?*.jpg" />
-      <entry name="?*.html" />
-      <entry name="?*.dtd" />
-      <entry name="?*.tld" />
-      <entry name="?*.ftl" />
-    </wildcardResourcePatterns>
     <annotationProcessing>
-      <profile default="true" name="Default" enabled="false">
-        <processorPath useClasspath="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="vsegdaorg" />
+        <module name="vsegdaorg (1)" />
+        <module name="vsegdaorg-admin-client" />
+        <module name="vsegdaorg-admin-shared" />
       </profile>
     </annotationProcessing>
-  </component>
-  <component name="EclipseCompilerSettings">
-    <option name="GENERATE_NO_WARNINGS" value="true" />
-    <option name="DEPRECATION" value="false" />
+    <bytecodeTargetLevel>
+      <module name="vsegdaorg" target="1.8" />
+      <module name="vsegdaorg (1)" target="1.8" />
+      <module name="vsegdaorg-admin" target="1.8" />
+      <module name="vsegdaorg-admin-client" target="1.8" />
+      <module name="vsegdaorg-admin-shared" target="1.8" />
+      <module name="vsegdaorg-project" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
-
