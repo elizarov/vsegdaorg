@@ -1,11 +1,8 @@
 package org.vsegda.storage
 
 import com.google.appengine.api.datastore.*
-import org.vsegda.data.DataArchive
-import org.vsegda.data.DataItem
-import org.vsegda.factory.DS
-import org.vsegda.util.TimeInstant
-
+import org.vsegda.data.*
+import org.vsegda.util.*
 import java.util.*
 
 private var Entity.streamId by Prop.long

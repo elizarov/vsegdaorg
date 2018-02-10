@@ -33,7 +33,7 @@ public class TimeInstant {
         if (s.startsWith("+") || s.startsWith("-"))
             return new TimeInstant(0, TimePeriod.valueOf(s));
         else
-            return new TimeInstant(TimeUtil.parseTime(s), null);
+            return new TimeInstant(TimeUtil.INSTANCE.parseTime(s), null);
     }
 
     public long time() {
@@ -58,7 +58,7 @@ public class TimeInstant {
 
     @Override
     public String toString() {
-        return period == null ? TimeUtil.formatDateTime(time) :
+        return period == null ? TimeUtil.INSTANCE.formatDateTime(time) :
                 ((period.period() >= 0 ? "+" : "") + period);
     }
 

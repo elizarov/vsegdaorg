@@ -4,7 +4,6 @@ import org.vsegda.data.*
 import org.vsegda.shared.*
 import org.vsegda.storage.*
 import org.vsegda.util.*
-import java.io.*
 import java.util.*
 import java.util.concurrent.*
 
@@ -51,11 +50,10 @@ object DataItemService {
         return if (items.isEmpty()) DataItem(stream, java.lang.Double.NaN, 0) else items[0]
     }
 
-    fun getDataItems(stream: DataStream, from: TimeInstant?, to: TimeInstant?, n: Int): List<DataItem> {
-        var n = n
+    fun getDataItems(stream: DataStream, from: TimeInstant?, to: TimeInstant?, nRequested: Int): List<DataItem> {
+        var n = nRequested
         if (stream.mode == DataStreamMode.LAST) {
-            if (to != null)
-                return emptyList()
+            if (to != null) return emptyList()
             n = 1
         }
         // try cache
@@ -131,15 +129,10 @@ object DataItemService {
         listCache.remove(stream.streamId)
         DataItemStorage.removeAllByStreamId(stream.streamId)
         DataArchiveStorage.removeAllByStreamId(stream.streamId)
-
     }
 
-    private class ListEntry internal constructor(
-        internal var fromTime: Long,
-        internal var items: MutableList<DataItem>
-    ) : Serializable {
-        companion object {
-            private const val serialVersionUID = 4488592054732566662L
-        }
-    }
+    private class ListEntry(
+        val fromTime: Long,
+        val items: MutableList<DataItem>
+    )
 }

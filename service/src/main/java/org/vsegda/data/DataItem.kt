@@ -44,8 +44,7 @@ class DataItem {
     constructor()
 
     constructor(line: String, now: Long) {
-        val tokens =
-            line.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val tokens = line.split(",").dropLastWhile { it.isEmpty() }.toTypedArray()
         require(tokens.size in 2..3) { "Invalid line format: $line" }
         stream = DataStream()
         stream.tag = tokens[0]

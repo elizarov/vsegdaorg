@@ -3,7 +3,6 @@ package org.vsegda.storage
 import com.google.appengine.api.datastore.*
 import org.vsegda.data.*
 import org.vsegda.util.*
-import java.util.*
 
 private var Entity.streamId by Prop.long
 private var Entity.timeMillis by Prop.long

@@ -16,7 +16,7 @@ fun main(args: Array<String>) {
         repeat(n) { index ->
             val value = lastValue + 10 * (rnd.nextDouble() - 0.5)
             val time = (n - index) * fromTime / n
-            write("$streamCode,$value,${time}d\r\n")
+            write("$streamCode,${value.fmt(2)},${time.fmt(3)}d\r\n")
             lastValue = value
         }
         flush()
@@ -29,3 +29,5 @@ fun main(args: Array<String>) {
         println("Response $responseCode: $responseMessage")
     }
 }
+
+private fun Double.fmt(i: Int): String = String.format("%.${i}f", this)

@@ -69,6 +69,6 @@ public class MessageSession {
 
     @Override
     public String toString() {
-        return queueId + "," + sessionId + "," + TimeUtil.formatDateTime(creationTimeMillis) + "," + lastPostIndex;
+        return queueId + "," + sessionId + "," + TimeUtil.INSTANCE.formatDateTime(creationTimeMillis) + "," + lastPostIndex;
     }
 }

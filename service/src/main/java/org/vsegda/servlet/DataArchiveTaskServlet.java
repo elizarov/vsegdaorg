@@ -50,7 +50,7 @@ public class DataArchiveTaskServlet extends HttpServlet {
         // Archive up to next midnight (or up to last item for LAST mode)
         long limit =
                 stream.getMode() == DataStreamMode.LAST ? lastItem.getTimeMillis() :
-                TimeUtil.getArchiveLimit(firstItem.getTimeMillis());
+                TimeUtil.INSTANCE.getArchiveLimit(firstItem.getTimeMillis());
 
         List<DataItem> items = DataItemStorage.INSTANCE.queryFirstDataItems(streamId, limit, MAX_ARCHIVE_ITEMS);
 
