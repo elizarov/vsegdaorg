@@ -19,10 +19,10 @@ public class DataNavigationTag extends SimpleTagSupport {
         DataRequest dataRequest = (DataRequest) ctx.getAttribute("dataRequest");
         if (dataRequest.hasNavigation()) {
             TimeInstant last = dataRequest.getTo();
-            dataRequest.setTo((last == null ? TimeInstant.now() : last).subtract(dataRequest.getSpan()));
+            dataRequest.setTo((last == null ? TimeInstant.Companion.now() : last).minus(dataRequest.getSpan()));
             ctx.getOut().println("[<a href=\"?" + dataRequest.getQueryString() + "\">Prev</a>]");
             if (last != null) {
-                TimeInstant nextLast = last.add(dataRequest.getSpan());
+                TimeInstant nextLast = last.plus(dataRequest.getSpan());
                 dataRequest.setTo(nextLast.isNowOrFuture() ? null : nextLast);
                 ctx.getOut().println("[<a href=\"?" + dataRequest.getQueryString() + "\">Next</a>]");
             }

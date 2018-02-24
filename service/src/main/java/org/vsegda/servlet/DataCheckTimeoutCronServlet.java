@@ -22,7 +22,7 @@ public class DataCheckTimeoutCronServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         log.info("Checking data items for timeouts");
         long startTimeMillis = System.currentTimeMillis();
-        for (DataStream stream : DataStreamService.getDataStreams()) {
+        for (DataStream stream : DataStreamService.INSTANCE.getDataStreams()) {
             // check for data update timeout
             if (stream.getAlertTimeout() != 0) {
                 DataItem item = DataItemService.INSTANCE.getLastDataItem(stream);

@@ -65,7 +65,7 @@ object TimeUtil {
             // ignore & fallback to parse as time period offset
         }
         try {
-            return now + TimePeriod.valueOf(s).period()
+            return now + TimePeriod.valueOf(s).period
         } catch (e: IllegalArgumentException) {
             throw IllegalArgumentException("Invalid time format: " + s, e)
         }

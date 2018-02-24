@@ -8,7 +8,6 @@ import kotlin.system.*
 private val dataStore: DatastoreService = DatastoreServiceFactory.getDatastoreService()
 
 abstract class BaseStorage<T> {
-    protected val log: Logger = Logger.getLogger(this::class.java.name)
     protected val ds = dataStore
 
     protected open val chunkSize: Int = 10000
@@ -21,19 +20,6 @@ abstract class BaseStorage<T> {
     protected fun List<Entity>.toObjectList(): List<T> = map { it.toObject() }
 
     protected fun Long.toKey(): Key = KeyFactory.createKey(kind, this)
-
-    protected inline fun <T> logged(msg: String, body: () -> T): T =
-        logged({ msg }, body)
-
-    @Suppress("UNCHECKED_CAST")
-    protected inline fun <T> logged(msg: (T) -> String, body: () -> T): T {
-        var result: T? = null
-        val time = measureTimeMillis {
-            result = body()
-        }
-        log.info("${msg(result as T)} in $time ms")
-        return result as T
-    }
 
     protected fun store(obj: T): Key = ds.put(obj.toEntity())
 

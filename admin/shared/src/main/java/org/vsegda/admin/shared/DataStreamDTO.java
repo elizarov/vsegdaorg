@@ -4,9 +4,6 @@ import org.vsegda.shared.DataStreamMode;
 
 import java.io.Serializable;
 
-/**
- * @author Roman Elizarov
- */
 public class DataStreamDTO implements Serializable {
     private long id;
     private String tag;

@@ -24,7 +24,7 @@ public class DataArchiveCronServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         log.info("Checking data items for archival needs");
         long startTimeMillis = System.currentTimeMillis();
-        for (DataStream stream : DataStreamService.getDataStreams()) {
+        for (DataStream stream : DataStreamService.INSTANCE.getDataStreams()) {
             // check for archive or purge (find non-recent items)
             DataItem firstItem = DataItemService.INSTANCE.getFirstDataItem(stream);
             DataItem lastItem = DataItemService.INSTANCE.getLastDataItem(stream);

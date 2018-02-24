@@ -5,7 +5,7 @@ import org.vsegda.data.MessageQueue;
 import org.vsegda.data.MessageSession;
 import org.vsegda.factory.DS;
 import org.vsegda.request.MessageRequest;
-import org.vsegda.storage.MessageStorage;
+import org.vsegda.storage.MessageItemStorage;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
@@ -68,7 +68,7 @@ public class MessageServlet extends HttpServlet {
                 long index = queue.getLastPostIndex() + 1;
                 queue.setLastPostIndex(index);
                 item.setMessageIndex(index);
-                MessageStorage.storeMessageItem(item);
+                MessageItemStorage.INSTANCE.storeMessageItem(item);
             }
         session.setLastPostIndex(maxSessionPostIndex);
         return session.getSessionId();

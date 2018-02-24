@@ -20,7 +20,7 @@ public class AlertService {
         String subject = "ALERT: " + text;
         String body = text;
         if (code != null) {
-            DataStream stream = DataStreamService.resolveDataStreamByCode(code, false);
+            DataStream stream = DataStreamService.INSTANCE.resolveDataStreamByCode(code);
             subject += ": " + (stream != null ? stream.getNameOrCode() : code);
             body += "\nhttp://apps.vsegda.org/dataPlot?id=" + code;
         }

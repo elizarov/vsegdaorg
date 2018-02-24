@@ -74,6 +74,6 @@ class DataItem {
     override fun toString(): String = "$streamCode,$value,$time"
 
     companion object {
-        val ORDER_BY_TIME = compareBy<DataItem> { it.timeMillis }
+        val BY_TIME = compareBy<DataItem> { it.timeMillis }
     }
 }

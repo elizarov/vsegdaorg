@@ -68,7 +68,7 @@ object DataArchiveStorage : BaseStorage<DataArchive>() {
         }
 
     fun updateStreamId(fromId: Long, toId: Long) =
-        logged("updateStreamId(fromId=$fromId, toId=$toId") {
+        logged("updateStreamId(fromId=$fromId, toId=$toId)") {
             queryAll(fromId).onEach { it.streamId = toId }.store()
         }
 

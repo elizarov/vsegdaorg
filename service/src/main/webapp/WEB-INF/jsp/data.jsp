@@ -1,4 +1,4 @@
-<%@ page import="org.vsegda.data.DataStream" %>
+<%@ page import="org.vsegda.data.CodeKt" %>
 <%@taglib uri="/WEB-INF/tld/c.tld" prefix="c" %>
 <%@taglib uri="/WEB-INF/tld/v.tld" prefix="v" %>
 <!DOCTYPE html>
@@ -18,7 +18,7 @@
 </div>
 <table class="par data">
   <tr>
-    <th>tag<%= DataStream.TAG_ID_SEPARATOR %>id</th>
+    <th>tag<%= CodeKt.TAG_ID_SEPARATOR %>id</th>
     <th>value</th>
     <c:if test="${param.id == null}">
       <th>name</th>

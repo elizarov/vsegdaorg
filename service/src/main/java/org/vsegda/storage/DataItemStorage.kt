@@ -29,7 +29,7 @@ object DataItemStorage : BaseStorage<DataItem>() {
         }
 
     fun deleteDataItem(item: DataItem) =
-        logged("deleteDataItem(${item.key}") {
+        logged("deleteDataItem(${item.key})") {
             delete(item)
         }
 
@@ -44,7 +44,7 @@ object DataItemStorage : BaseStorage<DataItem>() {
         }
 
     fun loadFirstDataItem(streamId: Long): DataItem? =
-        logged({ "loadFirstDataItem($streamId) -> ${it?.key}" }) {
+        logged({ "loadFirstDataItem($streamId) -> ${it?.key})" }) {
             query {
                 filterEq(Entity::streamId, streamId)
                 sortAscBy(Entity::timeMillis)
@@ -52,7 +52,7 @@ object DataItemStorage : BaseStorage<DataItem>() {
         }
 
     fun queryFirstDataItems(streamId: Long, timeLimit: Long, n: Int): List<DataItem> =
-        logged({ "queryFirstDataItems(streamId=$streamId, timeLimit=$timeLimit, n=$n" }) {
+        logged({ "queryFirstDataItems(streamId=$streamId, timeLimit=$timeLimit, n=$n)" }) {
             query {
                 filterEq(Entity::streamId, streamId)
                 filterLess(Entity::timeMillis, timeLimit)
@@ -61,12 +61,12 @@ object DataItemStorage : BaseStorage<DataItem>() {
         }
 
     fun updateStreamId(fromId: Long, toId: Long) =
-        logged("updateStreamId(fromId=$fromId, toId=$toId") {
+        logged("updateStreamId(fromId=$fromId, toId=$toId)") {
             queryAll(fromId).onEach { it.streamId = toId }.store()
         }
 
     fun removeAllByStreamId(streamId: Long) =
-        logged("removeAllByStreamId(streamId=$streamId") {
+        logged("removeAllByStreamId(streamId=$streamId)") {
             queryAll(streamId).map { it.key }.delete()
         }
 

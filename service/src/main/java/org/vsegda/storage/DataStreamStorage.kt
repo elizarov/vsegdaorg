@@ -3,6 +3,7 @@ package org.vsegda.storage
 import com.google.appengine.api.datastore.*
 import org.vsegda.data.*
 import org.vsegda.shared.*
+import org.vsegda.util.*
 
 private var Entity.tag by Prop.string
 private var Entity.name by Prop.string
@@ -54,7 +55,7 @@ object DataStreamStorage : BaseStorage<DataStream>() {
             query {
                 sortAscByKey()
                 filterEq(Entity::tag, tag)
-            }.asObject()
+            }.asList(1).singleOrNull()
         }
 
     fun loadDataStreamById(id: Long): DataStream? =

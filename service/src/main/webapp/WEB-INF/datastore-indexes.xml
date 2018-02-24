@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <datastore-indexes autoGenerate="true">
-  <datastore-index kind="MessageItem" ancestor="false" source="auto">
-    <property name="queueId" direction="asc"/>
-    <property name="messageIndex" direction="desc"/>
-  </datastore-index>
+    <datastore-index kind="MessageItem" ancestor="false" source="auto">
+        <property name="queueId" direction="asc"/>
+        <property name="messageIndex" direction="desc"/>
+    </datastore-index>
 
-  <datastore-index kind="MessageItem" ancestor="false" source="auto">
-    <property name="queueId" direction="asc"/>
-    <property name="messageIndex" direction="asc"/>
-  </datastore-index>
+    <datastore-index kind="MessageItem" ancestor="false" source="auto">
+        <property name="queueId" direction="asc"/>
+        <property name="messageIndex" direction="asc"/>
+    </datastore-index>
 
-  <datastore-index kind="DataItem" ancestor="false" source="auto">
-    <property name="streamId" direction="asc"/>
-    <property name="timeMillis" direction="desc"/>
-  </datastore-index>
+    <datastore-index kind="DataItem" ancestor="false" source="auto">
+        <property name="streamId" direction="asc"/>
+        <property name="timeMillis" direction="desc"/>
+    </datastore-index>
 
-  <datastore-index kind="DataItem" ancestor="false">
-    <property name="streamId" direction="asc" />
-    <property name="timeMillis" direction="asc" />
-  </datastore-index>
+    <datastore-index kind="DataItem" ancestor="false">
+        <property name="streamId" direction="asc"/>
+        <property name="timeMillis" direction="asc"/>
+    </datastore-index>
 
-  <datastore-index kind="DataArchive" ancestor="false" source="auto">
-    <property name="streamId" direction="asc"/>
-    <property name="firstTimeMillis" direction="desc"/>
-  </datastore-index>
+    <datastore-index kind="DataArchive" ancestor="false" source="auto">
+        <property name="streamId" direction="asc"/>
+        <property name="firstTimeMillis" direction="desc"/>
+    </datastore-index>
 
-  <datastore-index kind="DataStream" ancestor="false" source="auto">
-    <property name="tag" direction="asc"/>
-    <property name="streamId" direction="asc"/>
-  </datastore-index>
+    <datastore-index kind="DataStream" ancestor="false" source="auto">
+        <property name="tag" direction="asc"/>
+        <property name="streamId" direction="asc"/>
+    </datastore-index>
 
-  <datastore-index kind="DataStream" ancestor="false" source="manual">
-    <property name="__key__" direction="desc"/>
-  </datastore-index>
+    <datastore-index kind="DataStream" ancestor="false" source="manual">
+        <property name="__key__" direction="desc"/>
+    </datastore-index>
 </datastore-indexes>

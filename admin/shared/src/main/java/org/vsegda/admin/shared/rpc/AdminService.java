@@ -6,9 +6,6 @@ import org.vsegda.admin.shared.DataStreamDTO;
 
 import java.util.List;
 
-/**
- * @author Roman Elizarov
- */
 @RemoteServiceRelativePath("admin.rpc")
 public interface AdminService extends RemoteService {
     public List<DataStreamDTO> getDataStreams();
