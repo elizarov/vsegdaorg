@@ -30,7 +30,7 @@ class MessageRequest(req: HttpServletRequest, post: Boolean) : AbstractRequest()
 
     // todo: ???
     fun query(): List<MessageItem> =
-        logged("Message request $this", start = true) {
+        logged("Message request $this", around = true) {
             if (id == null) {
                 val query = Query("MessageQueue")
                 query.addSort("__key__", Query.SortDirection.ASCENDING)

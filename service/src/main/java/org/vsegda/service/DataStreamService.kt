@@ -38,10 +38,10 @@ object DataStreamService {
             log.info("Creating new data stream with tag=$tag")
             // find last stream
             val lastStream = DataStreamStorage.loadLastDataStream()
-            val stream = DataStream(max(FIRST_STREAM_ID, (lastStream?.streamId ?: 0) + 1))
-            stream.tag = tag
-            DataStreamStorage.storeDataStream(stream)
-            stream
+            DataStream(max(FIRST_STREAM_ID, (lastStream?.streamId ?: 0) + 1), tag).also {
+                DataStreamStorage.storeDataStream(it)
+                cache(it)
+            }
         }
 
     fun resolveDataStreamById(id: Long): DataStream? =
@@ -54,7 +54,10 @@ object DataStreamService {
             throw IllegalArgumentException("Stream with id=$id already exists")
         return exists ?: run {
             log.info("Creating new data stream with id=$id")
-            DataStream(id).also { DataStreamStorage.storeDataStream(it) }
+            DataStream(id).also {
+                DataStreamStorage.storeDataStream(it)
+                cache(it)
+            }
         }
     }
 
@@ -74,9 +77,9 @@ object DataStreamService {
     }
 
     private fun cache(stream: DataStream) {
-        val cached = CachedStream(stream.streamId, stream.tag!!, stream)
+        val cached = CachedStream(stream.streamId, stream.tag, stream)
         idCache[cached.id] = cached
-        tagCache[cached.tag] = cached
+        if (cached.tag != null) tagCache[cached.tag] = cached
     }
 
     private fun DataStream.removeFromCache() {
@@ -91,7 +94,7 @@ object DataStreamService {
 
     class CachedStream(
         val id: Long,
-        val tag: String,
+        val tag: String?,
         val stream: DataStream
     )
 }

@@ -22,13 +22,13 @@ class DataRequest(req: HttpServletRequest? = null) : AbstractRequest() {
             field = to
         }
 
-    var span: TimePeriod? = DataItemService.DEFAULT_SPAN
+    var span: TimePeriod? = TimePeriod.valueOf(1, TimePeriodUnit.WEEK) // one week by default
         set(span) {
             updateQueryString("span", span?.toString())
             field = span
         }
 
-    var n = DataItemService.DEFAULT_N
+    var n = 2500 // enough data item for a week of data assuming reading every 5 mins
         set(n) {
             updateQueryString("n", if (n == 0) null else n.toString())
             field = n
@@ -43,7 +43,7 @@ class DataRequest(req: HttpServletRequest? = null) : AbstractRequest() {
 
     @get:JvmName("hasNavigation")
     val hasNavigation: Boolean
-        get() = span != null
+        get() = id != null && span != null
     
     init {
         init(req)
@@ -58,7 +58,7 @@ class DataRequest(req: HttpServletRequest? = null) : AbstractRequest() {
     }
 
     fun queryMap(): Map<DataStream, List<DataItem>> =
-        logged("Data query $this", start = true) {
+        logged("Data query $this", around = true) {
             val id = this.id
             if (id == null) {
                 DataStreamService.dataStreams

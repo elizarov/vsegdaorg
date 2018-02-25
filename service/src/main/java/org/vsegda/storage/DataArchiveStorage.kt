@@ -45,7 +45,7 @@ object DataArchiveStorage : BaseStorage<DataArchive>() {
         }
 
     fun queryItemsFromDataArchives(streamId: Long, from: TimeInstant?, to: TimeInstant?, nItems: Int): List<DataItem> =
-        logged({ "queryItemsFromDataArchives(streamId=$streamId, from=$from, to=$to, nItem=$nItems) -> ${it.size} items" }) {
+        logged({ "queryItemsFromDataArchives(streamId=$streamId, from=$from, to=$to, nItems=$nItems) -> ${it.size} items" }) {
             val estimatedRange = 1 + nItems / DataArchive.COUNT_ESTIMATE // estimate number of archives
             val items = ArrayList<DataItem>()
             val it = query {

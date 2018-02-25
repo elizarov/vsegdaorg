@@ -8,7 +8,7 @@ fun main(args: Array<String>) {
     val url = "http://localhost:8080/data.csv"
     val streamCode = "TST"
     val fromTime = 10.0 // days
-    val n = 100 // items
+    val n = 10 * 24 * 12 // many items (even 5 mins)
     val baos = ByteArrayOutputStream()
     var lastValue = 50.0
     val rnd = Random()
