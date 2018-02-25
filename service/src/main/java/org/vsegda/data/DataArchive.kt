@@ -1,10 +1,9 @@
 package org.vsegda.data
 
-import com.google.appengine.api.datastore.Key
-import org.vsegda.util.TimeUtil
-
-import java.io.EOFException
-import java.util.ArrayList
+import com.google.appengine.api.datastore.*
+import org.vsegda.util.*
+import java.io.*
+import java.util.*
 
 class DataArchive {
     var key: Key? = null
@@ -22,12 +21,14 @@ class DataArchive {
         get() {
             val result = ArrayList<DataItem>(count)
             result.add(DataItem(streamId, firstValue, firstTimeMillis))
-            if (encodedItems != null) with(DeltaDecoder(firstValue, firstTimeMillis, encodedItems)) {
-                for (i in 1 until count) {
-                    try {
-                        result.add(DataItem(streamId, readValue(), readTime()))
-                    } catch (e: EOFException) {
-                        break
+            encodedItems?.let {
+                with(DeltaDecoder(firstValue, firstTimeMillis, it)) {
+                    for (i in 1 until count) {
+                        try {
+                            result.add(DataItem(streamId, readValue(), readTime()))
+                        } catch (e: EOFException) {
+                            break
+                        }
                     }
                 }
             }
