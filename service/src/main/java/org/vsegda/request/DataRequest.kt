@@ -58,7 +58,7 @@ class DataRequest(req: HttpServletRequest? = null) : AbstractRequest() {
     }
 
     fun queryMap(): Map<DataStream, List<DataItem>> =
-        logged("Data query $this", around = true, result = { "${it.size} items" }) {
+        logged("Data query $this", around = true, result = { "${it.values.sumBy { it.size } } items" }) {
             val id = this.id
             if (id == null) {
                 DataStreamService.dataStreams
