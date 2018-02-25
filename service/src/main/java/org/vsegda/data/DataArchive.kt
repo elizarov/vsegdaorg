@@ -59,7 +59,7 @@ class DataArchive {
             encoder.writeValue(value)
             encoder.writeTime(item.timeMillis)
             val size = encoder.size()
-            if (size > MAX_ENCODED_SIZE)
+            if (size > MAX_ARCHIVE_ENCODED_SIZE)
                 break
             lastGoodSize = size
             highValue = Math.max(highValue, value)
@@ -72,32 +72,4 @@ class DataArchive {
     override fun toString(): String =
         "$streamId,$firstValue,${TimeUtil.formatDateTime(firstTimeMillis)}" +
             (encodedItems?.run { "#{count=$count,high=$highValue,low=$lowValue,bytes=$size}" } ?: "")
-                
-    companion object {
-        /**
-         * Each archive keeps data for one day.
-         */
-        const val ARCHIVE_INTERVAL = TimeUtil.DAY
-
-        /**
-         * Data items usually come every 5 minutes and we round times in archive to it.
-         */
-        const val TIME_PRECISION = 5 * TimeUtil.MINUTE
-
-        /**
-         * Estimated number of items per archive.
-         */
-        const val COUNT_ESTIMATE = (ARCHIVE_INTERVAL / TIME_PRECISION).toInt()
-
-        /**
-         * Data is considered recent for 2 days (then it is archived or deleted).
-         */
-        const val RECENT_TIME_INTERVAL = 2 * TimeUtil.DAY
-
-        /**
-         * Limit for max size of data archive blob
-         * :todo: can be increased
-         */
-        const val MAX_ENCODED_SIZE = 1500
-    }
 }

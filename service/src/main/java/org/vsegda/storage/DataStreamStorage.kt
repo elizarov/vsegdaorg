@@ -26,7 +26,7 @@ object DataStreamStorage : BaseStorage<DataStream>() {
         val e = this@toObject
         tag = e.tag
         name = e.name ?: ""
-        mode = e.mode?.let { DataStreamMode.valueOf(it) } ?: DataStreamMode.ARCHIVE
+        mode = e.mode?.let { DataStreamMode.valueOf(it) } ?: DataStreamMode.ARCHIVE // legacy items are archived
         alertTimeout = e.alertTimeout ?: 0L
     }
 

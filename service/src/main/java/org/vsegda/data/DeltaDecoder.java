@@ -38,7 +38,7 @@ class DeltaDecoder {
         long flag = readBit();
         if (flag == 0)
             return lastTimeMillis;
-        lastTimeMillis += DataArchive.TIME_PRECISION * readNonZero();
+        lastTimeMillis += ConstantsKt.TIME_PRECISION * readNonZero();
         return lastTimeMillis;
     }
 

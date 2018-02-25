@@ -61,7 +61,7 @@ class DeltaEncoder {
 
     public void writeTime(long timeMillis) {
         long rounded = DeltaUtil.roundTime(timeMillis);
-        long delta = (rounded - lastTimeMillis) / DataArchive.TIME_PRECISION;
+        long delta = (rounded - lastTimeMillis) / ConstantsKt.TIME_PRECISION;
         if (delta < 0)
             throw new IllegalArgumentException("Should be ordered by time");
         lastTimeMillis = rounded;

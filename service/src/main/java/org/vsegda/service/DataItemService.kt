@@ -8,9 +8,6 @@ import java.util.*
 import java.util.concurrent.*
 
 object DataItemService {
-    private const val DEFAULT_N = 40 * 24 * 12 // load into cache 40 days assuming reading every 5 mins
-    private const val MAX_CACHED_LIST_SIZE = (1.5 * DEFAULT_N).toInt()
-
     private val cache = ConcurrentHashMap<Long, CachedItems>()
 
     private fun addDataItem(dataItem: DataItem) {
@@ -23,22 +20,23 @@ object DataItemService {
         val size = items.size
         if (size >= 2 && DataItem.BY_TIME.compare(items[size - 1], items[size - 2]) < 0)
             items.sortWith(DataItem.BY_TIME)
-        if (size > MAX_CACHED_LIST_SIZE)
-            items.subList(0, size - DEFAULT_N).clear()
+        if (size > MAX_CACHED_ITEMS)
+            items.subList(0, size - PRELOAD_CACHED_ITEMS).clear()
     }
 
     fun addDataItems(items: List<DataItem>) = items.forEach { addDataItem(it) }
 
-    // DON'T REMOVE THEM FROM THE CACHE BY DESIGN AS THEY TYPICALLY MOVE TO ARCHIVES
+    // DON'T REMOVE THEM FROM THE CACHE BY DESIGN AS THEY MOVE TO ARCHIVES
     fun removeDataItems(stream: DataStream, items: List<DataItem>) =
         items.forEach {
             require(it.streamId == stream.streamId)
             DataItemStorage.deleteDataItem(it)
         }
 
-    fun refreshCache(streamId: Long) {
-        performItemsQuery(streamId, null, null, DEFAULT_N, true)
-    }
+    fun refreshCache(streamId: Long) =
+        logged("refreshCache(streamId=$streamId)", around = true) {
+            performItemsQuery(streamId, null, null, PRELOAD_CACHED_ITEMS, true)
+        }
 
     fun getFirstDataItem(stream: DataStream): DataItem? =
         DataItemStorage.loadFirstDataItem(stream.streamId)?.also { it.stream = stream }
@@ -93,10 +91,9 @@ object DataItemService {
         forceCacheUpdate: Boolean
     ): List<DataItem> {
         // query both recent items and archive
-        val items = ArrayList<DataItem>()
-        items.addAll(DataItemStorage.queryDataItems(streamId, from, to, n))
+        val items = ArrayList<DataItem>(DataItemStorage.queryDataItems(streamId, from, to, n))
         if (items.size < n)
-            items.addAll(DataArchiveStorage.queryItemsFromDataArchives(streamId, from, to, n - items.size))
+            items += DataArchiveStorage.queryItemsFromDataArchives(streamId, from, to, n - items.size)
         items.sortWith(DataItem.BY_TIME)
         // update cache if needed
         val fromTime = from?.time() ?: if (items.size < n) 0 else items[0].timeMillis
@@ -111,28 +108,29 @@ object DataItemService {
                     ArrayList(items)
                 else
                     merge(items, to.time(), oldCached.items)
-                val cached: CachedItems
-                if (cachedItems.size > MAX_CACHED_LIST_SIZE) {
-                    cachedItems.subList(0, items.size - MAX_CACHED_LIST_SIZE).clear()
-                    cached = CachedItems(cachedItems.first().timeMillis, cachedItems)
+                val cached: CachedItems = if (cachedItems.size > MAX_CACHED_ITEMS) {
+                    cachedItems.trimFrontToSize(MAX_CACHED_ITEMS)
+                    CachedItems(cachedItems.first().timeMillis, cachedItems)
                 } else {
-                    cached = CachedItems(fromTime, cachedItems)
+                    CachedItems(fromTime, cachedItems)
                 }
                 cache[streamId] = cached
                 log.info("performItemsQuery(streamId=$streamId) $cached")
             }
         }
         // remove extra items beyond requested
-        if (items.size > n)
-            items.subList(0, items.size - n).clear()
+        items.trimFrontToSize(n)
         return items
     }
 
+    private fun ArrayList<DataItem>.trimFrontToSize(n: Int) {
+        if (size > n) subList(0, size - n).clear()
+    }
+
     private fun merge(newItems: List<DataItem>, time: Long, oldItems: List<DataItem>): ArrayList<DataItem> {
-        val result = ArrayList(newItems)
-        for (item in oldItems)
-            if (item.timeMillis >= time)
-                result += item
+        val result = ArrayList<DataItem>()
+        newItems.filterTo(result) { it.timeMillis < time }
+        oldItems.filterTo(result) { it.timeMillis >= time }
         return result
     }
 

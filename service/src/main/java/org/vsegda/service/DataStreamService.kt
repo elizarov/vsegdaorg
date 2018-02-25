@@ -8,12 +8,21 @@ import kotlin.math.*
 
 object DataStreamService {
     private const val FIRST_STREAM_ID = 1000L
+    private const val CACHE_TIMEOUT = 30_000L // cache all streams for 30 sec
 
     private val idCache = ConcurrentHashMap<Long, CachedStream>()
     private val tagCache = ConcurrentHashMap<String, CachedStream>()
 
+    @Volatile
+    private var allCache: CachedStreams? = null
+
     val dataStreams: List<DataStream>
-        get() = DataStreamStorage.queryDataStreams().apply { forEach { cache(it) } }
+        get() = allCache.takeIf { it.isUpToDate() }?.streams ?:
+            DataStreamStorage.queryDataStreams().apply {
+                forEach { cache(it) }
+            }.also {
+                allCache = CachedStreams(System.currentTimeMillis(), it)
+            }
 
     fun resolveDataStreamByCode(code: String): DataStream? = code.toCode().let {
         when (it) {
@@ -68,12 +77,12 @@ object DataStreamService {
 
     fun removeDataStream(stream: DataStream) {
         DataStreamStorage.deleteDataStream(stream)
-        stream.removeFromCache()
+        clearCache()
     }
 
     fun storeDataStream(stream: DataStream) {
         DataStreamStorage.storeDataStream(stream)
-        stream.removeFromCache()
+        clearCache()
     }
 
     private fun cache(stream: DataStream) {
@@ -82,14 +91,10 @@ object DataStreamService {
         if (cached.tag != null) tagCache[cached.tag] = cached
     }
 
-    private fun DataStream.removeFromCache() {
-        idCache.remove(streamId)?.removeCached()
-        tagCache.remove(tag)?.removeCached()
-    }
-
-    private fun CachedStream.removeCached() {
-        idCache.remove(id)
-        tagCache.remove(tag)
+    private fun clearCache() {
+        allCache = null 
+        idCache.clear()
+        tagCache.clear()
     }
 
     class CachedStream(
@@ -97,4 +102,12 @@ object DataStreamService {
         val tag: String?,
         val stream: DataStream
     )
+
+    class CachedStreams(
+        val time: Long,
+        val streams: List<DataStream>
+    )
+
+    private fun CachedStreams?.isUpToDate() =
+        this != null && System.currentTimeMillis() < time + CACHE_TIMEOUT
 }

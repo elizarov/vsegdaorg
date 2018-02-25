@@ -25,6 +25,6 @@ class DeltaUtil {
     }
 
     static long roundTime(long timeMillis) {
-        return timeMillis / DataArchive.TIME_PRECISION * DataArchive.TIME_PRECISION;
+        return timeMillis / ConstantsKt.TIME_PRECISION * ConstantsKt.TIME_PRECISION;
     }
 }

@@ -18,7 +18,7 @@ class DataStream(
 
     var alertTimeout: Long = 0L
     
-    var mode: DataStreamMode = DataStreamMode.LAST
+    var mode: DataStreamMode = DataStreamMode.RECENT // keep recent items by default
 
     /**
      * Returns stream id or tag if defined.

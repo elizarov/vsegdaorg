@@ -22,7 +22,7 @@ class DataItem {
         get() = TimeUtil.getFormatClass(timeMillis, System.currentTimeMillis())
 
     val isRecent: Boolean
-        get() = timeMillis >= System.currentTimeMillis() - DataArchive.RECENT_TIME_INTERVAL
+        get() = timeMillis >= System.currentTimeMillis() - RECENT_TIME_INTERVAL
 
     var stream: DataStream
         get() = _stream ?: DataStream(streamId)

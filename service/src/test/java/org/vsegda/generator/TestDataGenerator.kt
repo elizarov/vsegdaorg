@@ -1,5 +1,7 @@
 package org.vsegda.generator
 
+import org.vsegda.data.*
+import org.vsegda.util.*
 import java.io.*
 import java.net.*
 import java.util.*
@@ -7,17 +9,18 @@ import java.util.*
 fun main(args: Array<String>) {
     val url = "http://localhost:8080/data.csv"
     val streamCode = "TST"
-    val fromTime = 10.0 // days
-    val n = 10 * 24 * 12 // many items (even 5 mins)
+    val n = 10 * 24 * 12 // 10 days of items (every 5 mins)
     val baos = ByteArrayOutputStream()
     var lastValue = 50.0
     val rnd = Random()
+    var millis = 0L
     with(baos.writer()) {
-        repeat(n) { index ->
+        repeat(n) {
             val value = lastValue + 10 * (rnd.nextDouble() - 0.5)
-            val time = (n - index) * fromTime / n
-            write("$streamCode,${value.fmt(2)},-${time.fmt(3)}d\r\n")
+            val minutes = millis / TimeUtil.MINUTE
+            write("$streamCode,${value.fmt(2)},${minutes}m\r\n")
             lastValue = value
+            millis -= TIME_PRECISION
         }
         flush()
     }

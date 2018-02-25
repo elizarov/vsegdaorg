@@ -1,10 +1,7 @@
 package org.vsegda.util
 
-import java.text.ParsePosition
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.TimeZone
+import java.text.*
+import java.util.*
 
 object TimeUtil {
     private val TIMEZONE = TimeZone.getTimeZone("Europe/Moscow")
@@ -74,14 +71,13 @@ object TimeUtil {
     fun getFormatClass(timeMillis: Long, now: Long): String =
         if (timeMillis < now - 15 * 60000L) "old" else "recent" // Check if older than 15 mins ago
 
-    fun getArchiveLimit(firstTime: Long): Long {
-        val cal = Calendar.getInstance(TIMEZONE)
-        cal.timeInMillis = firstTime
-        cal.add(Calendar.DATE, 1)
-        cal.set(Calendar.HOUR_OF_DAY, cal.getMinimum(Calendar.HOUR_OF_DAY))
-        cal.set(Calendar.MINUTE, cal.getMinimum(Calendar.MINUTE))
-        cal.set(Calendar.SECOND, cal.getMinimum(Calendar.SECOND))
-        cal.set(Calendar.MILLISECOND, cal.getMinimum(Calendar.MILLISECOND))
-        return cal.timeInMillis
-    }
+    fun getArchiveLimit(firstTime: Long): Long =
+        Calendar.getInstance(TIMEZONE).apply {
+            timeInMillis = firstTime
+            add(Calendar.DATE, 1)
+            set(Calendar.HOUR_OF_DAY, getMinimum(Calendar.HOUR_OF_DAY))
+            set(Calendar.MINUTE, getMinimum(Calendar.MINUTE))
+            set(Calendar.SECOND, getMinimum(Calendar.SECOND))
+            set(Calendar.MILLISECOND, getMinimum(Calendar.MILLISECOND))
+        }.timeInMillis
 }
