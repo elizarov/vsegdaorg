@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
     with(baos.writer()) {
         repeat(n) {
             val value = lastValue + 10 * (rnd.nextDouble() - 0.5)
-            val minutes = millis / TimeUtil.MINUTE
+            val minutes = millis / MINUTE
             write("$streamCode,${value.fmt(2)},${minutes}m\r\n")
             lastValue = value
             millis -= TIME_PRECISION

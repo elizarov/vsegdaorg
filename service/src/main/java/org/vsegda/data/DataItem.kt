@@ -13,13 +13,13 @@ class DataItem(
     private var _stream: DataStream? = null
 
     val time: String
-        get() = TimeUtil.formatDateTime(timeMillis)
+        get() = formatDateTime(timeMillis)
 
     val ago: String
-        get() = TimeUtil.formatDateTimeDifference(timeMillis, System.currentTimeMillis())
+        get() = formatDateTimeDifference(timeMillis, System.currentTimeMillis())
 
     val formatClass: String
-        get() = TimeUtil.getFormatClass(timeMillis, System.currentTimeMillis())
+        get() = formatTimeClass(timeMillis, System.currentTimeMillis())
 
     val isRecent: Boolean
         get() = timeMillis >= System.currentTimeMillis() - RECENT_TIME_INTERVAL
@@ -48,7 +48,7 @@ class DataItem(
         stream.tag = tokens[0]
         try {
             value = tokens[1].toDouble()
-            timeMillis = if (tokens.size < 3) now else Math.min(TimeUtil.parseTime(tokens[2], now), now)
+            timeMillis = if (tokens.size < 3) now else Math.min(parseTime(tokens[2], now), now)
         } catch (e: NumberFormatException) {
             throw IllegalArgumentException("Invalid line format: " + line, e)
         }

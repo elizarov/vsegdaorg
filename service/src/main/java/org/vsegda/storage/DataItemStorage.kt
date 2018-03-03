@@ -60,7 +60,7 @@ object DataItemStorage : BaseStorage<DataItem>() {
         }
 
     fun queryFirstDataItems(streamId: Long, timeLimit: Long, n: Int): List<DataItem> =
-        logged({ "queryFirstDataItems(streamId=$streamId, timeLimit=${TimeUtil.formatDateTime(timeLimit)}, n=$n) -> ${it.size} items" }) {
+        logged({ "queryFirstDataItems(streamId=$streamId, timeLimit=${formatDateTime(timeLimit)}, n=$n) -> ${it.size} items" }) {
             query {
                 filterEq(Entity::streamId, streamId)
                 filterLess(Entity::timeMillis, timeLimit)

@@ -5,12 +5,12 @@ import org.vsegda.util.*
 /**
  * Each archive keeps data for one day.
  */
-const val ARCHIVE_INTERVAL = TimeUtil.DAY
+const val ARCHIVE_INTERVAL = DAY
 
 /**
  * Data items usually come every 5 minutes and we round times in archive to it.
  */
-const val TIME_PRECISION = 5 * TimeUtil.MINUTE
+const val TIME_PRECISION = 5 * MINUTE
 
 /**
  * Estimated number of items per archive.
@@ -20,7 +20,7 @@ const val ARCHIVE_COUNT_ESTIMATE = (ARCHIVE_INTERVAL / TIME_PRECISION).toInt()
 /**
  * Data is considered recent for 2 days (then it is archived or deleted).
  */
-const val RECENT_TIME_INTERVAL = 2 * TimeUtil.DAY
+const val RECENT_TIME_INTERVAL = 2 * DAY
 
 /**
  * Maximal number of items in one archive

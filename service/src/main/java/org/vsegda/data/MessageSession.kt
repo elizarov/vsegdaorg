@@ -10,5 +10,5 @@ class MessageSession(
     var lastPostIndex: Long = -1
 
     override fun toString(): String =
-        "$queueId,$sessionId,${TimeUtil.formatDateTime(creationTimeMillis)},$lastPostIndex"
+        "$queueId,$sessionId,${formatDateTime(creationTimeMillis)},$lastPostIndex"
 }

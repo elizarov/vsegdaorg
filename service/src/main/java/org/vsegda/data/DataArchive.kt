@@ -70,6 +70,6 @@ class DataArchive {
     }
 
     override fun toString(): String =
-        "$streamId,$firstValue,${TimeUtil.formatDateTime(firstTimeMillis)}" +
+        "$streamId,$firstValue,${formatDateTime(firstTimeMillis)}" +
             (encodedItems?.run { "#{count=$count,high=$highValue,low=$lowValue,bytes=$size}" } ?: "")
 }

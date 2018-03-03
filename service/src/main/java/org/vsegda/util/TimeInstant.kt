@@ -27,7 +27,7 @@ class TimeInstant private constructor(
         valueOf(period.plus(other))
 
     override fun toString(): String = if (period == null)
-        TimeUtil.formatDateTime(time!!)
+        formatDateTime(time!!)
     else
         (if (period.period >= 0) "+" else "") + period
 
@@ -53,7 +53,7 @@ class TimeInstant private constructor(
             return if (s.startsWith("+") || s.startsWith("-"))
                 TimeInstant(null, TimePeriod.valueOf(s))
             else
-                TimeInstant(TimeUtil.parseTime(s), null)
+                TimeInstant(parseTime(s), null)
         }
     }
 }

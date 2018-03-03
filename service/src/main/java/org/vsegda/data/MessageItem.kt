@@ -11,13 +11,13 @@ class MessageItem(
     var timeMillis: Long = 0
 
     val time: String
-        get() = TimeUtil.formatDateTime(timeMillis)
+        get() = formatDateTime(timeMillis)
 
     val ago: String
-        get() = TimeUtil.formatDateTimeDifference(timeMillis, System.currentTimeMillis())
+        get() = formatDateTimeDifference(timeMillis, System.currentTimeMillis())
 
     val formatClass: String
-        get() = TimeUtil.getFormatClass(timeMillis, System.currentTimeMillis())
+        get() = formatTimeClass(timeMillis, System.currentTimeMillis())
 
     constructor(line: String, now: Long) : this() {
         val tokens = line.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
@@ -26,7 +26,7 @@ class MessageItem(
         try {
             queueId = tokens[0].toLong()
             text = tokens[1]
-            timeMillis = if (tokens.size < 3) now else min(TimeUtil.parseTime(tokens[2], now), now)
+            timeMillis = if (tokens.size < 3) now else min(parseTime(tokens[2], now), now)
             messageIndex = if (tokens.size < 4) 0 else tokens[3].toLong()
         } catch (e: NumberFormatException) {
             throw IllegalArgumentException("Invalid line format: " + line, e)

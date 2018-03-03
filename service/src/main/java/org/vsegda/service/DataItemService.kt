@@ -161,6 +161,6 @@ object DataItemService : Logged {
             get() = items.lastOrNull()?.timeMillis ?: fromTime
         
         override fun toString() =
-            "Cached fromTime=${TimeUtil.formatDateTime(fromTime)} nItems=${items.size}"
+            "Cached fromTime=${formatDateTime(fromTime)} nItems=${items.size}"
     }
 }

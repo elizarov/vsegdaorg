@@ -35,9 +35,9 @@ object DataArchiveService : Logged {
             val limit = if (stream.mode == DataStreamMode.LAST)
                 lastItem.timeMillis
             else
-                TimeUtil.getArchiveLimit(firstItem.timeMillis)
+                getArchiveLimit(firstItem.timeMillis)
             // log info
-            log.info("First item is $firstItem; last item is $lastItem; limit=${TimeUtil.formatDateTime(limit)}")
+            log.info("First item is $firstItem; last item is $lastItem; limit=${formatDateTime(limit)}")
             require(limit > firstItem.timeMillis) { "Inconsistent limit" }
             if (lastItem.timeMillis < limit) {
                 log.info("Last item is below archive limit, do not archive (until more data comes)")
@@ -56,7 +56,7 @@ object DataArchiveService : Logged {
                 return@logged RetryLater
             }
             if (items.first().timeMillis < prevTime) {
-                log.warning("Inconsistent read from the storage (less that previous time of ${TimeUtil.formatDateTime(prevTime)}), will retry later")
+                log.warning("Inconsistent read from the storage (less that previous time of ${formatDateTime(prevTime)}), will retry later")
                 return@logged RetryLater
             }
             // never remove or archive the last item (we've already checked for it)
