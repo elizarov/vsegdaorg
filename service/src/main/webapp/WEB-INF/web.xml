@@ -28,17 +28,6 @@
         </auth-constraint>
     </security-constraint>
 
-    <!-- filters -->
-
-    <filter>
-        <filter-name>persistenceManager</filter-name>
-        <filter-class>org.vsegda.factory.PersistenceManagerFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>persistenceManager</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-
     <!-- JSP page servlets -->
 
     <servlet>

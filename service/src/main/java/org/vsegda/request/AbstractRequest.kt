@@ -5,7 +5,7 @@ import org.vsegda.util.*
 import java.util.*
 import javax.servlet.http.*
 
-abstract class AbstractRequest {
+abstract class AbstractRequest : Logged {
     private lateinit var keyValues: MutableList<String>
 
     val queryString: String

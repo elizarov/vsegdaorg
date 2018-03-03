@@ -6,7 +6,7 @@ import org.vsegda.util.*
 import java.util.concurrent.*
 import kotlin.math.*
 
-object DataStreamService {
+object DataStreamService : Logged {
     private const val FIRST_STREAM_ID = 1000L
     private const val CACHE_TIMEOUT = 30_000L // cache all streams for 30 sec
 
@@ -80,7 +80,7 @@ object DataStreamService {
         clearCache()
     }
 
-    fun storeDataStream(stream: DataStream) {
+    fun updateDataStream(stream: DataStream) {
         DataStreamStorage.storeDataStream(stream)
         clearCache()
     }

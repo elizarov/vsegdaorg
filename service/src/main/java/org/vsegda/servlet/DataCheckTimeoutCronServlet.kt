@@ -4,7 +4,7 @@ import org.vsegda.service.*
 import org.vsegda.util.*
 import javax.servlet.http.*
 
-class DataCheckTimeoutCronServlet : HttpServlet() {
+class DataCheckTimeoutCronServlet : HttpServlet(), Logged {
     override fun doGet(req: HttpServletRequest, resp: HttpServletResponse) =
         logged("Checking data items for timeouts", around = true) {
             for (stream in DataStreamService.dataStreams) {

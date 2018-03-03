@@ -16,9 +16,9 @@ private var Entity.encodedItems by Prop.blob
 object DataArchiveStorage : BaseStorage<DataArchive>() {
     override val kind: String = "DataArchive"
 
-    override fun DataArchive.toKey(): Key = key ?: error("Data archive $this is not persistent")
+    override fun DataArchive.toKey() = key ?: error("Data archive $this is not persistent")
 
-    override fun DataArchive.toEntity(): Entity = Entity(kind).also { e ->
+    override fun DataArchive.toEntity() = Entity(kind).also { e ->
         e.streamId = streamId
         e.count = count
         e.firstValue = firstValue
@@ -28,7 +28,7 @@ object DataArchiveStorage : BaseStorage<DataArchive>() {
         e.encodedItems = encodedItems
     }
 
-    override fun Entity.toObject(): DataArchive = DataArchive().apply {
+    override fun Entity.toObject() = DataArchive().apply {
         val e = this@toObject
         streamId = e.streamId ?: 0
         count = e.count ?: 0

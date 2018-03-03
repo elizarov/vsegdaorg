@@ -6,7 +6,7 @@ import java.util.*
 import javax.mail.*
 import javax.mail.internet.*
 
-object AlertService {
+object AlertService : Logged {
     fun sendAlertEmail(code: String?, text: String) {
         val session = Session.getDefaultInstance(Properties(), null)
         var subject = "ALERT: " + text

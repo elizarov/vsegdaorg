@@ -13,16 +13,16 @@ private var Entity.alertTimeout by Prop.long
 object DataStreamStorage : BaseStorage<DataStream>() {
     override val kind = "DataStream"
 
-    override fun DataStream.toKey(): Key = streamId.toKey()
+    override fun DataStream.toKey() = streamId.toKey()
 
-    override fun DataStream.toEntity(): Entity = Entity(kind, streamId).also { e ->
+    override fun DataStream.toEntity() = Entity(kind, streamId).also { e ->
         e.tag = tag
         e.name = name
         e.mode = mode.toString()
         if (alertTimeout != 0L) e.alertTimeout = alertTimeout
     }
 
-    override fun Entity.toObject(): DataStream = DataStream(key.id).apply {
+    override fun Entity.toObject() = DataStream(key.id).apply {
         val e = this@toObject
         tag = e.tag
         name = e.name ?: ""
@@ -60,6 +60,6 @@ object DataStreamStorage : BaseStorage<DataStream>() {
 
     fun loadDataStreamById(id: Long): DataStream? =
         logged({ "loadDataStreamById($id) -> $it" }) {
-            loadById(id)
+            load(id.toKey())
         }
 }

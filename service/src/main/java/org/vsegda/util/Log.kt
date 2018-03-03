@@ -1,8 +1,9 @@
 package org.vsegda.util
 
-import java.util.concurrent.*
 import java.util.logging.*
 import kotlin.system.*
+
+interface Logged // marker interface
 
 private const val TRIM_COMPANION = "\$Companion"
 
@@ -13,9 +14,9 @@ private val logger = object : ClassValue<Logger>() {
     override fun computeValue(type: Class<*>) = Logger.getLogger(type.name.toCategory())
 }
 
-val Any.log: Logger get() = logger.get(this::class.java) 
+val Logged.log: Logger get() = logger.get(this::class.java)
 
-inline fun <T> Any.logged(
+inline fun <T> Logged.logged(
     msg: String,
     around: Boolean = false,
     noinline result: ((T) -> String)? = null, /* inliner fail with inline lambda */
@@ -31,7 +32,7 @@ inline fun <T> Any.logged(
 }
 
 @Suppress("UNCHECKED_CAST")
-inline fun <T> Any.logged(msg: (T) -> String, body: () -> T): T {
+inline fun <T> Logged.logged(msg: (T) -> String, body: () -> T): T {
     var result: T? = null
     val time = measureTimeMillis {
         result = body()

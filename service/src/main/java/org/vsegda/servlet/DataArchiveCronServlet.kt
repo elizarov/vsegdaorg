@@ -6,7 +6,7 @@ import org.vsegda.shared.*
 import org.vsegda.util.*
 import javax.servlet.http.*
 
-class DataArchiveCronServlet : HttpServlet() {
+class DataArchiveCronServlet : HttpServlet(), Logged {
     override fun doGet(req: HttpServletRequest, resp: HttpServletResponse) =
         logged("Checking data items for archival needs") {
             for (stream in DataStreamService.dataStreams) {

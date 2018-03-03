@@ -9,7 +9,7 @@ import org.vsegda.util.*
 import org.vsegda.util.TimeUtil
 import javax.servlet.http.*
 
-class DataArchiveTaskServlet : HttpServlet() {
+class DataArchiveTaskServlet : HttpServlet(), Logged {
     override fun doPost(req: HttpServletRequest, resp: HttpServletResponse) {
         val streamId = req.getParameter("id").toLong()
         val stream = DataStreamStorage.loadDataStreamById(streamId)!!
@@ -67,7 +67,7 @@ class DataArchiveTaskServlet : HttpServlet() {
         enqueueTask(streamId)
     }
 
-    companion object {
+    companion object : Logged {
         fun enqueueTask(streamId: Long) {
             log.info("Enqueueing data archive task for id=$streamId")
             val queue = QueueFactory.getQueue("archiveTaskQueue")

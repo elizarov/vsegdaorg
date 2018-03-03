@@ -1,9 +1,7 @@
 package org.vsegda.request
 
-import com.google.appengine.api.datastore.*
 import org.vsegda.data.*
-import org.vsegda.factory.*
-import org.vsegda.storage.*
+import org.vsegda.service.*
 import org.vsegda.util.*
 import javax.servlet.http.*
 
@@ -28,18 +26,30 @@ class MessageRequest(req: HttpServletRequest, post: Boolean) : AbstractRequest()
             throw IllegalArgumentException("cannot specify take with first")
     }
 
-    // todo: ???
     fun query(): List<MessageItem> =
-        logged("Message request $this", around = true) {
+        logged("Message request $this", around = true, result = { "${it.size} items" }) {
+            val id = this.id
             if (id == null) {
-                val query = Query("MessageQueue")
-                query.addSort("__key__", Query.SortDirection.ASCENDING)
-                val entities = DS.prepare(query).asIterable(
-                    FetchOptions.Builder.withOffset(first).limit(last).chunkSize(last)
-                )
-                entities.map { MessageItemStorage.toMessageItem(it) }
+                MessageQueueService.messageQueues
+                    .map {
+                        MessageItemService.getMessageItem(it.queueId, it.lastPostIndex) ?:
+                            MessageItem(it.queueId, it.lastPostIndex)
+                    }
             } else {
-                throw TODO("Message query for id list is not supported")
+                id.asSequence()
+                    .mapNotNull { MessageQueueService.resolveMessageQueueByCode(it) }
+                    .flatMap { queue ->
+                        val list = if (isTake) {
+                            index = Math.max(index, queue.lastGetIndex)
+                            queue.lastGetIndex = index
+                            MessageQueueService.updateMessageQueue(queue)
+                            MessageItemService.getNewMessageItems(queue.queueId, index, first, last)
+                        } else {
+                            MessageItemService.getLastMessagesItems(queue.queueId, first, last)
+                        }
+                        list.asSequence()
+                    }
+                    .toList()
             }
         }
 }

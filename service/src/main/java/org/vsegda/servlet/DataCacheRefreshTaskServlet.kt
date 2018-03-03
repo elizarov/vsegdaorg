@@ -10,7 +10,7 @@ class DataCacheRefreshTaskServlet : HttpServlet() {
         DataItemService.refreshCache(req.getParameter("id").toLong())
     }
 
-    companion object {
+    companion object : Logged {
         fun enqueueTask(streamId: Long) {
             log.info("Enqueueing data cache refresh task for id=$streamId")
             val queue = QueueFactory.getQueue("dataCacheRefreshTaskQueue")

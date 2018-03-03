@@ -7,7 +7,7 @@ import org.vsegda.util.*
 import java.util.*
 import java.util.concurrent.*
 
-object DataItemService {
+object DataItemService : Logged {
     private val cache = ConcurrentHashMap<Long, CachedItems>()
 
     private fun addDataItem(dataItem: DataItem) {

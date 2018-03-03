@@ -11,7 +11,7 @@ import org.vsegda.shared.*
 import org.vsegda.util.*
 import java.util.*
 
-class AdminServiceImpl : RemoteServiceServlet(), AdminService {
+class AdminServiceImpl : RemoteServiceServlet(), AdminService, Logged {
     override fun getDataStreams(): List<DataStreamDTO> {
         val items = DataRequest().queryList()
         val result = ArrayList<DataStreamDTO>()
@@ -63,6 +63,6 @@ class AdminServiceImpl : RemoteServiceServlet(), AdminService {
         stream.name = sd.name ?: ""
         stream.alertTimeout = TimePeriod.valueOf(sd.alert).period
         stream.mode = sd.mode
-        DataStreamService.storeDataStream(stream)
+        DataStreamService.updateDataStream(stream)
     }
 }

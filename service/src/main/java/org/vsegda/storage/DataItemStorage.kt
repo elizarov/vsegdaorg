@@ -11,15 +11,15 @@ private var Entity.value by Prop.double
 object DataItemStorage : BaseStorage<DataItem>() {
     override val kind: String = "DataItem"
 
-    override fun DataItem.toKey(): Key = key ?: error("Data item $this is not persistent")
+    override fun DataItem.toKey() = key ?: error("Data item $this is not persistent")
 
-    override fun DataItem.toEntity(): Entity = Entity(kind).also { e ->
+    override fun DataItem.toEntity() = Entity(kind).also { e ->
         e.streamId = streamId
         e.timeMillis = timeMillis
         e.value = value
     }
 
-    override fun Entity.toObject(): DataItem = DataItem(
+    override fun Entity.toObject() = DataItem(
         streamId ?: 0L, value ?: 0.0, timeMillis ?: 0L, key
     )
 
