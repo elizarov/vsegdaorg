@@ -9,6 +9,8 @@ import org.vsegda.util.*
 import org.vsegda.util.TimeUtil
 import javax.servlet.http.*
 
+private const val FLUSH_DELAY_MS = 10_000L // 10 seconds
+
 class DataArchiveTaskServlet : HttpServlet(), Logged {
     override fun doPost(req: HttpServletRequest, resp: HttpServletResponse) {
         val streamId = req.getParameter("id").toLong()
@@ -63,18 +65,19 @@ class DataArchiveTaskServlet : HttpServlet(), Logged {
             }
             else -> log.warning("Unsupported ${stream.mode} mode")
         }
-        // create next task to check this stream again
-        enqueueTask(streamId)
+        // create next task to check this stream again after some delay (to flush previous operation)
+        enqueueTask(streamId, FLUSH_DELAY_MS)
     }
 
     companion object : Logged {
-        fun enqueueTask(streamId: Long) {
+        fun enqueueTask(streamId: Long, waitMillis: Long = 0L) {
             log.info("Enqueueing data archive task for id=$streamId")
             val queue = QueueFactory.getQueue("archiveTaskQueue")
             queue.add(
                 TaskOptions.Builder
                     .withUrl("/task/dataArchive")
                     .param("id", streamId.toString())
+                    .countdownMillis(waitMillis)
             )
         }
     }

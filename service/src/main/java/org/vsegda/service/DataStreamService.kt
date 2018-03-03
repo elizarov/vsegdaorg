@@ -49,7 +49,7 @@ object DataStreamService : Logged {
             val lastStream = DataStreamStorage.loadLastDataStream()
             DataStream(max(FIRST_STREAM_ID, (lastStream?.streamId ?: 0) + 1), tag).also {
                 DataStreamStorage.storeDataStream(it)
-                cache(it)
+                clearCache()
             }
         }
 
@@ -65,7 +65,7 @@ object DataStreamService : Logged {
             log.info("Creating new data stream with id=$id")
             DataStream(id).also {
                 DataStreamStorage.storeDataStream(it)
-                cache(it)
+                clearCache()
             }
         }
     }
