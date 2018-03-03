@@ -49,7 +49,9 @@ object DataArchiveStorage : BaseStorage<DataArchive>() {
         }
 
     fun queryItemsFromDataArchives(streamId: Long, from: TimeInstant?, to: TimeInstant?, nItems: Int): List<DataItem> =
-        logged({ "queryItemsFromDataArchives(streamId=$streamId, from=$from, to=$to, nItems=$nItems) -> ${it.size} items" }) {
+        logged("queryItemsFromDataArchives(streamId=$streamId, from=$from, to=$to, nItems=$nItems)",
+            result={ "${it.size} items" }, around=true
+        ) {
             val estimatedRange = 1 + nItems / ARCHIVE_COUNT_ESTIMATE // estimate number of archives
             val items = ArrayList<DataItem>()
             val it = query {
@@ -59,8 +61,10 @@ object DataArchiveStorage : BaseStorage<DataArchive>() {
                 sortDescBy(Entity::firstTimeMillis)
             }.asSequence(estimatedRange)
             for (archive in it) {
+                val archiveItems = archive.items
+                log.info("Retrieved archive $archive, decoded ${archiveItems.size} items")
                 val prevSize = items.size
-                items.addAll(archive.items)
+                items.addAll(archiveItems)
                 items.subList(prevSize, items.size).reverse() // turn ascending items into descending
                 if (items.size >= nItems) {
                     items.subList(nItems, items.size).clear()

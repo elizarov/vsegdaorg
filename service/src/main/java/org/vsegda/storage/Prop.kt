@@ -1,7 +1,6 @@
 package org.vsegda.storage
 
 import com.google.appengine.api.datastore.*
-import sun.misc.*
 import kotlin.reflect.*
 
 object Prop {
@@ -32,11 +31,7 @@ object Prop {
     }
 
     val blob = object : BaseProp<ByteArray>() {
-        override fun fromEntity(value: Any?): ByteArray? = when (value) {
-            is Blob -> value.bytes
-            is String -> BASE64Decoder().decodeBuffer(value)
-            else -> null
-        }
+        override fun fromEntity(value: Any?): ByteArray? = (value as? Blob)?.bytes
         override fun toEntity(value: ByteArray?): Any? = Blob(value)
     }
 }
