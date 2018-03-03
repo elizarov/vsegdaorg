@@ -10,6 +10,11 @@
         <property name="messageIndex" direction="asc"/>
     </datastore-index>
 
+    <datastore-index kind="MessageSession" ancestor="false" source="manual">
+        <property name="queueId" direction="asc"/>
+        <property name="sessionId" direction="desc"/>
+    </datastore-index>
+
     <datastore-index kind="DataItem" ancestor="false" source="auto">
         <property name="streamId" direction="asc"/>
         <property name="timeMillis" direction="desc"/>
