@@ -39,7 +39,7 @@ object MessageItemStorage : BaseStorage<MessageItem>() {
         }
 
     fun loadNewMessageItems(queueId: Long, index: Long, offset: Int, n: Int): List<MessageItem> =
-        logged({ "loadNewMessageItems(queueId=$queueId, index=$index, offset=$offset, n=$n" }) {
+        logged({ "loadNewMessageItems(queueId=$queueId, index=$index, offset=$offset, n=$n) -> ${it.size}" }) {
             query {
                 filterEq(Entity::queueId, queueId)
                 filterGreater(Entity::messageIndex, index)
@@ -48,7 +48,7 @@ object MessageItemStorage : BaseStorage<MessageItem>() {
         }
 
     fun loadLastMessagesItems(queueId: Long, offset: Int, n: Int): List<MessageItem> =
-        logged({ "loadLastMessagesItems(queueId=$queueId, offset=$offset, n=$n" }) {
+        logged({ "loadLastMessagesItems(queueId=$queueId, offset=$offset, n=$n) -> ${it.size}" }) {
             query {
                 filterEq(Entity::queueId, queueId)
                 sortDescBy(Entity::messageIndex)
