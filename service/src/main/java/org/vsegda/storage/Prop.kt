@@ -31,7 +31,15 @@ object Prop {
     }
 
     val blob = object : BaseProp<ByteArray>() {
-        override fun fromEntity(value: Any?): ByteArray? = (value as? Blob)?.bytes
-        override fun toEntity(value: ByteArray?): Any? = Blob(value)
+        override fun fromEntity(value: Any?): ByteArray? = when (value) {
+            is Blob -> value.bytes
+            is ShortBlob -> value.bytes
+            else -> null /* unknown type or null */
+        }
+        override fun toEntity(value: ByteArray?): Any? = when {
+            value == null -> null
+            value.size <= DataTypeUtils.MAX_SHORT_BLOB_PROPERTY_LENGTH -> ShortBlob(value)
+            else -> Blob(value)
+        }
     }
 }
