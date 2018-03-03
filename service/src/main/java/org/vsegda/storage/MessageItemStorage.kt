@@ -15,9 +15,10 @@ object MessageItemStorage : BaseStorage<MessageItem>() {
     private fun keyOf(queueId: Long, messageIndex: Long): Key = KeyFactory.createKey(
         MessageQueueStorage.keyOf(queueId), kind, messageIndex)
 
-    override fun MessageItem.toKey() = keyOf(queueId, messageIndex)
+    override fun MessageItem.toKey() =
+        if (messageIndex == 0L) null else keyOf(queueId, messageIndex)
 
-    override fun MessageItem.toEntity()= Entity(toKey()).also { e ->
+    override fun MessageItem.toEntity()= newEntity { e ->
         e.queueId = queueId
         e.messageIndex = messageIndex
         e.text = text
@@ -26,8 +27,8 @@ object MessageItemStorage : BaseStorage<MessageItem>() {
 
     override fun Entity.toObject() = MessageItem().apply {
         val e = this@toObject
-        queueId = e.queueId ?: e.key.parent?.id ?: 0L
-        messageIndex = e.messageIndex ?: e.key.id
+        queueId = e.queueId ?: e.key?.parent?.id ?: 0L
+        messageIndex = e.messageIndex ?: e.key?.id ?: 0L
         text = e.text ?: ""
         timeMillis = e.timeMillis ?: 0L
     }

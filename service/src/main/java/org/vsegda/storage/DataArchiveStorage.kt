@@ -16,9 +16,12 @@ private var Entity.encodedItems by Prop.blob
 object DataArchiveStorage : BaseStorage<DataArchive>() {
     override val kind: String = "DataArchive"
 
-    override fun DataArchive.toKey() = key ?: error("Data archive $this is not persistent")
+    private fun keyOf(archiveId: Long) = KeyFactory.createKey(kind, archiveId)
 
-    override fun DataArchive.toEntity() = Entity(kind).also { e ->
+    override fun DataArchive.toKey() =
+        if (archiveId == 0L) null else keyOf(archiveId)
+
+    override fun DataArchive.toEntity() = newEntity { e ->
         e.streamId = streamId
         e.count = count
         e.firstValue = firstValue
@@ -30,7 +33,8 @@ object DataArchiveStorage : BaseStorage<DataArchive>() {
 
     override fun Entity.toObject() = DataArchive().apply {
         val e = this@toObject
-        streamId = e.streamId ?: 0
+        archiveId = e.key?.id ?: 0L
+        streamId = e.streamId ?: 0L
         count = e.count ?: 0
         firstValue = e.firstValue ?: Double.NaN
         firstTimeMillis = e.firstTimeMillis ?: 0L
@@ -40,8 +44,8 @@ object DataArchiveStorage : BaseStorage<DataArchive>() {
     }
 
     fun storeDataArchive(archive: DataArchive) =
-        logged("storeDataArchive($archive") {
-            store(archive).also { archive.key = it }
+        logged({ "storeDataArchive($archive) -> $it" }) {
+            store(archive).also { archive.archiveId = it.id }
         }
 
     fun queryItemsFromDataArchives(streamId: Long, from: TimeInstant?, to: TimeInstant?, nItems: Int): List<DataItem> =

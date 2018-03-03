@@ -18,7 +18,7 @@ class DataArchiveCronServlet : HttpServlet(), Logged {
                     lastItem.timeMillis
                 else
                     System.currentTimeMillis() - RECENT_TIME_INTERVAL - ARCHIVE_INTERVAL
-                if (firstItem != null && firstItem.timeMillis < threshold && firstItem.key != lastItem.key) {
+                if (firstItem != null && firstItem.timeMillis < threshold && firstItem.itemId != lastItem.itemId) {
                     // need to archive
                     DataArchiveTaskServlet.enqueueTask(stream.streamId)
                 }

@@ -2,7 +2,6 @@ package org.vsegda.storage
 
 import com.google.appengine.api.datastore.*
 import org.vsegda.data.*
-import org.vsegda.storage.MessageQueueStorage.toKey
 import org.vsegda.util.*
 
 private var Entity.queueId by Prop.long
@@ -16,9 +15,10 @@ object MessageSessionStorage : BaseStorage<MessageSession>() {
     private fun keyOf(queueId: Long, sessionId: Long): Key = KeyFactory.createKey(
         MessageQueueStorage.keyOf(queueId), kind, sessionId)
 
-    override fun MessageSession.toKey() = keyOf(queueId, sessionId)
+    override fun MessageSession.toKey() =
+        if (sessionId == 0L) null else keyOf(queueId, sessionId)
         
-    override fun MessageSession.toEntity()= Entity(toKey()).also { e ->
+    override fun MessageSession.toEntity()= newEntity { e ->
         e.queueId = queueId
         e.sessionId = sessionId
         e.creationTimeMillis = creationTimeMillis
@@ -27,8 +27,8 @@ object MessageSessionStorage : BaseStorage<MessageSession>() {
 
     override fun Entity.toObject() = MessageSession().apply {
         val e = this@toObject
-        queueId = e.queueId ?: e.key.parent?.id ?: 0L
-        sessionId = e.sessionId ?: e.key.id
+        queueId = e.queueId ?: e.key?.parent?.id ?: 0L
+        sessionId = e.sessionId ?: e.key?.id ?: 0L
         creationTimeMillis = e.creationTimeMillis ?: 0L
         lastPostIndex = e.lastPostIndex ?: 0L
     }

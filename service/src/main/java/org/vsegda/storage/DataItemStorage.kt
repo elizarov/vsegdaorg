@@ -11,26 +11,34 @@ private var Entity.value by Prop.double
 object DataItemStorage : BaseStorage<DataItem>() {
     override val kind: String = "DataItem"
 
-    override fun DataItem.toKey() = key ?: error("Data item $this is not persistent")
+    private fun keyOf(itemId: Long): Key = KeyFactory.createKey(kind, itemId)
 
-    override fun DataItem.toEntity() = Entity(kind).also { e ->
+    override fun DataItem.toKey(): Key? =
+        if (itemId == 0L) null else keyOf(itemId)
+
+    override fun DataItem.toEntity() = newEntity { e ->
         e.streamId = streamId
         e.timeMillis = timeMillis
         e.value = value
     }
 
-    override fun Entity.toObject() = DataItem(
-        streamId ?: 0L, value ?: 0.0, timeMillis ?: 0L, key
-    )
+    override fun Entity.toObject() = DataItem().apply {
+        val e = this@toObject
+        itemId = e.key?.id ?: 0L
+        streamId = e.streamId ?: 0L
+        value = e.value ?: 0.0
+        timeMillis = e.timeMillis ?: 0L
+        
+    }
 
     fun storeDataItem(item: DataItem): Key =
         logged({ "storeDataItem($item) -> $it" }) {
-            store(item).also { item.key = it }
+            store(item).also { item.itemId = it.id }
         }
 
-    fun deleteDataItem(item: DataItem) =
-        logged("deleteDataItem(${item.key})") {
-            delete(item)
+    fun deleteDataItems(list: List<DataItem>) =
+        logged("deleteDataItems(${list.size} items starting from ${list.firstOrNull()})") {
+            deleteList(list)
         }
 
     fun queryDataItems(streamId: Long, from: TimeInstant?, to: TimeInstant?, n: Int): List<DataItem> =
@@ -44,7 +52,7 @@ object DataItemStorage : BaseStorage<DataItem>() {
         }
 
     fun loadFirstDataItem(streamId: Long): DataItem? =
-        logged({ "loadFirstDataItem($streamId) -> ${it?.key})" }) {
+        logged({ "loadFirstDataItem($streamId) -> $it" }) {
             query {
                 filterEq(Entity::streamId, streamId)
                 sortAscBy(Entity::timeMillis)
@@ -52,7 +60,7 @@ object DataItemStorage : BaseStorage<DataItem>() {
         }
 
     fun queryFirstDataItems(streamId: Long, timeLimit: Long, n: Int): List<DataItem> =
-        logged({ "queryFirstDataItems(streamId=$streamId, timeLimit=$timeLimit, n=$n)" }) {
+        logged({ "queryFirstDataItems(streamId=$streamId, timeLimit=${TimeUtil.formatDateTime(timeLimit)}, n=$n) -> ${it.size} items" }) {
             query {
                 filterEq(Entity::streamId, streamId)
                 filterLess(Entity::timeMillis, timeLimit)

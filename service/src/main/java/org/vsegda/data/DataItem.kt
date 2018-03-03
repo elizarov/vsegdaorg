@@ -1,13 +1,13 @@
 package org.vsegda.data
 
-import com.google.appengine.api.datastore.*
 import org.vsegda.util.*
 
-class DataItem {
-    var key: Key? = null
-    var streamId: Long = 0L
-    var value: Double = 0.0
+class DataItem(
+    var streamId: Long = 0L,
+    var value: Double = 0.0,
     var timeMillis: Long = 0L
+) {
+    var itemId: Long = 0L
 
     // non-persistent!!!
     private var _stream: DataStream? = null
@@ -41,9 +41,7 @@ class DataItem {
     val streamCode: String
         get() = _stream?.code ?: streamId.toString()
 
-    constructor()
-
-    constructor(line: String, now: Long) {
+    constructor(line: String, now: Long) : this() {
         val tokens = line.split(",").dropLastWhile { it.isEmpty() }.toTypedArray()
         require(tokens.size in 2..3) { "Invalid line format: $line" }
         stream = DataStream()
@@ -56,20 +54,8 @@ class DataItem {
         }
     }
 
-    @JvmOverloads
-    constructor(streamId: Long, value: Double, timeMillis: Long, key: Key? = null) {
-        this.key = key
-        this.streamId = streamId
-        this.value = value
-        this.timeMillis = timeMillis
-    }
-
-    constructor(stream: DataStream, value: Double, timeMillis: Long) {
-        this.streamId = stream.streamId
-        this.stream = stream
-        this.value = value
-        this.timeMillis = timeMillis
-    }
+    constructor(stream: DataStream, value: Double, timeMillis: Long) :
+        this(stream.streamId, value, timeMillis)
 
     override fun toString(): String = "$streamCode,$value,$time"
 

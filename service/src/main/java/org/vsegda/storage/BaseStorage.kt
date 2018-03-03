@@ -14,24 +14,35 @@ abstract class BaseStorage<T> : Logged {
     protected open val chunkSize: Int = 10000
     protected abstract val kind: String
 
-    protected abstract fun T.toKey(): Key
+    protected abstract fun T.toKey(): Key?
     protected abstract fun T.toEntity(): Entity
     protected abstract fun Entity.toObject(): T
+
+    protected inline fun T.newEntity(init: (Entity) -> Unit): Entity {
+        val key = toKey()
+        val entity = if (key == null) Entity(kind) else Entity(key)
+        init(entity)
+        return entity
+    }
 
     private fun List<Entity>.toObjectList(): List<T> = map { it.toObject() }
 
     private fun List<T>.toEntityList(): List<Entity> = map { it.toEntity() }
 
-    protected fun Long.toKey(): Key = KeyFactory.createKey(kind, this)
+    protected fun store(obj: T): Key =
+        ds.put(obj.toEntity())
 
-    protected fun store(obj: T): Key = ds.put(obj.toEntity())
-
-    protected fun Transaction.store(obj: T): Key = ds.put(this, obj.toEntity())
+    protected fun Transaction.store(obj: T): Key =
+        ds.put(this, obj.toEntity())
 
     protected fun Transaction.storeList(list: List<T>): List<Key> =
         ds.put(this, list.toEntityList())
 
-    protected fun delete(obj: T) = ds.delete(obj.toKey())
+    protected fun delete(obj: T) =
+        ds.delete(obj.toKey() ?: error("$kind should be saved first: $obj"))
+
+    protected fun deleteList(list: List<T>) =
+        ds.delete(list.map { it.toKey() ?: error("$kind should be saved first: $it") })
 
     protected fun Sequence<Entity>.store() = chunked(chunkSize).forEach { ds.put(it) }
 

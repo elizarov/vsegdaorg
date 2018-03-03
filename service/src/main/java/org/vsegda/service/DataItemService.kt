@@ -27,11 +27,10 @@ object DataItemService : Logged {
     fun addDataItems(items: List<DataItem>) = items.forEach { addDataItem(it) }
 
     // DON'T REMOVE THEM FROM THE CACHE BY DESIGN AS THEY MOVE TO ARCHIVES
-    fun removeDataItems(stream: DataStream, items: List<DataItem>) =
-        items.forEach {
-            require(it.streamId == stream.streamId)
-            DataItemStorage.deleteDataItem(it)
-        }
+    fun removeDataItems(stream: DataStream, items: List<DataItem>) {
+        items.forEach { require(it.streamId == stream.streamId) }
+        DataItemStorage.deleteDataItems(items)
+    }
 
     fun refreshCache(streamId: Long) =
         logged("refreshCache(streamId=$streamId)", around = true) {

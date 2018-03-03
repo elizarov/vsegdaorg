@@ -12,7 +12,7 @@ import javax.servlet.http.*
 class DataArchiveTaskServlet : HttpServlet(), Logged {
     override fun doPost(req: HttpServletRequest, resp: HttpServletResponse) {
         val streamId = req.getParameter("id").toLong()
-        val stream = DataStreamStorage.loadDataStreamById(streamId)!!
+        val stream = DataStreamStorage.loadDataStreamById(streamId) ?: error("Stream id=$streamId is not found")
         log.info("Archiving data for streamId=$streamId, mode=${stream.mode}")
         val firstItem = DataItemService.getFirstDataItem(stream)
         if (firstItem == null || stream.mode != DataStreamMode.LAST && firstItem.isRecent) {
@@ -27,7 +27,7 @@ class DataArchiveTaskServlet : HttpServlet(), Logged {
         else
             TimeUtil.getArchiveLimit(firstItem.timeMillis)
 
-        val items = ArrayList(DataItemStorage.queryFirstDataItems(streamId, limit, MAX_ARCHIVE_ITEMS))
+        val items = DataItemStorage.queryFirstDataItems(streamId, limit, MAX_ARCHIVE_ITEMS).toMutableList()
 
         // remove archives when needed
         if (stream.mode == DataStreamMode.LAST || stream.mode == DataStreamMode.RECENT) {
@@ -36,7 +36,7 @@ class DataArchiveTaskServlet : HttpServlet(), Logged {
         }
 
         // never remove or archive the last item !!!
-        if (!items.isEmpty() && items[items.size - 1].key == lastItem.key)
+        if (!items.isEmpty() && items[items.size - 1].itemId == lastItem.itemId)
             items.removeAt(items.size - 1)
         if (items.isEmpty()) {
             log.warning("No items to archive")

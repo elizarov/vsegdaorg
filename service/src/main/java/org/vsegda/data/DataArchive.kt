@@ -1,12 +1,11 @@
 package org.vsegda.data
 
-import com.google.appengine.api.datastore.*
 import org.vsegda.util.*
 import java.io.*
 import java.util.*
 
 class DataArchive {
-    var key: Key? = null
+    var archiveId: Long = 0L
     var streamId: Long = 0L
     var count: Int = 0
     var firstValue: Double = 0.0
