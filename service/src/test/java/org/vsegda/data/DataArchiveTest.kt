@@ -39,4 +39,24 @@ class DataArchiveTest {
             assertEquals(putItem.timeMillis, gotItem.timeMillis)
         }
     }
+
+    @Test
+    fun testLegacyData() {
+        // data test from production DB
+        val archive = DataArchive().apply {
+            streamId = 1
+            count = 287
+            firstTimeMillis = 1519851600000
+            firstValue = -23.3
+            highValue = -1.9
+            lowValue = -27.3
+            encodedItems = Base64.getDecoder().decode(
+                "qJESyVJJUSpZKlRKlkqWSJUqWRKiIlSpUqVEqJERIkkSpZKkRKkkslSolRKiRKiVEqIiVKlkqIkkSpUSIiVESokSyIlSolREqRIiSRIkREkkSSSSSTSUkklJKknSStJ6T0SekqSVJUkkSVpKknJL0lpLSWkqSpOSek5Ik0nJEkktJaTSJbSJLSXpZJSSkmiTSUk0skS0kkukSUk0mkkqTSSWkskktJJJpeRJyVLJJKlS6TSJERJ6REkk0tpLSUkS0lSSSS0l0qWkvUlqkt6WpLaWpL6WktpaS0lpLSWktJaS6VLpdLJdKl0ul1LlksoWSqUsllLCWULJZSilkpZSpUSJUqVKlkSpZLJUqWSpZESpZEslSpUqJJKlQA=="
+            )
+        }
+        val items = archive.items
+        assertEquals(archive.count, items.size)
+        assertEquals(archive.highValue, items.map { it.value }.max())
+        assertEquals(archive.lowValue, items.map { it.value }.min())
+    }
 }
