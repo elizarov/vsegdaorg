@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5"
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
-
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         metadata-complete="false"
+         version="3.1">
+    
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
-
-    <jsp-config>
-        <jsp-property-group>
-            <url-pattern>*.jsp</url-pattern>
-            <page-encoding>UTF-8</page-encoding>
-        </jsp-property-group>
-    </jsp-config>
 
     <!-- security -->
 
@@ -55,15 +50,6 @@
     <servlet-mapping>
         <servlet-name>messageView</servlet-name>
         <url-pattern>/message</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>dataGraphView</servlet-name>
-        <jsp-file>/WEB-INF/jsp/dataGraph.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>dataGraphView</servlet-name>
-        <url-pattern>/dataGraph</url-pattern>
     </servlet-mapping>
 
     <servlet>
