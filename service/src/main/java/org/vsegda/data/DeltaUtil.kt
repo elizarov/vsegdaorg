@@ -16,7 +16,7 @@ val MAX_VALUE_POWER: Long = run {
 fun computePrecision(value: Double): Int {
     for (i in 0 until MAX_VALUE_PRECISION) {
         val m = value * POWER[i]
-        if (Math.abs(m - floor(m + 0.5)) < 1.0 / POWER[MAX_VALUE_PRECISION - i])
+        if (abs(m - floor(m + 0.5)) * POWER[MAX_VALUE_PRECISION - i] < 1.0)
             return i
     }
     return MAX_VALUE_PRECISION

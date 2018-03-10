@@ -4,7 +4,9 @@ import io.ktor.application.*
 import io.ktor.html.*
 import io.ktor.pipeline.*
 import kotlinx.html.*
+import org.vsegda.data.*
 import org.vsegda.request.*
+import kotlin.math.*
 
 suspend fun PipelineContext<Unit, ApplicationCall>.renderDataPlot() {
     val req = DataRequest(call.request)
@@ -24,18 +26,45 @@ suspend fun PipelineContext<Unit, ApplicationCall>.renderDataPlot() {
             script {
                 +"data = ["
                 for ((stream, items) in streams) {
-                    +"{label:'${stream.nameOrCode}', "
-                    +"data: ["
-                    for (item in items) {
-                        +"[${item.timeMillis},${item.value}],"
-                    }
-                    +"]},"
+                    +"{label:'${stream.nameOrCode}'"
+                    +",times:"
+                    compressTimes(items)
+                    +",values:"
+                    compressValues(items)
+                    +"},"
                 }
                 +"];"
             }
             dataNavigation(req)
         }
     }
+}
+
+fun SCRIPT.compressTimes(items: List<DataItem>) {
+    +"['*',$TIME_PRECISION"
+    var cur = 0L
+    for (item in items) {
+        val delta = (item.timeMillis - cur) / TIME_PRECISION
+        +",$delta"
+        cur += delta * TIME_PRECISION
+    }
+    +"]"
+}
+
+fun SCRIPT.compressValues(items: List<DataItem>) {
+    var precision = 0
+    for (item in items) {
+        precision = max(precision, computePrecision(item.value))
+    }
+    val pow = POWER[precision]
+    +"['/',$pow"
+    var cur = 0.0
+    for (item in items) {
+        val delta = ((item.value - cur) * pow).roundToLong()
+        +",$delta"
+        cur += delta / pow
+    }
+    +"]"
 }
 
 private fun HEAD.dataPlotHeader() {

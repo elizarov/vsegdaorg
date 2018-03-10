@@ -1,6 +1,35 @@
 var data = []; // will be set by the JSP
 
 $(function () {
+    function decompressArray(a) {
+        var op = a[0];
+        var m = a[1];
+        var cur = 0;
+        var b = [];
+        for (var i = 2; i < a.length; ++i) {
+            cur += a[i];
+            switch (op) {
+                case '*': b.push(cur * m); break;
+                case '/': b.push(cur / m); break;
+            }
+        }
+        return b;
+    }
+
+    function decompressSeries(series) {
+        var times = decompressArray(series.times);
+        var values = decompressArray(series.values);
+        var data = [];
+        for (var i = 0; i < times.length; ++i) {
+            data.push([times[i], values[i]]);
+        }
+        series.data = data;
+    }
+
+    for (var i = 0; i < data.length; ++i) {
+        decompressSeries(data[i]);
+    }
+
     var marginLeft = 20;
     var marginRight = 40;
 
