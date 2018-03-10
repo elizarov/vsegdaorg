@@ -62,7 +62,7 @@ fun SCRIPT.compressValues(items: List<DataItem>) {
     for (item in items) {
         val delta = ((item.value - cur) * pow).roundToLong()
         +",$delta"
-        cur += delta / pow
+        cur += delta.toDouble() / pow
     }
     +"]"
 }
