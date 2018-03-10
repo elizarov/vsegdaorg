@@ -68,11 +68,11 @@ suspend fun PipelineContext<Unit, ApplicationCall>.renderData() {
 }
 
 enum class DataSpan(val text: String, val span: TimePeriod) {
-    DAY("1 Day", valueOf(1, TimePeriodUnit.DAY)),
-    DAY3("3 Days", valueOf(3, TimePeriodUnit.DAY)),
-    WEEK("1 Week", valueOf(1, TimePeriodUnit.WEEK)),
-    WEEK2("2 Weeks", valueOf(2, TimePeriodUnit.WEEK)),
-    MONTH("4 Weeks", valueOf(4, TimePeriodUnit.WEEK))
+    DAY("1D", valueOf(1, TimePeriodUnit.DAY)),
+    DAY3("3D", valueOf(3, TimePeriodUnit.DAY)),
+    WEEK("1W", valueOf(1, TimePeriodUnit.WEEK)),
+    WEEK2("2W", valueOf(2, TimePeriodUnit.WEEK)),
+    MONTH("4W", valueOf(4, TimePeriodUnit.WEEK))
 }
 
 fun BODY.dataNavigation(req: DataRequest) {
