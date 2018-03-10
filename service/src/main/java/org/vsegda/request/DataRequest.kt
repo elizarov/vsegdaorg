@@ -8,12 +8,15 @@ import java.util.*
 import javax.servlet.http.*
 import kotlin.math.*
 
+val TimePeriod.expectedNItems: Int
+    get() = (period * 1.2 / TIME_PRECISION).roundToInt() // +20% from excepted number
+
 class DataRequest() : AbstractRequest() {
     // request props
     var id: IdList? = null
     var to: TimeInstant? = null
-    var span: TimePeriod = TimePeriod.valueOf(1, TimePeriodUnit.WEEK) // one week by default
-    var n = 2500 // enough data item for a week of data assuming reading every 5 mins
+    var span: TimePeriod = DEFAULT_SPAN
+    var n = DEFAULT_SPAN.expectedNItems
     var filter = 5.0 // 5 sigmas by default
 
     // derived props

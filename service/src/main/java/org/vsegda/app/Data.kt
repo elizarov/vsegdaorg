@@ -72,7 +72,10 @@ enum class DataSpan(val text: String, val span: TimePeriod) {
     DAY3("3D", valueOf(3, TimePeriodUnit.DAY)),
     WEEK("1W", valueOf(1, TimePeriodUnit.WEEK)),
     WEEK2("2W", valueOf(2, TimePeriodUnit.WEEK)),
-    MONTH("4W", valueOf(4, TimePeriodUnit.WEEK))
+    MONTH("4W", valueOf(4, TimePeriodUnit.WEEK));
+
+    // expected number of data items + 30%
+    val n = span.expectedNItems
 }
 
 fun BODY.dataNavigation(req: DataRequest) {
@@ -87,7 +90,11 @@ fun BODY.dataNavigation(req: DataRequest) {
     navigate("Prev", "$prevQuery")
     navigate("Next", nextQuery?.toString() ?: "")
     span(classes = "spacer")
+    val resetQuery = query.update("to", null).update("span", null).update("n", null);
+    navigate("Reset", if (query == resetQuery) "" else resetQuery.toString())
+    span(classes = "spacer")
     for (ds in DataSpan.values()) {
-        navigate(ds.text, if (req.span == ds.span) "" else "${query.update("span", ds.span)}")
+        navigate(ds.text, if (req.span == ds.span) "" else
+            "${query.update("span", ds.span).update("n", ds.n)}")
     }
 }

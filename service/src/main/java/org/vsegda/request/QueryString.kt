@@ -1,6 +1,6 @@
 package org.vsegda.request
 
-class QueryString(private val str: String = "") {
+data class QueryString(private val str: String = "") {
     fun isEmpty(): Boolean = str.isEmpty()
     override fun toString(): String = if (str.isEmpty()) "" else "?$str"
 
