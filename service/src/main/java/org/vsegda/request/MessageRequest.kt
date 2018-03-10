@@ -1,19 +1,29 @@
 package org.vsegda.request
 
+import io.ktor.request.*
 import org.vsegda.data.*
 import org.vsegda.service.*
 import org.vsegda.util.*
 import javax.servlet.http.*
 
-class MessageRequest(req: HttpServletRequest, post: Boolean) : AbstractRequest() {
+class MessageRequest() : AbstractRequest() {
     var id: IdList? = null
     var isTake: Boolean = false
     var index: Long = 0
     var last = 100 // last 100 items by default
     var first: Int = 0
 
-    init {
+    constructor(req: HttpServletRequest, post: Boolean) : this() {
         init(req)
+        validate(post)
+    }
+
+    constructor(req: ApplicationRequest, post: Boolean = false) : this() {
+        init(req)
+        validate(post)
+    }
+
+    private fun validate(post: Boolean) {
         if (id != null && id!!.isSingleton && post)
             isTake = true // force take on POST request if "id" is set
         if (index != 0L && (id == null || !id!!.isSingleton))

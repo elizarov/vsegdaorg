@@ -6,6 +6,31 @@
     font-weight: bold;
 }
 
+.nav {
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
+    border: 1px solid black;
+    padding: 0 10px;
+    text-align: center;
+    display: inline-block;
+    margin-left: 5px;
+    margin-right: 5px;
+    border-radius: 10px;
+}
+
+.cur {
+}
+
+.link {
+    background-color: #aac4ff;
+}
+
+.spacer {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
 table.data {
     border: 3px solid black;
     border-collapse: collapse;
@@ -56,4 +81,18 @@ table.data th, .th {
 
 .mrt {
     margin-right: .5em !important;
+}
+
+#plot {
+    width: 700px;
+    height: 300px;
+}
+
+#overview {
+    width: 700px;
+    height: 60px;
+}
+
+#time {
+    font-size: smaller
 }

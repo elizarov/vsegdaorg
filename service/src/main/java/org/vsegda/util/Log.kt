@@ -23,12 +23,18 @@ inline fun <T> Logged.logged(
     body: () -> T): T
 {
     if (around) log.info("START $msg")
+    val hdr = if (around) "FINISH $msg" else msg
     return logged(
         msg = {
-            val hdr = if (around) "FINISH $msg" else msg
             if (result == null) hdr else "$hdr -> ${result(it)}"
         },
-        body = body)
+        body = {
+            try { body() }
+            catch (e: Throwable) {
+                log.log(Level.SEVERE, "FAILED $msg: $e")
+                throw e
+            }
+        })
 }
 
 @Suppress("UNCHECKED_CAST")

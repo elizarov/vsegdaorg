@@ -8,6 +8,11 @@ class TimePeriod private constructor(
     operator fun plus(other: TimePeriod): TimePeriod = valueOf(period - other.period)
     operator fun minus(other: TimePeriod): TimePeriod = valueOf(period + other.period)
 
+    override fun equals(other: Any?): Boolean =
+        other is TimePeriod && other.period == period
+
+    override fun hashCode(): Int = period.hashCode()
+
     override fun toString(): String {
         val sb = StringBuilder()
         var r = period

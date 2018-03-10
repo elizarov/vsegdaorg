@@ -5,7 +5,7 @@ import org.vsegda.storage.*
 
 object MessageItemService {
     fun getMessageItem(queueId: Long, messageIndex: Long): MessageItem? =
-        MessageItemStorage.loadMessageItem(queueId, messageIndex)
+        if (messageIndex == 0L) null else MessageItemStorage.loadMessageItem(queueId, messageIndex)
 
     fun getNewMessageItems(queueId: Long, index: Long, first: Int, last: Int): List<MessageItem> =
         MessageItemStorage.loadNewMessageItems(queueId, index, first, last)

@@ -1,54 +1,38 @@
 package org.vsegda.request
 
+import io.ktor.request.*
 import org.apache.commons.beanutils.*
 import org.vsegda.util.*
 import java.util.*
 import javax.servlet.http.*
 
 abstract class AbstractRequest : Logged {
-    private lateinit var keyValues: MutableList<String>
+    var queryString: QueryString = QueryString()
+        private set
 
-    val queryString: String
-        get() = keyValues.joinToString(separator = "&")
-
-    override fun toString(): String = if (keyValues.isEmpty()) "<all>" else keyValues.toString()
+    override fun toString(): String = if (queryString.isEmpty()) "<all>" else queryString.toString()
 
     // must be invoked at most once
-    protected fun init(req: HttpServletRequest? = null) {
-        check(!this::keyValues.isInitialized)
-        if (req == null) {
-            keyValues = mutableListOf()
-            return
+    protected fun init(req: HttpServletRequest) {
+        populate(req.parameterMap.mapValues { it.value.toList() }.entries)
+        queryString = QueryString(req.queryString ?: "")
+    }
+
+    protected fun init(req: ApplicationRequest) {
+        populate(req.queryParameters.entries())
+        queryString = QueryString(req.local.uri.substringAfter('?', ""))
+    }
+
+    private fun populate(params: Set<Map.Entry<String, List<String>>>) {
+        val populate = LinkedHashMap<String, String>()
+        for ((key, values) in params) {
+            if (values.isNotEmpty()) populate[key] = values[0]
         }
-        // populate first
         try {
-            val params = req.parameterMap
-            val populate = LinkedHashMap<String, String>()
-            for ((key, value) in params) {
-                if (value.isNotEmpty()) populate[key] = value[0]
-            }
             BeanUtils.populate(this, populate)
         } catch (e: Exception) {
             throw IllegalArgumentException(e)
         }
-        // then keep keyValues as simple strings in order
-        keyValues = (req.queryString?.split("&") ?: emptyList()).toMutableList()
-    }
-
-    protected fun updateQueryString(key: String, value: String?) {
-        if (!this::keyValues.isInitialized) return // ignore updates from inside constructor
-        val eq = key + "="
-        for (i in keyValues.indices) {
-            val keyValue = keyValues[i]
-            if (keyValue.startsWith(eq)) {
-                if (value == null)
-                    keyValues.removeAt(i)
-                else
-                    keyValues[i] = eq + value
-                return
-            }
-        }
-        keyValues.add(eq + value!!)
     }
 
     companion object {

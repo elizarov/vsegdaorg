@@ -1,5 +1,6 @@
 package org.vsegda.request
 
+import io.ktor.request.*
 import org.vsegda.data.*
 import org.vsegda.service.*
 import org.vsegda.util.*
@@ -7,48 +8,31 @@ import java.util.*
 import javax.servlet.http.*
 import kotlin.math.*
 
-class DataRequest(req: HttpServletRequest? = null) : AbstractRequest() {
+class DataRequest() : AbstractRequest() {
     // request props
-
     var id: IdList? = null
-        set(id) {
-            updateQueryString("id", id?.toString())
-            field = id
-        }
-
     var to: TimeInstant? = null
-        set(to) {
-            updateQueryString("to", to?.toString())
-            field = to
-        }
-
-    var span: TimePeriod? = TimePeriod.valueOf(1, TimePeriodUnit.WEEK) // one week by default
-        set(span) {
-            updateQueryString("span", span?.toString())
-            field = span
-        }
-
+    var span: TimePeriod = TimePeriod.valueOf(1, TimePeriodUnit.WEEK) // one week by default
     var n = 2500 // enough data item for a week of data assuming reading every 5 mins
-        set(n) {
-            updateQueryString("n", if (n == 0) null else n.toString())
-            field = n
-        }
-
     var filter = 5.0 // 5 sigmas by default
 
     // derived props
-
     val from: TimeInstant?
-        get() = span?.let { (to ?: TimeInstant.now()) - it }
+        get() = span.let { (to ?: TimeInstant.now()) - it }
 
+    // todo: remove
     @get:JvmName("hasNavigation")
     val hasNavigation: Boolean
-        get() = id != null && span != null
+        get() = id != null
     
-    init {
+    constructor(req: HttpServletRequest) : this() {
         init(req)
     }
     
+    constructor(req: ApplicationRequest) : this() {
+        init(req)
+    }
+
     fun queryList(): List<DataItem> {
         val result = queryMap().values.flatMap { it }
         return if (id == null) result else {

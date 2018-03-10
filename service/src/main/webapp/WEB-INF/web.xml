@@ -23,42 +23,26 @@
         </auth-constraint>
     </security-constraint>
 
-    <!-- JSP page servlets -->
+    <!-- Ktor application -->
 
     <servlet>
-        <servlet-name>adminView</servlet-name>
-        <jsp-file>/WEB-INF/jsp/admin.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>adminView</servlet-name>
-        <url-pattern>/admin</url-pattern>
-    </servlet-mapping>
+        <display-name>KtorServlet</display-name>
+        <servlet-name>KtorServlet</servlet-name>
+        <servlet-class>io.ktor.server.servlet.ServletApplicationEngine</servlet-class>
 
-    <servlet>
-        <servlet-name>dataView</servlet-name>
-        <jsp-file>/WEB-INF/jsp/data.jsp</jsp-file>
+        <!-- path to application.conf file, required -->
+        <init-param>
+            <param-name>io.ktor.config</param-name>
+            <param-value>application.conf</param-value>
+        </init-param>
     </servlet>
+
     <servlet-mapping>
-        <servlet-name>dataView</servlet-name>
+        <servlet-name>KtorServlet</servlet-name>
         <url-pattern>/data</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>messageView</servlet-name>
-        <jsp-file>/WEB-INF/jsp/message.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>messageView</servlet-name>
-        <url-pattern>/message</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>dataPlotView</servlet-name>
-        <jsp-file>/WEB-INF/jsp/dataPlot.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>dataPlotView</servlet-name>
         <url-pattern>/dataPlot</url-pattern>
+        <url-pattern>/message</url-pattern>
+        <url-pattern>/admin</url-pattern>
     </servlet-mapping>
 
     <!-- Other servlets -->
