@@ -9,7 +9,8 @@ enum class TimeUnit(
     HOUR('h', org.vsegda.util.HOUR),
     DAY('d', org.vsegda.util.DAY),
     WEEK('w', org.vsegda.util.WEEK),
-    MONTH('M', org.vsegda.util.MONTH);
+    MONTH('M', org.vsegda.util.MONTH),
+    YEAR('Y', org.vsegda.util.YEAR);
 
     override fun toString(): String = "1" + code
 }

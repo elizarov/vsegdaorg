@@ -40,6 +40,7 @@ abstract class AbstractRequest : Logged {
             ConvertUtils.register(IdList.Cnv(), IdList::class.java)
             ConvertUtils.register(TimeInstant.Cnv(), TimeInstant::class.java)
             ConvertUtils.register(TimePeriod.Cnv(), TimePeriod::class.java)
+            ConvertUtils.register(ConflateOp.Cnv(), ConflateOp::class.java)
         }
     }
 }

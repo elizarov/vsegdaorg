@@ -78,11 +78,18 @@ fun BODY.dataSelector(req: DataRequest) {
     navigate("Prev", "$prevQuery")
     navigate("Next", nextQuery?.toString() ?: "")
     span(classes = "spacer")
-    val resetQuery = query.update("to", null).update("span", null)
+    val resetQuery = query.update("to", null).update("span", null).update("op", null)
     navigate("Reset", if (query == resetQuery) "" else resetQuery.toString())
     span(classes = "spacer")
     for (ds in DataSpan.values()) {
         navigate(ds.text, if (req.span == ds.span) "" else
             "${query.update("span", ds.span)}")
+    }
+    if (conflationForSpan(req.span) != null) {
+        span(classes = "spacer")
+        for (op in ConflateOp.values()) {
+            navigate(op.toString(), if (req.op == op) "" else
+            "${query.update("op", op)}")
+        }
     }
 }

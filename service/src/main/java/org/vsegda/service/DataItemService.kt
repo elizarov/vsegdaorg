@@ -1,12 +1,15 @@
 package org.vsegda.service
 
 import org.vsegda.data.*
+import org.vsegda.request.*
 import org.vsegda.shared.*
 import org.vsegda.storage.*
 import org.vsegda.util.*
 import java.util.*
 import java.util.concurrent.*
 import kotlin.math.*
+
+private val ITEM_BY_VALUE = compareBy(DataItem::value)
 
 object DataItemService : Logged {
     private val cache = ConcurrentHashMap<Long, CachedItems>()
@@ -51,7 +54,8 @@ object DataItemService : Logged {
         from: TimeInstant?,
         to: TimeInstant?,
         nRequested: Int,
-        conflate: TimePeriod? = null
+        conflate: TimePeriod? = null,
+        op: ConflateOp = ConflateOp.MAX
     ): List<DataItem> {
         val (nQuery, nReturn) = when {
             stream.mode == DataStreamMode.LAST -> {
@@ -69,7 +73,7 @@ object DataItemService : Logged {
             ?.getCached(from, to, nQuery)
             ?: CachedResult(mutableListOf(), false)
         val cachedItems = cachedResult.items
-        conflate(cachedItems, conflate)
+        conflate(cachedItems, conflate, op)
         cachedItems.trimFrontToSize(nReturn)
         if (cachedResult.all || cachedItems.size >= nReturn) {
             return fillStream(stream, cachedItems)
@@ -83,24 +87,32 @@ object DataItemService : Logged {
         }
         val queriedItems = performItemsQuery(
             stream.streamId, from, queryTo, nQuery - cachedItems.size, false)
-        conflate(queriedItems, conflate)
+        conflate(queriedItems, conflate, op)
         queriedItems.addAll(cachedItems)
         queriedItems.trimFrontToSize(nReturn)
         return fillStream(stream, queriedItems)
     }
 
-    private fun conflate(list: MutableList<DataItem>, conflate: TimePeriod?) {
+    private fun conflate(list: MutableList<DataItem>, conflate: TimePeriod?, op: ConflateOp) {
         if (conflate == null) return
         val period = conflate.period
         var j = 0
         var prev = 0L
+        var firstInBucket = true
         for (i in list.indices) {
             val item = list[i]
             val cur = item.timeMillis / period
-            list[j] = item
+            list[j] = if (firstInBucket) item else when (op) {
+                ConflateOp.LAST -> item
+                ConflateOp.MAX -> maxOf(item, list[j], ITEM_BY_VALUE)
+                ConflateOp.MIN -> minOf(item, list[j], ITEM_BY_VALUE)
+            }
             if (cur != prev) {
                 j++
                 prev = cur
+                firstInBucket = true
+            } else {
+                firstInBucket = false
             }
         }
         list.subList(j, list.size).clear()

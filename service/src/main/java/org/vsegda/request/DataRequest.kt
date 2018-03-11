@@ -13,6 +13,7 @@ class DataRequest() : AbstractRequest() {
     var id: IdList? = null
     var to: TimeInstant? = null
     var span: TimePeriod = DEFAULT_SPAN
+    var op: ConflateOp = ConflateOp.MAX
     var filter = 5.0 // 5 sigmas by default
 
     // derived props
@@ -50,7 +51,7 @@ class DataRequest() : AbstractRequest() {
                 id.asSequence()
                     .mapNotNull { DataStreamService.resolveDataStreamByCode(it) }
                     .associate { it to
-                        DataItemService.getDataItems(it, from, to, nRequested, conflate)
+                        DataItemService.getDataItems(it, from, to, nRequested, conflate, op)
                         .filterData()
                     }
             }
