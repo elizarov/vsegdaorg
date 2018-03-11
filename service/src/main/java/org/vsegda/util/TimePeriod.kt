@@ -1,17 +1,14 @@
 package org.vsegda.util
 
-import org.apache.commons.beanutils.Converter
+import org.apache.commons.beanutils.*
 
-class TimePeriod private constructor(
+@Suppress("DataClassPrivateConstructor")
+data class TimePeriod private constructor(
     @get:JvmName("period") val period: Long
-) {
+): Comparable<TimePeriod> {
     operator fun plus(other: TimePeriod): TimePeriod = valueOf(period - other.period)
     operator fun minus(other: TimePeriod): TimePeriod = valueOf(period + other.period)
-
-    override fun equals(other: Any?): Boolean =
-        other is TimePeriod && other.period == period
-
-    override fun hashCode(): Int = period.hashCode()
+    override fun compareTo(other: TimePeriod): Int = period.compareTo(other.period)
 
     override fun toString(): String {
         val sb = StringBuilder()
@@ -20,14 +17,14 @@ class TimePeriod private constructor(
             sb.append('-')
             r = -r
         }
-        val units = TimePeriodUnit.values()
+        val units = TimeUnit.values()
         var cnt = 0
         var i = units.size
         while (--i >= 0) {
             val unit = units[i]
             val `val` = r / unit.period
             r %= unit.period
-            val ms = unit === TimePeriodUnit.SECOND && r > 0
+            val ms = unit === TimeUnit.SECOND && r > 0
             if (`val` > 0 || ms) {
                 cnt++
                 sb.append(`val`)
@@ -59,13 +56,13 @@ class TimePeriod private constructor(
     companion object {
         val ZERO = TimePeriod(0)
 
-        fun valueOf(period: Long): TimePeriod = TimePeriod(period)
-        fun valueOf(n: Long, unit: TimePeriodUnit): TimePeriod = TimePeriod(n * unit.period)
+        fun valueOf(period: Long): TimePeriod =
+            if (period == 0L) ZERO else TimePeriod(period)
 
         fun valueOf(string: String?): TimePeriod {
-            var s: String = string ?: return TimePeriod(0)
+            var s: String = string ?: return ZERO
             s = s.trim { it <= ' ' }
-            if (s.isEmpty()) return TimePeriod(0)
+            if (s.isEmpty()) return ZERO
             var period: Long = 0
             var mul: Long = 1
             var i = 0
@@ -75,13 +72,13 @@ class TimePeriod private constructor(
                 i++
                 mul = -1
             }
-            val units = TimePeriodUnit.values()
+            val units = TimeUnit.values()
             var k = units.size - 1
             while (i < s.length) {
                 var j = i
                 while (j < s.length && numChar(s[j]))
                     j++
-                val part = java.lang.Double.parseDouble(s.substring(i, j))
+                val part = s.substring(i, j).toDouble()
                 if (j >= s.length) {
                     period += part.toLong()
                     break
@@ -100,3 +97,6 @@ class TimePeriod private constructor(
         private fun numChar(c: Char): Boolean = c in '0'..'9' || c == '.'
     }
 }
+
+operator fun Int.times(unit: TimeUnit) = TimePeriod.valueOf(this * unit.period)
+

@@ -8,26 +8,17 @@ import java.util.*
 import javax.servlet.http.*
 import kotlin.math.*
 
-val TimePeriod.expectedNItems: Int
-    get() = (period * 1.2 / TIME_PRECISION).roundToInt() // +20% from excepted number
-
 class DataRequest() : AbstractRequest() {
     // request props
     var id: IdList? = null
     var to: TimeInstant? = null
     var span: TimePeriod = DEFAULT_SPAN
-    var n = DEFAULT_SPAN.expectedNItems
     var filter = 5.0 // 5 sigmas by default
 
     // derived props
     val from: TimeInstant?
-        get() = span.let { (to ?: TimeInstant.now()) - it }
+        get() = (to ?: TimeInstant.now()) - span
 
-    // todo: remove
-    @get:JvmName("hasNavigation")
-    val hasNavigation: Boolean
-        get() = id != null
-    
     constructor(req: HttpServletRequest) : this() {
         init(req)
     }
@@ -51,13 +42,21 @@ class DataRequest() : AbstractRequest() {
                 DataStreamService.dataStreams
                     .associate { it to listOf(DataItemService.getLastDataItem(it)) }
             } else {
+                // find conflation
+                val conflate = conflationForSpan(span)
+                // request up to +25% from the excepted number of items
+                val nRequested = (span.period * 1.25 / (conflate?.period ?: TIME_PRECISION)).roundToInt()
+                // separately for each stream
                 id.asSequence()
                     .mapNotNull { DataStreamService.resolveDataStreamByCode(it) }
-                    .associate { it to DataItemService.getDataItems(it, from, to, n).filter() }
+                    .associate { it to
+                        DataItemService.getDataItems(it, from, to, nRequested, conflate)
+                        .filterData()
+                    }
             }
         }
 
-    private fun List<DataItem>.filter(): List<DataItem> {
+    private fun List<DataItem>.filterData(): List<DataItem> {
         if (filter <= 0) return this
         val items = toMutableList()
         for (repeat in 0..19) {

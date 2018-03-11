@@ -35,7 +35,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.renderDataPlot() {
                 }
                 +"];"
             }
-            dataNavigation(req)
+            dataSelector(req)
         }
     }
 }

@@ -6,6 +6,7 @@ import org.vsegda.storage.*
 import org.vsegda.util.*
 import java.util.*
 import java.util.concurrent.*
+import kotlin.math.*
 
 object DataItemService : Logged {
     private val cache = ConcurrentHashMap<Long, CachedItems>()
@@ -45,23 +46,73 @@ object DataItemService : Logged {
         return if (items.isEmpty()) DataItem(stream, java.lang.Double.NaN, 0) else items[0]
     }
 
-    fun getDataItems(stream: DataStream, from: TimeInstant?, to: TimeInstant?, nRequested: Int): List<DataItem> {
-        var n = nRequested
-        if (stream.mode == DataStreamMode.LAST) {
-            if (to != null) return emptyList()
-            n = 1
+    fun getDataItems(
+        stream: DataStream,
+        from: TimeInstant?,
+        to: TimeInstant?,
+        nRequested: Int,
+        conflate: TimePeriod? = null
+    ): List<DataItem> {
+        val (nQuery, nReturn) = when {
+            stream.mode == DataStreamMode.LAST -> {
+                if (to != null) return emptyList()
+                1 to 1
+            }
+            conflate != null -> {
+                val q = (conflate.period + TIME_PRECISION - 1) / TIME_PRECISION
+                (nRequested * q).toInt() to nRequested
+            }
+            else -> nRequested to nRequested
         }
-        // try cache
-        val result: List<DataItem>? = cache[stream.streamId]?.run { getCached(from, to, n) }
+        // take all we have from cache
+        val cachedResult = cache[stream.streamId]
+            ?.getCached(from, to, nQuery)
+            ?: CachedResult(mutableListOf(), false)
+        val cachedItems = cachedResult.items
+        conflate(cachedItems, conflate)
+        cachedItems.trimFrontToSize(nReturn)
+        if (cachedResult.all || cachedItems.size >= nReturn) {
+            return fillStream(stream, cachedItems)
+        }
         // perform query if not found in cache
-        return fillStream(stream, result ?: performItemsQuery(stream.streamId, from, to, n, false))
+        val firstCachedTime = cachedItems.firstOrNull()?.timeMillis
+        val queryTo = when {
+            firstCachedTime == null -> to
+            to == null -> TimeInstant.valueOf(firstCachedTime)
+            else -> TimeInstant.valueOf(min(firstCachedTime, to.time()))
+        }
+        val queriedItems = performItemsQuery(
+            stream.streamId, from, queryTo, nQuery - cachedItems.size, false)
+        conflate(queriedItems, conflate)
+        queriedItems.addAll(cachedItems)
+        queriedItems.trimFrontToSize(nReturn)
+        return fillStream(stream, queriedItems)
     }
+
+    private fun conflate(list: MutableList<DataItem>, conflate: TimePeriod?) {
+        if (conflate == null) return
+        val period = conflate.period
+        var j = 0
+        var prev = 0L
+        for (i in list.indices) {
+            val item = list[i]
+            val cur = item.timeMillis / period
+            list[j] = item
+            if (cur != prev) {
+                j++
+                prev = cur
+            }
+        }
+        list.subList(j, list.size).clear()
+    }
+
+    class CachedResult(val items: MutableList<DataItem>, val all: Boolean)
 
     private fun CachedItems.getCached(
         from: TimeInstant?,
         to: TimeInstant?,
         n: Int
-    ): List<DataItem>? = synchronized(this) {
+    ): CachedResult = synchronized(this) {
         val items = items
         val size = items.size
         var fromIndex = 0
@@ -76,10 +127,8 @@ object DataItemService : Logged {
         }
         val fromTime = from?.time() ?: 0
         // can safely return from cache?
-        return if (this.fromTime <= fromTime || fromIndex > 0 || toIndex - fromIndex >= n)
-            items.subList(Math.max(fromIndex, toIndex - n), toIndex).toList()
-        else
-            null
+        return CachedResult(items.subList(max(fromIndex, toIndex - n), toIndex).toMutableList(),
+            this.fromTime <= fromTime || fromIndex > 0 || toIndex - fromIndex >= n)
     }
 
     private fun performItemsQuery(
@@ -88,7 +137,7 @@ object DataItemService : Logged {
         to: TimeInstant?,
         n: Int,
         forceCacheUpdate: Boolean
-    ): List<DataItem> {
+    ): MutableList<DataItem> {
         // query both recent items and archive
         val items = ArrayList<DataItem>(DataItemStorage.queryDataItems(streamId, from, to, n))
         if (items.size < n)
@@ -122,7 +171,7 @@ object DataItemService : Logged {
         return items
     }
 
-    private fun ArrayList<DataItem>.trimFrontToSize(n: Int) {
+    private fun MutableList<DataItem>.trimFrontToSize(n: Int) {
         if (size > n) subList(0, size - n).clear()
     }
 

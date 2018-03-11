@@ -7,7 +7,6 @@ import kotlinx.html.*
 import org.vsegda.data.*
 import org.vsegda.request.*
 import org.vsegda.util.*
-import org.vsegda.util.TimePeriod.Companion.valueOf
 
 enum class DataPage(val title: String, val link: DataRequest.() -> String?) {
     OVERVIEW("Overview", { "/data${queryString.update("id", null)}" }),
@@ -62,23 +61,12 @@ suspend fun PipelineContext<Unit, ApplicationCall>.renderData() {
                     }
                 }
             }
-            dataNavigation(req)
+            dataSelector(req)
         }
     }
 }
 
-enum class DataSpan(val text: String, val span: TimePeriod) {
-    DAY("1D", valueOf(1, TimePeriodUnit.DAY)),
-    DAY3("3D", valueOf(3, TimePeriodUnit.DAY)),
-    WEEK("1W", valueOf(1, TimePeriodUnit.WEEK)),
-    WEEK2("2W", valueOf(2, TimePeriodUnit.WEEK)),
-    MONTH("4W", valueOf(4, TimePeriodUnit.WEEK));
-
-    // expected number of data items + 30%
-    val n = span.expectedNItems
-}
-
-fun BODY.dataNavigation(req: DataRequest) {
+fun BODY.dataSelector(req: DataRequest) {
     if (req.id == null) return
     val query = req.queryString
     val last = req.to
@@ -90,11 +78,11 @@ fun BODY.dataNavigation(req: DataRequest) {
     navigate("Prev", "$prevQuery")
     navigate("Next", nextQuery?.toString() ?: "")
     span(classes = "spacer")
-    val resetQuery = query.update("to", null).update("span", null).update("n", null);
+    val resetQuery = query.update("to", null).update("span", null)
     navigate("Reset", if (query == resetQuery) "" else resetQuery.toString())
     span(classes = "spacer")
     for (ds in DataSpan.values()) {
         navigate(ds.text, if (req.span == ds.span) "" else
-            "${query.update("span", ds.span).update("n", ds.n)}")
+            "${query.update("span", ds.span)}")
     }
 }

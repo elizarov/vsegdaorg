@@ -1,6 +1,6 @@
 package org.vsegda.util
 
-enum class TimePeriodUnit(
+enum class TimeUnit(
     @get:JvmName("code") val code: Char,
     @get:JvmName("period") val period: Long
 ) {
@@ -8,7 +8,8 @@ enum class TimePeriodUnit(
     MINUTE('m', org.vsegda.util.MINUTE),
     HOUR('h', org.vsegda.util.HOUR),
     DAY('d', org.vsegda.util.DAY),
-    WEEK('w', org.vsegda.util.WEEK);
+    WEEK('w', org.vsegda.util.WEEK),
+    MONTH('M', org.vsegda.util.MONTH);
 
     override fun toString(): String = "1" + code
 }

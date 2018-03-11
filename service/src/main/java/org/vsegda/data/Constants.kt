@@ -43,6 +43,6 @@ const val PRELOAD_CACHED_ITEMS = 40 * 24 * 12 // load into cache 40 days assumin
 const val MAX_CACHED_ITEMS = (1.5 * PRELOAD_CACHED_ITEMS).toInt()
 
 /**
- * Default time span for dispaly (a week).
+ * Default time span for display (a week).
  */
-val DEFAULT_SPAN = TimePeriod.valueOf(1, TimePeriodUnit.WEEK)
+val DEFAULT_SPAN = 1 * TimeUnit.WEEK
