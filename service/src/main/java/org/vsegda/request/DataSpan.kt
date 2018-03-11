@@ -1,27 +1,6 @@
 package org.vsegda.request
 
-import org.apache.commons.beanutils.*
 import org.vsegda.util.*
-
-enum class ConflateOp(private val str: String) {
-    MAX("Max"),
-    MIN("Min"),
-    LAST("Last");
-
-    override fun toString(): String = str
-
-    class Cnv : Converter {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : Any?> convert(type: Class<T>?, value: Any?): T {
-            check(type === ConflateOp::class.java)
-            return convert(value) as T
-        }
-
-        private fun convert(o: Any?): ConflateOp? {
-            return ConflateOp.valueOf(o?.toString()?.toUpperCase() ?: return null)
-        }
-    }
-}
 
 enum class DataSpan(
     val text: String,
@@ -38,9 +17,3 @@ enum class DataSpan(
     YEAR("1Y", 1 *  TimeUnit.YEAR, 6 * TimeUnit.HOUR),
     YEAR5("5Y", 5 *  TimeUnit.YEAR, 1 * TimeUnit.DAY);
 }
-
-fun conflationForSpan(span: TimePeriod): TimePeriod? =
-    DataSpan.values()
-        .lastOrNull { span >= it.span }
-        ?.conflate
-

@@ -20,6 +20,11 @@ class DataRequest() : AbstractRequest() {
     val from: TimeInstant?
         get() = (to ?: TimeInstant.now()) - span
 
+    val conflate: TimePeriod?
+        get() = DataSpan.values()
+            .lastOrNull { span >= it.span }
+            ?.conflate
+
     constructor(req: HttpServletRequest) : this() {
         init(req)
     }
@@ -44,14 +49,14 @@ class DataRequest() : AbstractRequest() {
                     .associate { it to listOf(DataItemService.getLastDataItem(it)) }
             } else {
                 // find conflation
-                val conflate = conflationForSpan(span)
-                // request up to +25% from the excepted number of items
-                val nRequested = (span.period * 1.25 / (conflate?.period ?: TIME_PRECISION)).roundToInt()
+                val conflate = this.conflate
+                // request up to +50% from the excepted number of items
+                val n = (span.period * 1.5 / (conflate?.period ?: TIME_PRECISION)).roundToInt()
                 // separately for each stream
                 id.asSequence()
                     .mapNotNull { DataStreamService.resolveDataStreamByCode(it) }
                     .associate { it to
-                        DataItemService.getDataItems(it, from, to, nRequested, conflate, op)
+                        DataItemService.getDataItems(it, from, to, n, conflate, op)
                         .filterData()
                     }
             }

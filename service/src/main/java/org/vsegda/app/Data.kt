@@ -96,7 +96,7 @@ fun BODY.dataSelector(req: DataRequest) {
             navigate(ds.text, "${query.update("span", ds.span)}", req.span == ds.span)
         }
     }
-    if (conflationForSpan(req.span) != null) {
+    if (req.conflate != null) {
         nav {
             for (op in ConflateOp.values()) {
                 navigate(op.toString(), "${query.update("op", op)}", req.op == op)
