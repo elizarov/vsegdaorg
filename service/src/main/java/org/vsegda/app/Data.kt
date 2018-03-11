@@ -73,6 +73,9 @@ suspend fun PipelineContext<Unit, ApplicationCall>.renderData() {
                     }
                 }
             }
+            div(classes = "par") {
+                +"${items.size} items"
+            }
             dataSelector(req)
         }
     }
