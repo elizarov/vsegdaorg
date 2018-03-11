@@ -12,7 +12,9 @@ suspend fun PipelineContext<Unit, ApplicationCall>.renderMessage() {
     val isOverview = req.id == null
     call.respondHtml {
         page("Message", topNav = {
-            navigate("Overview", if (isOverview) "" else "/message${req.queryString.update("id", null)}")
+            nav {
+                navigate("Overview", "/message${req.queryString.update("id", null)}", isOverview)
+            }
         }) {
             table(classes = "par data") {
                 thead {

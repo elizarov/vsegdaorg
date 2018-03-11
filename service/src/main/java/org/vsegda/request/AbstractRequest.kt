@@ -10,7 +10,8 @@ abstract class AbstractRequest : Logged {
     var queryString: QueryString = QueryString()
         private set
 
-    override fun toString(): String = if (queryString.isEmpty()) "<all>" else queryString.toString()
+    override fun toString(): String =
+        if (queryString.isEmpty()) "<all>" else queryString.params
 
     // must be invoked at most once
     protected fun init(req: HttpServletRequest) {

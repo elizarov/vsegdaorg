@@ -15,8 +15,20 @@ enum class DataPage(val title: String, val link: DataRequest.() -> String?) {
 }
 
 fun dataNav(req: DataRequest, cur: DataPage): DIV.() -> Unit = {
-    for (page in DataPage.values()) {
-        navigate(page.title, if (page == cur) "" else page.link(req))
+    nav {
+        for (page in DataPage.values()) {
+            val link = page.link(req)
+            if (link != null) navigate(page.title, link, page == cur)
+        }
+    }
+    val resetQuery = req.queryString
+        .update("to", null)
+        .update("span", null)
+        .update("op", null)
+    if (resetQuery != req.queryString) {
+        nav {
+            navigate("Reset", resetQuery.toString())
+        }
     }
 }
 
@@ -75,21 +87,20 @@ fun BODY.dataSelector(req: DataRequest) {
         val nextLast = it.plus(req.span)
         query.update("to", if (nextLast.isNowOrFuture) null else nextLast)
     }
-    navigate("Prev", "$prevQuery")
-    navigate("Next", nextQuery?.toString() ?: "")
-    span(classes = "spacer")
-    val resetQuery = query.update("to", null).update("span", null).update("op", null)
-    navigate("Reset", if (query == resetQuery) "" else resetQuery.toString())
-    span(classes = "spacer")
-    for (ds in DataSpan.values()) {
-        navigate(ds.text, if (req.span == ds.span) "" else
-            "${query.update("span", ds.span)}")
+    nav {
+        navigate("Prev", "$prevQuery")
+        navigate("Next", nextQuery?.toString())
+    }
+    nav {
+        for (ds in DataSpan.values()) {
+            navigate(ds.text, "${query.update("span", ds.span)}", req.span == ds.span)
+        }
     }
     if (conflationForSpan(req.span) != null) {
-        span(classes = "spacer")
-        for (op in ConflateOp.values()) {
-            navigate(op.toString(), if (req.op == op) "" else
-            "${query.update("op", op)}")
+        nav {
+            for (op in ConflateOp.values()) {
+                navigate(op.toString(), "${query.update("op", op)}", req.op == op)
+            }
         }
     }
 }
