@@ -7,9 +7,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="vsegdaorg" />
-        <module name="vsegdaorg (1)" />
         <module name="vsegdaorg-admin-client" />
         <module name="vsegdaorg-admin-shared" />
+        <module name="vsegdaorg (1)" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

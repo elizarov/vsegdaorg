@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="vsegdaorg:war">
+    <output-path>$PROJECT_DIR$/service/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>vsegdaorg</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="vsegdaorg-4.war">
+      <element id="artifact" artifact-name="vsegdaorg:war exploded" />
+    </root>
+  </artifact>
+</component>

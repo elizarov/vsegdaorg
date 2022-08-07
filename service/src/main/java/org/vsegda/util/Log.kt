@@ -39,7 +39,7 @@ inline fun <T> Logged.logged(
 
 @Suppress("UNCHECKED_CAST")
 inline fun <T> Logged.logged(msg: (T) -> String, body: () -> T): T {
-    var result: T? = null
+    var result: T?
     val time = measureTimeMillis {
         result = body()
     }

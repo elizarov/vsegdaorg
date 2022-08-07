@@ -2,7 +2,7 @@ package org.vsegda.app
 
 import io.ktor.application.*
 import io.ktor.html.*
-import io.ktor.pipeline.*
+import io.ktor.util.pipeline.*
 import kotlinx.html.*
 import org.vsegda.data.*
 import org.vsegda.request.*
@@ -24,23 +24,25 @@ suspend fun PipelineContext<Unit, ApplicationCall>.renderDataPlot() {
                 id = "overview"
             }
             script {
-                +"data = ["
-                for ((stream, items) in streams) {
-                    +"{label:'${stream.nameOrCode}'"
-                    +",times:"
-                    compressTimes(items)
-                    +",values:"
-                    compressValues(items)
-                    +"},"
+                unsafe {
+                    +"data = ["
+                    for ((stream, items) in streams) {
+                        +"{label:'${stream.nameOrCode}'"
+                        +",times:"
+                        compressTimes(items)
+                        +",values:"
+                        compressValues(items)
+                        +"},"
+                    }
+                    +"];"
                 }
-                +"];"
             }
             dataSelector(req)
         }
     }
 }
 
-fun SCRIPT.compressTimes(items: List<DataItem>) {
+fun Unsafe.compressTimes(items: List<DataItem>) {
     +"['*',$TIME_PRECISION"
     var cur = 0L
     for (item in items) {
@@ -51,7 +53,7 @@ fun SCRIPT.compressTimes(items: List<DataItem>) {
     +"]"
 }
 
-fun SCRIPT.compressValues(items: List<DataItem>) {
+fun Unsafe.compressValues(items: List<DataItem>) {
     var precision = 0
     for (item in items) {
         precision = max(precision, computePrecision(item.value))

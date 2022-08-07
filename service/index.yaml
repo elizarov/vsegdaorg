@@ -1,0 +1,47 @@
+indexes:
+- kind: MessageItem
+  properties:
+  - direction: asc
+    name: queueId
+  - direction: desc
+    name: messageIndex
+- kind: MessageItem
+  properties:
+  - direction: asc
+    name: queueId
+  - direction: asc
+    name: messageIndex
+- kind: MessageSession
+  properties:
+  - direction: asc
+    name: queueId
+  - direction: desc
+    name: sessionId
+- kind: DataItem
+  properties:
+  - direction: asc
+    name: streamId
+  - direction: desc
+    name: timeMillis
+- kind: DataItem
+  properties:
+  - direction: asc
+    name: streamId
+  - direction: asc
+    name: timeMillis
+- kind: DataArchive
+  properties:
+  - direction: asc
+    name: streamId
+  - direction: desc
+    name: firstTimeMillis
+- kind: DataStream
+  properties:
+  - direction: asc
+    name: tag
+  - direction: asc
+    name: streamId
+- kind: DataStream
+  properties:
+  - direction: desc
+    name: __key__

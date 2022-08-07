@@ -1,0 +1,10 @@
+cron:
+- url: '/cron/dataCheckTimeout'
+  schedule: 'every 15 minutes'
+  description: 'Check data timeouts'
+- url: '/cron/dataArchive'
+  schedule: 'every 24 hours'
+  description: 'Check data archival needs'
+- url: '/cron/dataCacheRefresh'
+  schedule: 'every 12 hours'
+  description: 'Update cache'

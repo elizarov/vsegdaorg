@@ -2,7 +2,7 @@ package org.vsegda.app
 
 import io.ktor.application.*
 import io.ktor.html.*
-import io.ktor.pipeline.*
+import io.ktor.util.pipeline.*
 import kotlinx.html.*
 import org.vsegda.request.*
 

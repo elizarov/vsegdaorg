@@ -17,7 +17,7 @@ enum class ConflateOp(private val str: String) {
         }
 
         private fun convert(o: Any?): ConflateOp? {
-            return ConflateOp.valueOf(o?.toString()?.toUpperCase() ?: return null)
+            return ConflateOp.valueOf(o?.toString()?.uppercase() ?: return null)
         }
     }
 }
