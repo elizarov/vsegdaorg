@@ -16,8 +16,9 @@
     </modules>
 
     <properties>
-        <kotlin.version>1.2.30</kotlin.version>
-        <ktor.version>0.9.2-alpha-1</ktor.version>
+        <kotlin.version>1.6.21</kotlin.version>
+        <ktor.version>1.0.1</ktor.version>
+        <khtml.version>0.7.5</khtml.version>
         <slf4j.version>1.7.25</slf4j.version>
         <appengine.version>1.9.63</appengine.version>
         <servlet.version>3.1.0</servlet.version>
@@ -31,18 +32,6 @@
     </properties>
     
     <repositories>
-        <repository>
-            <id>ktor</id>
-            <url>http://dl.bintray.com/kotlin/ktor</url>
-        </repository>
-        <repository>
-            <id>kotlinx</id>
-            <url>http://dl.bintray.com/kotlin/kotlinx</url>
-        </repository>
-        <repository>
-            <id>jcenter</id>
-            <url>http://jcenter.bintray.com</url>
-        </repository>
     </repositories>
 
     <dependencyManagement>

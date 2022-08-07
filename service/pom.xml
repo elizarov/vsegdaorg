@@ -70,17 +70,23 @@
             <artifactId>ktor-html-builder</artifactId>
             <version>${ktor.version}</version>
         </dependency>
+        <!-- kotlinx-html -->
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-html-jvm</artifactId>
+            <version>${khtml.version}</version>
+        </dependency>
         <!-- GWT -->
         <dependency>
             <groupId>org.vsegda</groupId>
             <artifactId>vsegdaorg-admin-shared</artifactId>
-            <version>2</version>
+            <version>3</version>
         </dependency>
         <dependency>
             <groupId>org.vsegda</groupId>
             <artifactId>vsegdaorg-admin-client</artifactId>
             <type>war</type>
-            <version>2</version>
+            <version>3</version>
         </dependency>
         <dependency>
             <groupId>com.google.gwt</groupId>
@@ -115,9 +121,6 @@
                 <version>${kotlin.version}</version>
                 <configuration>
                     <jvmTarget>1.8</jvmTarget>
-                    <args>
-                        <arg>-Xcoroutines=enable</arg>
-                    </args>
                 </configuration>
                 <executions>
                     <execution>

@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.vsegda</groupId>
         <artifactId>vsegdaorg-admin</artifactId>
-        <version>2</version>
+        <version>3</version>
     </parent>
 
     <artifactId>vsegdaorg-admin-client</artifactId>
@@ -14,12 +14,12 @@
         <dependency>
             <groupId>org.vsegda</groupId>
             <artifactId>vsegdaorg-admin-shared</artifactId>
-            <version>2</version>
+            <version>3</version>
         </dependency>
         <dependency>
             <groupId>org.vsegda</groupId>
             <artifactId>vsegdaorg-admin-shared</artifactId>
-            <version>2</version>
+            <version>3</version>
             <classifier>sources</classifier>
         </dependency>
         <dependency>
