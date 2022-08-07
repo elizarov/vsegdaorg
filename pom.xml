@@ -20,7 +20,7 @@
         <ktor.version>1.6.8</ktor.version>
         <khtml.version>0.8.0</khtml.version>
         <slf4j.version>1.7.25</slf4j.version>
-        <appengine.version>1.9.63</appengine.version>
+        <appengine.version>2.0.4</appengine.version>
         <servlet.version>3.1.0</servlet.version>
         <gwt.version>2.8.2</gwt.version>
         <junit.version>4.13.1</junit.version>
