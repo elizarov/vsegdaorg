@@ -78,7 +78,7 @@
     <orderEntry type="library" name="Maven: io.ktor:ktor-io-jvm:1.6.8" level="project" />
     <orderEntry type="library" name="Maven: com.typesafe:config:1.4.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.fusesource.jansi:jansi:2.4.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.5" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlinx:kotlinx-html-jvm:0.8.0" level="project" />
     <orderEntry type="module" module-name="vsegdaorg-admin-shared" />
     <orderEntry type="module" module-name="vsegdaorg-admin-client" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.google.gwt:gwt-servlet:2.8.2" level="project" />
