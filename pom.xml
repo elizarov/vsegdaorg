@@ -17,7 +17,7 @@
 
     <properties>
         <kotlin.version>1.6.21</kotlin.version>
-        <ktor.version>1.0.1</ktor.version>
+        <ktor.version>1.1.4</ktor.version>
         <khtml.version>0.7.5</khtml.version>
         <slf4j.version>1.7.25</slf4j.version>
         <appengine.version>1.9.63</appengine.version>
