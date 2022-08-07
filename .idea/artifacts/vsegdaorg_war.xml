@@ -7,7 +7,7 @@
         <packaging>war</packaging>
       </options>
     </properties>
-    <root id="archive" name="vsegdaorg-3.war">
+    <root id="archive" name="vsegdaorg-4.war">
       <element id="artifact" artifact-name="vsegdaorg:war exploded" />
     </root>
   </artifact>
