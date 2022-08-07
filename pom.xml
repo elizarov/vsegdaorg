@@ -16,7 +16,7 @@
     </modules>
 
     <properties>
-        <kotlin.version>1.6.21</kotlin.version>
+        <kotlin.version>1.7.10</kotlin.version>
         <ktor.version>1.6.8</ktor.version>
         <khtml.version>0.7.5</khtml.version>
         <slf4j.version>1.7.25</slf4j.version>
